@@ -699,6 +699,17 @@ body.view-mode .hide-in-view {
   display: none !important;
 }
 
+/* 查看模式：隐藏导航栏编辑相关按钮 */
+body.view-mode .nav-toggle-mode,
+body.view-mode .share-btn {
+  display: none !important;
+}
+
+/* 查看模式：隐藏头像区域 */
+body.view-mode .hero-avatar {
+  display: none !important;
+}
+
 body.view-mode .uploadable {
   cursor: default;
   pointer-events: none;
@@ -720,13 +731,21 @@ body.view-mode .upload-input {
   left: 0;
   right: 0;
   z-index: 100;
-  background: #F0EDE8;
-  border-bottom: 1px solid #E0DBD3;
-  padding: 6px 24px;
+  background: rgba(248, 247, 245, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 7px 24px;
   text-align: center;
   font-size: 12px;
-  color: #8C8C8C;
-  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.8px;
+}
+
+.view-mode-banner::before {
+  content: "◍";
+  margin-right: 6px;
+  color: var(--text-tertiary);
 }
 
 body.view-mode .view-mode-banner {
@@ -820,6 +839,9 @@ body:not(.view-mode) .share-btn {
 </style>
 </head>
 <body>
+
+<!-- 查看模式提示条 -->
+<div class="view-mode-banner">此链接仅用于作品展示</div>
 
 <!-- ==========================================
      导航栏
