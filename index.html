@@ -1460,6 +1460,11 @@ document.getElementById('btnDownloadPDF')?.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   ImageUploader.init();
 
+  // 检测查看模式
+  if (new URLSearchParams(window.location.search).has('view')) {
+    document.body.classList.add('view-mode');
+  }
+
   // 分享链接按钮
   const btnShare = document.getElementById('btnShare');
   if (btnShare) {
