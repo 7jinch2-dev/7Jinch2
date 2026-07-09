@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PORTFOLIO – Bao Long</title>
+
+<!--
+  ============================================
+  替换点总览（搜索「替换点」即可定位所有可修改内容）
+  1. CONFIG 对象：所有文字集中配置
+  2. 图片占位符：搜索「替换点：图片」
+  3. 文字内容：搜索「替换点：文字」
+  4. 上传功能：所有图片区域支持点击/拖拽上传，自动存 localStorage
+  ============================================
+-->
+
+<style>
+/* ==========================================
+   CSS 变量 —— 全局配色与尺寸
+   替换点：颜色 —— 修改以下变量即可统一改配色
+   ========================================== */
+:root {
+  --bg:              #F8F7F5;
+  --text-primary:    #1A1A1A;
+  --text-secondary:  #6B6B6B;
+  --text-tertiary:   #9A9A9A;
+  --btn-solid:       #2C2C2C;
+  --btn-solid-hover: #3D3D3D;
+  --btn-outline:     #E0E0E0;
+  --card-bg:         #FFFFFF;
+  --card-shadow:     0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.10);
+  --tag-bg:          #EEEEEE;
+  --tag-text:        #555555;
+  --border-light:    #E8E8E8;
+  --radius-sm:       8px;
+  --radius-md:       12px;
+  --radius-lg:       16px;
+  --radius-xl:       20px;
+  --nav-height:      64px;
+}
+
+/* ==========================================
+   全局重置
+   ========================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-height);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ==========================================
+   导航栏
+   ========================================== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-light);
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}
+
+.nav-brand .cross {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+.nav-toggle-mode {
+  margin-left: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--tag-bg);
+  color: var(--text-secondary);
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-toggle-mode:hover {
+  background: var(--btn-outline);
+}
+
+/* 移动端汉堡菜单 */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: transform 0.3s;
+}
+
+/* ==========================================
+   Hero Section
+   ========================================== */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 32px 80px;
+  align-items: center;
+}
+
+/* 左侧文字区 */
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 头像 */
+.hero-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D5D5D0 0%, #C0C0BA 100%);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid var(--border-light);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.hero-avatar:hover {
+  border-color: var(--text-tertiary);
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+}
+
+.hero-avatar.has-image {
+  border-color: transparent;
+  background: none;
+}
+
+.hero-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--tag-bg);
+  color: var(--text-tertiary);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.hero-name {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: -8px;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+/* 按钮组 */
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-solid {
+  background: var(--btn-solid);
+  color: #FFFFFF;
+}
+
+.btn-solid:hover {
+  background: var(--btn-solid-hover);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--btn-outline);
+}
+
+.btn-outline:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* 数据统计卡片 */
+.hero-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  min-width: 120px;
+}
+
+.stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* 右侧大图 */
+.hero-right {
+  position: relative;
+}
+
+.hero-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  /* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
+  background: linear-gradient(135deg, #C5D3C2 0%, #A3B5A0 30%, #8A9F87 60%, #B8C9B5 100%);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* 浮动信息卡片 */
+.featured-card {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--card-shadow);
+  z-index: 2;
+}
+
+.featured-card .fc-tag {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.featured-card .fc-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.featured-card .fc-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ==========================================
+   上传通用样式
+   ========================================== */
+.uploadable {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* 上传遮罩层 */
+.upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 3;
+  transition: background 0.3s;
+  pointer-events: none;
+}
+
+.uploadable:hover .upload-overlay,
+.uploadable.drag-over .upload-overlay {
+  background: rgba(0,0,0,0.45);
+}
+
+.upload-icon {
+  font-size: 32px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s, transform 0.3s;
+  line-height: 1;
+}
+
+.upload-text {
+  font-size: 13px;
+  color: #FFFFFF;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s, transform 0.3s 0.05s;
+  letter-spacing: 0.5px;
+}
+
+.uploadable:hover .upload-icon,
+.uploadable:hover .upload-text,
+.uploadable.drag-over .upload-icon,
+.uploadable.drag-over .upload-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 头像专用上传遮罩 */
+.hero-avatar .upload-icon {
+  font-size: 20px;
+}
+
+.hero-avatar .upload-text {
+  font-size: 11px;
+}
+
+/* 大图上传提示稍大 */
+.hero-image .upload-icon {
+  font-size: 40px;
+}
+
+.hero-image .upload-text {
+  font-size: 14px;
+}
+
+/* 已上传状态：hover 时提示可重新上传 */
+.uploadable.has-image:hover .upload-overlay {
+  background: rgba(0,0,0,0.5);
+}
+
+/* 拖拽高亮边框 */
+.uploadable.drag-over {
+  outline: 3px dashed var(--btn-solid);
+  outline-offset: -3px;
+}
+
+/* 隐藏的 file input */
+.upload-input {
+  display: none;
+}
+
+/* 上传中 toasts */
+.upload-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--btn-solid);
+  color: #FFF;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  z-index: 9999;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.upload-toast.error {
+  background: #C0392B;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
+}
+
+/* ==========================================
+   Selected Works Section
+   ========================================== */
+.works {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 100px;
+}
+
+.works-header {
+  margin-bottom: 32px;
+}
+
+.works-title {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+/* 布局模式切换 */
+.layout-toggles {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.layout-toggle {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--btn-outline);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.25s;
+}
+
+.layout-toggle.active {
+  background: var(--btn-solid);
+  color: #FFFFFF;
+  border-color: var(--btn-solid);
+}
+
+.layout-toggle:hover:not(.active) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* 分类筛选标签 */
+.filter-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-tag {
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1.5px solid var(--btn-outline);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.25s;
+}
+
+.filter-tag.active {
+  background: var(--btn-solid);
+  color: #FFFFFF;
+  border-color: var(--btn-solid);
+}
+
+.filter-tag:hover:not(.active) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* 作品网格 */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.works-grid.waterfall {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.works-grid.magazine {
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+/* 作品卡片 */
+.work-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.work-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.work-card-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
+.work-card-image.img-1 {
+  background-image: linear-gradient(160deg, #BCC9B5 0%, #9CB08A 50%, #7D956B 100%);
+}
+.work-card-image.img-2 {
+  background-image: linear-gradient(160deg, #C4B5A5 0%, #B8A590 50%, #A08D75 100%);
+}
+.work-card-image.img-3 {
+  background-image: linear-gradient(160deg, #A5B8C4 0%, #8FA5B2 50%, #7A94A0 100%);
+}
+.work-card-image.img-4 {
+  background-image: linear-gradient(160deg, #C4B0B5 0%, #B09AA0 50%, #9A858B 100%);
+}
+.work-card-image.img-5 {
+  background-image: linear-gradient(160deg, #B0C4B8 0%, #95B0A0 50%, #7D9A88 100%);
+}
+.work-card-image.img-6 {
+  background-image: linear-gradient(160deg, #C4BEB0 0%, #B0A998 50%, #9A927D 100%);
+}
+
+.work-card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.9);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+  z-index: 4;
+}
+
+.work-card-body {
+  padding: 16px 20px 20px;
+}
+
+.work-card-category {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.work-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.work-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.work-card-tag {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-size: 12px;
+}
+
+/* ==========================================
+   Footer
+   ========================================== */
+.footer {
+  border-top: 1px solid var(--border-light);
+  padding: 32px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.footer a {
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: var(--text-primary);
+}
+
+/* ==========================================
+   响应式
+   ========================================== */
+/* ==========================================
+   查看模式
+   ========================================== */
+body.view-mode .hide-in-view {
+  display: none !important;
+}
+
+body.view-mode .uploadable {
+  cursor: default;
+  pointer-events: none;
+}
+
+body.view-mode .upload-overlay {
+  display: none !important;
+}
+
+body.view-mode .upload-input {
+  display: none !important;
+}
+
+/* 查看模式提示条 */
+.view-mode-banner {
+  display: none;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #F0EDE8;
+  border-bottom: 1px solid #E0DBD3;
+  padding: 6px 24px;
+  text-align: center;
+  font-size: 12px;
+  color: #8C8C8C;
+  letter-spacing: 0.5px;
+}
+
+body.view-mode .view-mode-banner {
+  display: block;
+}
+
+/* 分享按钮 */
+.share-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.share-btn:hover {
+  background: var(--btn-solid);
+  color: #FFFFFF;
+  border-color: var(--btn-solid);
+}
+
+body:not(.view-mode) .share-btn {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    gap: 32px;
+    padding: 40px 24px 60px;
+  }
+  .hero-name { font-size: 42px; }
+  .works-grid { grid-template-columns: repeat(2, 1fr); }
+  .works-grid.waterfall { grid-template-columns: 1fr 1fr; }
+  .works-grid.magazine { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    padding: 20px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .nav-hamburger { display: flex; }
+  .nav-toggle-mode { display: none; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 32px 20px 48px;
+    gap: 32px;
+  }
+  .hero-avatar { width: 60px; height: 60px; }
+  .hero-name { font-size: 36px; }
+  .hero-right { order: -1; }
+  .hero-image { aspect-ratio: 3 / 2; }
+  .featured-card { bottom: 12px; left: 12px; right: 12px; padding: 14px 16px; }
+  .featured-card .fc-title { font-size: 15px; }
+
+  .works { padding: 0 20px 60px; }
+  .works-title { font-size: 30px; }
+  .works-grid,
+  .works-grid.waterfall,
+  .works-grid.magazine {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-name { font-size: 30px; }
+  .hero-buttons { flex-direction: column; }
+  .hero-buttons .btn { width: 100%; }
+  .hero-stats { flex-direction: column; }
+  .stat-card { min-width: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     导航栏
+     ========================================== -->
+<nav class="nav" id="nav">
+  <!-- 替换点：品牌名 -->
+  <a href="#" class="nav-brand">
+    <span class="cross">✦</span> PORTFOLIO
+  </a>
+
+  <ul class="nav-links" id="navLinks">
+    <!-- 替换点：导航菜单项 -->
+    <li><a href="#about" data-section="about">About</a></li>
+    <li><a href="#resume" data-section="resume">Resume</a></li>
+    <li><a href="#works" data-section="works">Works</a></li>
+    <li><a href="#contact" data-section="contact">Contact</a></li>
+  </ul>
+
+  <button class="nav-toggle-mode" id="navToggleMode" title="切换展示模式">切换展示模式</button>
+  <button class="share-btn" id="btnShare" title="复制分享链接">复制分享链接</button>
+  <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ==========================================
+     Hero Section
+     ========================================== -->
+<section class="hero" id="about">
+  <div class="hero-left">
+    <!-- 头像上传区域 -->
+    <div class="hero-avatar uploadable" data-store-key="pf_avatar" title="点击上传头像">
+      <div class="upload-overlay">
+        <span class="upload-icon">📷</span>
+        <span class="upload-text">上传头像</span>
+      </div>
+      <input type="file" accept="image/*" class="upload-input" hidden>
+    </div>
+
+    <!-- 替换点：文字 -->
+    <span class="hero-pill">PERSONAL WEBSITE PORTFOLIO</span>
+
+    <!-- 替换点：文字 —— 姓名 -->
+    <h1 class="hero-name">Bao Long</h1>
+
+    <!-- 替换点：文字 —— 副标题 -->
+    <p class="hero-subtitle">Landscape / Visual / Brand Portfolio</p>
+
+    <!-- 替换点：文字 —— 个人简介 -->
+    <p class="hero-desc">
+      专注于景观设计、视觉传达与品牌策划的创意工作者。
+      每一次按下快门、每一张设计稿，都是我对世界观察的切片。
+      欢迎浏览我的作品集，感受设计的力量。
+    </p>
+
+    <!-- 按钮组 -->
+    <div class="hero-buttons">
+      <button class="btn btn-solid hide-in-view" id="btnUpload">上传作品图片</button>
+      <button class="btn btn-outline hide-in-view" id="btnReset">重置示例</button>
+      <button class="btn btn-outline hide-in-view" id="btnAvatar">上传头像</button>
+      <button class="btn btn-outline hide-in-view" id="btnDownloadPDF">下载简历 PDF</button>
+    </div>
+
+    <!-- 数据卡片 -->
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="stat-number" id="statImages">9</span>
+        <span class="stat-label">IMAGES</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="statProjects">3</span>
+        <span class="stat-label">PROJECTS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <!-- Hero 大图上传区域 -->
+    <div class="hero-image uploadable" data-store-key="pf_hero_image" title="点击或拖拽上传封面图">
+      <div class="upload-overlay">
+        <span class="upload-icon">📷</span>
+        <span class="upload-text">点击或拖拽上传封面图</span>
+      </div>
+      <input type="file" accept="image/*" class="upload-input" hidden>
+    </div>
+
+    <!-- 浮动卡片 -->
+    <div class="featured-card">
+      <!-- 替换点：文字 -->
+      <div class="fc-tag">FEATURED PROJECT</div>
+      <div class="fc-title">Interior Planting Service System</div>
+      <div class="fc-desc">每次上传的一张照片都将自动更新在此处，作为精选项目的封面展示。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     Resume Section（页内锚点）
+     ========================================== -->
+<section id="resume" style="display:none;"></section>
+
+<!-- ==========================================
+     Selected Works
+     ========================================== -->
+<section class="works" id="works">
+  <div class="works-header">
+    <h2 class="works-title">作品集</h2>
+
+    <div class="layout-toggles">
+      <button class="layout-toggle active" data-layout="grid">网格</button>
+      <button class="layout-toggle" data-layout="magazine">杂志风</button>
+      <button class="layout-toggle" data-layout="waterfall">瀑布流</button>
+    </div>
+
+    <div class="filter-tags" id="filterTags">
+      <button class="filter-tag active" data-filter="all">All</button>
+      <button class="filter-tag" data-filter="presentation">Presentation</button>
+      <button class="filter-tag" data-filter="plant">Plant Display</button>
+      <button class="filter-tag" data-filter="portfolio">Portfolio</button>
+      <button class="filter-tag" data-filter="rendering">Rendering</button>
+    </div>
+  </div>
+
+  <div class="works-grid" id="worksGrid">
+    <!-- Card 1 -->
+    <article class="work-card" data-category="presentation plant portfolio">
+      <div class="work-card-image img-1 uploadable" data-store-key="pf_work_0" title="点击上传作品封面">
+        <span class="work-card-badge">3 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">PRESENTATION</div>
+        <h3 class="work-card-title">Interior Planting Service System</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Presentation</span>
+          <span class="work-card-tag">Plant Display</span>
+          <span class="work-card-tag">Portfolio</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="work-card" data-category="rendering presentation">
+      <div class="work-card-image img-2 uploadable" data-store-key="pf_work_1" title="点击上传作品封面">
+        <span class="work-card-badge">5 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">RENDERING</div>
+        <h3 class="work-card-title">Urban Landscape Master Plan</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Rendering</span>
+          <span class="work-card-tag">Presentation</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="work-card" data-category="plant portfolio">
+      <div class="work-card-image img-3 uploadable" data-store-key="pf_work_2" title="点击上传作品封面">
+        <span class="work-card-badge">4 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">PLANT DISPLAY</div>
+        <h3 class="work-card-title">Botanical Garden Exhibition Design</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Plant Display</span>
+          <span class="work-card-tag">Portfolio</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="work-card" data-category="rendering portfolio">
+      <div class="work-card-image img-4 uploadable" data-store-key="pf_work_3" title="点击上传作品封面">
+        <span class="work-card-badge">6 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">RENDERING</div>
+        <h3 class="work-card-title">Residential Courtyard Concept</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Rendering</span>
+          <span class="work-card-tag">Portfolio</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="work-card" data-category="presentation plant">
+      <div class="work-card-image img-5 uploadable" data-store-key="pf_work_4" title="点击上传作品封面">
+        <span class="work-card-badge">7 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">PRESENTATION</div>
+        <h3 class="work-card-title">Rooftop Garden Terrace</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Presentation</span>
+          <span class="work-card-tag">Plant Display</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 6 -->
+    <article class="work-card" data-category="portfolio presentation">
+      <div class="work-card-image img-6 uploadable" data-store-key="pf_work_5" title="点击上传作品封面">
+        <span class="work-card-badge">8 IMAGES</span>
+        <div class="upload-overlay">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">点击上传</span>
+        </div>
+        <input type="file" accept="image/*" class="upload-input" hidden>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-category">PORTFOLIO</div>
+        <h3 class="work-card-title">Public Park Wayfinding System</h3>
+        <div class="work-card-tags">
+          <span class="work-card-tag">Portfolio</span>
+          <span class="work-card-tag">Presentation</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ==========================================
+     Contact Section
+     ========================================== -->
+<section id="contact"></section>
+
+<!-- ==========================================
+     Footer
+     ========================================== -->
+<footer class="footer">
+  <!-- 替换点：文字 —— 版权信息 -->
+  <p>&copy; 2026 Bao Long. All Rights Reserved. &nbsp;|&nbsp;
+  <a href="mailto:hello@baolong.com">hello@baolong.com</a></p>
+</footer>
+
+<!-- ==========================================
+     JavaScript
+     ========================================== -->
+<script>
+/* ==========================================
+   Toast 提示工具
+   ========================================== */
+function showToast(msg, isError = false) {
+  const existing = document.querySelector('.upload-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'upload-toast' + (isError ? ' error' : '');
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* ==========================================
+   图片上传管理器
+   ========================================== */
+const ImageUploader = {
+  // 已上传过的 key 集合（用于跟踪哪些区域已上传过）
+  _uploadedKeys: new Set(),
+
+  /**
+   * 初始化所有可上传区域
+   */
+  init() {
+    const uploadables = document.querySelectorAll('.uploadable');
+    uploadables.forEach(el => this._bindElement(el));
+    // 从 localStorage 恢复已保存的图片
+    this._restoreAll();
+  },
+
+  /**
+   * 绑定单个上传元素
+   */
+  _bindElement(el) {
+    const input = el.querySelector('.upload-input');
+    const key = el.dataset.storeKey;
+    if (!input || !key) return;
+
+    // 点击元素 → 触发 file input
+    el.addEventListener('click', (e) => {
+      // 如果点的是已有的 file input 不处理（防止双击 input）
+      if (e.target === input) return;
+      e.stopPropagation();
+      input.click();
+    });
+
+    // file input 选择文件后处理
+    input.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        this._handleFile(e.target.files[0], el, key);
+        input.value = ''; // 清空以便重复选择同一文件
+      }
+    });
+
+    // 拖拽事件
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.classList.add('drag-over');
+    });
+
+    el.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.classList.remove('drag-over');
+    });
+
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.classList.remove('drag-over');
+
+      const files = e.dataTransfer.files;
+      if (files && files[0]) {
+        this._handleFile(files[0], el, key);
+      }
+    });
+  },
+
+  /**
+   * 处理上传文件
+   */
+  _handleFile(file, el, key) {
+    // 校验文件类型
+    if (!file.type.startsWith('image/')) {
+      showToast('请选择图片文件（JPG / PNG / WebP 等）', true);
+      return;
+    }
+
+    // 校验文件大小（限制 5MB，localStorage 一般 5-10MB 上限）
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('图片大小不能超过 5MB，请压缩后重试', true);
+      return;
+    }
+
+    // 用 FileReader 读取为 base64
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target.result;
+      const saved = this._saveToStorage(key, base64);
+      if (saved) {
+        this._applyImage(el, base64);
+        this._uploadedKeys.add(key);
+        showToast('图片上传成功！已自动保存');
+      } else {
+        showToast('存储空间不足，请清理浏览器缓存后重试', true);
+      }
+    };
+    reader.onerror = () => {
+      showToast('图片读取失败，请重试', true);
+    };
+    reader.readAsDataURL(file);
+  },
+
+  /**
+   * 将 base64 图片应用到元素上
+   */
+  _applyImage(el, base64) {
+    el.style.backgroundImage = `url(${base64})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.classList.add('has-image');
+  },
+
+  /**
+   * 清除元素上的图片，恢复默认渐变
+   */
+  _clearImage(el) {
+    el.style.backgroundImage = '';
+    el.style.backgroundSize = '';
+    el.style.backgroundPosition = '';
+    el.classList.remove('has-image');
+  },
+
+  /**
+   * 保存到 localStorage
+   */
+  _saveToStorage(key, base64) {
+    try {
+      localStorage.setItem(key, base64);
+      return true;
+    } catch (e) {
+      // QuotaExceededError
+      if (e.name === 'QuotaExceededError' || e.code === 22) {
+        return false;
+      }
+      // 其他错误也返回 false
+      return false;
+    }
+  },
+
+  /**
+   * 从 localStorage 读取
+   */
+  _loadFromStorage(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  },
+
+  /**
+   * 页面加载时恢复所有已保存图片
+   */
+  _restoreAll() {
+    const uploadables = document.querySelectorAll('.uploadable');
+    uploadables.forEach(el => {
+      const key = el.dataset.storeKey;
+      if (!key) return;
+      const saved = this._loadFromStorage(key);
+      if (saved) {
+        this._applyImage(el, saved);
+        this._uploadedKeys.add(key);
+      }
+    });
+  },
+
+  /**
+   * 清除所有上传的图片
+   */
+  clearAll() {
+    const uploadables = document.querySelectorAll('.uploadable');
+    uploadables.forEach(el => {
+      const key = el.dataset.storeKey;
+      if (!key) return;
+      localStorage.removeItem(key);
+      this._clearImage(el);
+    });
+    this._uploadedKeys.clear();
+    showToast('已清除所有上传图片，恢复默认样式');
+  },
+
+  /**
+   * 触发指定 key 的上传
+   */
+  triggerUpload(key) {
+    const el = document.querySelector(`[data-store-key="${key}"]`);
+    if (el) {
+      const input = el.querySelector('.upload-input');
+      if (input) input.click();
+    }
+  },
+};
+
+/* ==========================================
+   导航交互
+   ========================================== */
+const navLinks = document.getElementById('navLinks');
+const navHamburger = document.getElementById('navHamburger');
+const navToggleMode = document.getElementById('navToggleMode');
+
+navHamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+  });
+});
+
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('data-section') === current);
+  });
+});
+
+/* ==========================================
+   布局模式切换
+   ========================================== */
+const worksGrid = document.getElementById('worksGrid');
+const layoutToggles = document.querySelectorAll('.layout-toggle');
+
+layoutToggles.forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    layoutToggles.forEach(t => t.classList.remove('active'));
+    toggle.classList.add('active');
+    const layout = toggle.dataset.layout;
+    worksGrid.classList.remove('waterfall', 'magazine');
+    if (layout === 'waterfall') worksGrid.classList.add('waterfall');
+    if (layout === 'magazine') worksGrid.classList.add('magazine');
+  });
+});
+
+navToggleMode.addEventListener('click', () => {
+  const layouts = ['grid', 'magazine', 'waterfall'];
+  const current = [...layoutToggles].findIndex(t => t.classList.contains('active'));
+  const next = (current + 1) % layouts.length;
+  layoutToggles.forEach(t => t.classList.remove('active'));
+  layoutToggles[next].classList.add('active');
+  worksGrid.classList.remove('waterfall', 'magazine');
+  if (layouts[next] === 'waterfall') worksGrid.classList.add('waterfall');
+  if (layouts[next] === 'magazine') worksGrid.classList.add('magazine');
+});
+
+/* ==========================================
+   分类筛选
+   ========================================== */
+const filterTags = document.querySelectorAll('.filter-tag');
+const workCards = document.querySelectorAll('.work-card');
+
+filterTags.forEach(tag => {
+  tag.addEventListener('click', () => {
+    filterTags.forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+    const filter = tag.dataset.filter;
+
+    workCards.forEach(card => {
+      if (filter === 'all') {
+        card.style.display = '';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(10px)';
+        requestAnimationFrame(() => {
+          card.style.transition = 'opacity 0.3s, transform 0.3s';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        });
+      } else {
+        const categories = card.dataset.category.split(' ');
+        if (categories.includes(filter)) {
+          card.style.display = '';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(10px)';
+          requestAnimationFrame(() => {
+            card.style.transition = 'opacity 0.3s, transform 0.3s';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          });
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    });
+  });
+});
+
+/* ==========================================
+   按钮交互 —— 对接上传功能
+   ========================================== */
+
+// 「上传作品图片」→ 触发 Hero 大图上传
+document.getElementById('btnUpload')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  ImageUploader.triggerUpload('pf_hero_image');
+});
+
+// 「上传头像」→ 触发头像上传
+document.getElementById('btnAvatar')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  ImageUploader.triggerUpload('pf_avatar');
+});
+
+// 「重置示例」→ 清除所有上传图片 + 重置筛选和布局
+document.getElementById('btnReset')?.addEventListener('click', () => {
+  ImageUploader.clearAll();
+
+  filterTags.forEach(t => t.classList.remove('active'));
+  filterTags[0].classList.add('active');
+  workCards.forEach(card => {
+    card.style.display = '';
+    card.style.opacity = '1';
+    card.style.transform = 'translateY(0)';
+  });
+
+  layoutToggles.forEach(t => t.classList.remove('active'));
+  layoutToggles[0].classList.add('active');
+  worksGrid.classList.remove('waterfall', 'magazine');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// 「下载简历 PDF」
+document.getElementById('btnDownloadPDF')?.addEventListener('click', () => {
+  showToast('请将简历 PDF 放在网站同目录下，命名为 resume.pdf，然后修改按钮链接');
+});
+
+/* ==========================================
+   页面加载初始化
+   ========================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  ImageUploader.init();
+
+  // 分享链接按钮
+  const btnShare = document.getElementById('btnShare');
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('edit');
+      url.searchParams.set('view', '');
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        showToast('分享链接已复制');
+      }).catch(() => {
+        showToast('复制失败，请手动复制地址栏链接', true);
+      });
+    });
+  }
+
+  console.log('PORTFOLIO 网站已就绪。');
+  console.log('所有图片区域支持点击或拖拽上传（自动保存到浏览器本地存储）。');
+  console.log('替换文字：搜索「替换点：文字」');
+  console.log('修改配色：搜索 CSS 变量 :root');
+});
+</script>
+
+</body>
+</html>
