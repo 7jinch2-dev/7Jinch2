@@ -21,19 +21,19 @@
    替换点：颜色 —— 修改以下变量即可统一改配色
    ========================================== */
 :root {
-  --bg:              #F8F7F5;
-  --text-primary:    #1A1A1A;
-  --text-secondary:  #6B6B6B;
-  --text-tertiary:   #9A9A9A;
-  --btn-solid:       #2C2C2C;
-  --btn-solid-hover: #3D3D3D;
-  --btn-outline:     #E0E0E0;
-  --card-bg:         #FFFFFF;
-  --card-shadow:     0 4px 12px rgba(0,0,0,0.06);
-  --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.10);
-  --tag-bg:          #EEEEEE;
-  --tag-text:        #555555;
-  --border-light:    #E8E8E8;
+  --bg:              #0E0E11;
+  --text-primary:    #F5E9F2;
+  --text-secondary:  #C9A8BC;
+  --text-tertiary:   #8F7687;
+  --btn-solid:       #FF69B4;
+  --btn-solid-hover: #FF1493;
+  --btn-outline:     #5C3A4C;
+  --card-bg:         #1A171B;
+  --card-shadow:     0 4px 12px rgba(255,105,180,0.12);
+  --card-shadow-hover: 0 8px 24px rgba(255,105,180,0.24);
+  --tag-bg:          #2B1F28;
+  --tag-text:        #FF8FC8;
+  --border-light:    #3A2A34;
   --radius-sm:       8px;
   --radius-md:       12px;
   --radius-lg:       16px;
@@ -174,7 +174,7 @@ img { display: block; max-width: 100%; }
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #D5D5D0 0%, #C0C0BA 100%);
+  background: linear-gradient(135deg, #3A1F2F 0%, #1A1118 100%);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
@@ -185,7 +185,7 @@ img { display: block; max-width: 100%; }
 
 .hero-avatar:hover {
   border-color: var(--text-tertiary);
-  box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+  box-shadow: 0 0 0 4px rgba(255,105,180,0.20);
 }
 
 .hero-avatar.has-image {
@@ -251,7 +251,7 @@ img { display: block; max-width: 100%; }
 
 .btn-solid {
   background: var(--btn-solid);
-  color: #FFFFFF;
+  color: #2A0A1A;
 }
 
 .btn-solid:hover {
@@ -315,7 +315,7 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-xl);
   overflow: hidden;
   /* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
-  background: linear-gradient(135deg, #C5D3C2 0%, #A3B5A0 30%, #8A9F87 60%, #B8C9B5 100%);
+  background: linear-gradient(135deg, #5C2A45 0%, #3A1F2F 30%, #1A1118 60%, #462033 100%);
   background-size: cover;
   background-position: center;
   position: relative;
@@ -335,8 +335,9 @@ img { display: block; max-width: 100%; }
   bottom: 24px;
   left: 24px;
   right: 24px;
-  background: rgba(255,255,255,0.92);
+  background: rgba(24, 15, 21, 0.92);
   backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
   box-shadow: var(--card-shadow);
@@ -525,7 +526,7 @@ img { display: block; max-width: 100%; }
 
 .layout-toggle.active {
   background: var(--btn-solid);
-  color: #FFFFFF;
+  color: #2A0A1A;
   border-color: var(--btn-solid);
 }
 
@@ -554,7 +555,7 @@ img { display: block; max-width: 100%; }
 
 .filter-tag.active {
   background: var(--btn-solid);
-  color: #FFFFFF;
+  color: #2A0A1A;
   border-color: var(--btn-solid);
 }
 
@@ -604,30 +605,30 @@ img { display: block; max-width: 100%; }
 
 /* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
 .work-card-image.img-1 {
-  background-image: linear-gradient(160deg, #BCC9B5 0%, #9CB08A 50%, #7D956B 100%);
+  background-image: linear-gradient(160deg, #6E2A4E 0%, #462033 50%, #241019 100%);
 }
 .work-card-image.img-2 {
-  background-image: linear-gradient(160deg, #C4B5A5 0%, #B8A590 50%, #A08D75 100%);
+  background-image: linear-gradient(160deg, #52304A 0%, #381F35 50%, #1C1019 100%);
 }
 .work-card-image.img-3 {
-  background-image: linear-gradient(160deg, #A5B8C4 0%, #8FA5B2 50%, #7A94A0 100%);
+  background-image: linear-gradient(160deg, #5C2A45 0%, #3E1D31 50%, #1F0E1A 100%);
 }
 .work-card-image.img-4 {
-  background-image: linear-gradient(160deg, #C4B0B5 0%, #B09AA0 50%, #9A858B 100%);
+  background-image: linear-gradient(160deg, #7A2D56 0%, #4A2040 50%, #241219 100%);
 }
 .work-card-image.img-5 {
-  background-image: linear-gradient(160deg, #B0C4B8 0%, #95B0A0 50%, #7D9A88 100%);
+  background-image: linear-gradient(160deg, #4A2840 0%, #331C2E 50%, #1A0F17 100%);
 }
 .work-card-image.img-6 {
-  background-image: linear-gradient(160deg, #C4BEB0 0%, #B0A998 50%, #9A927D 100%);
+  background-image: linear-gradient(160deg, #642E50 0%, #402038 50%, #1E1018 100%);
 }
 
 .work-card-badge {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(255,255,255,0.9);
-  color: var(--text-secondary);
+  background: rgba(20, 12, 18, 0.9);
+  color: #FF8FC8;
   font-size: 11px;
   padding: 4px 10px;
   border-radius: var(--radius-sm);
@@ -731,7 +732,7 @@ body.view-mode .upload-input {
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(248, 247, 245, 0.92);
+  background: rgba(14, 14, 17, 0.92);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-light);
@@ -770,7 +771,7 @@ body.view-mode .view-mode-banner {
 
 .share-btn:hover {
   background: var(--btn-solid);
-  color: #FFFFFF;
+  color: #2A0A1A;
   border-color: var(--btn-solid);
 }
 
