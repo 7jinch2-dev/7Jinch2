@@ -10,9 +10,10 @@
   替换点总览（搜索「替换点」即可定位所有可修改内容）
   1. 文字内容：搜索「替换点：文字」
   2. 头像：把 images/avatar.jpg 放进仓库，就会自动替换掉字母占位
-  3. 作品：搜索「GALLERY_ITEMS」改作品名、分类、图片地址
-  4. 画廊配色与动效参数：搜索「GALLERY_CONFIG」
-  5. 全站配色：搜索 CSS 变量 :root
+  3. 作品：搜索「GALLERY_ITEMS」改作品名、分类、图片地址、详情页链接
+  4. 项目详情页：projects/ 目录，样式在 assets/project.css
+  5. 画廊配色与动效参数：搜索「GALLERY_CONFIG」
+  6. 全站配色：搜索 CSS 变量 :root
   ============================================
 -->
 
@@ -318,6 +319,69 @@ img { display: block; max-width: 100%; }
   color: var(--text-secondary);
 }
 
+/* 每条经历的要点列表：左栏的条目圆点靠右，右栏靠左 */
+.tl-points {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tl-points li {
+  position: relative;
+  padding-left: 15px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.tl-points li + li {
+  margin-top: 5px;
+}
+
+.tl-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--btn-outline);
+}
+
+.tl-item:nth-child(odd) .tl-points li {
+  padding-left: 0;
+  padding-right: 15px;
+}
+
+.tl-item:nth-child(odd) .tl-points li::before {
+  left: auto;
+  right: 0;
+}
+
+/* 时间轴下方压一条教育经历 */
+.edu-line {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-top: 84px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border-light);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+.edu-line span {
+  flex: 0 0 auto;
+  min-width: 72px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
 /* ==========================================
    个人优势 —— 三栏
    ========================================== */
@@ -370,6 +434,122 @@ img { display: block; max-width: 100%; }
   display: block;
   width: 42px;
   height: 42px;
+}
+
+/* 软件技能 / 兴趣爱好 */
+.fact-rows {
+  margin-top: 64px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-light);
+}
+
+.fact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+.fact-row + .fact-row {
+  margin-top: 14px;
+}
+
+.fact-row span {
+  flex: 0 0 auto;
+  min-width: 72px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* ==========================================
+   校园经历 —— 左教育、右荣誉与职位
+   ========================================== */
+.campus-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 56px;
+  margin-top: 64px;
+}
+
+.campus-label {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.campus-label--gap {
+  margin-top: 46px;
+}
+
+.campus-school {
+  margin-top: 26px;
+  font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.campus-school em {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  vertical-align: middle;
+}
+
+.campus-major {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--btn-solid);
+}
+
+.campus-date {
+  margin-top: 8px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.campus-list {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.campus-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(58, 42, 52, 0.6);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.campus-list li em {
+  flex: 0 0 auto;
+  font-style: normal;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  white-space: nowrap;
 }
 
 /* ==========================================
@@ -532,6 +712,7 @@ img { display: block; max-width: 100%; }
 .contact-body {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 56px;
   margin-top: 40px;
@@ -765,6 +946,15 @@ img { display: block; max-width: 100%; }
   text-overflow: ellipsis;
 }
 
+.ag-panel__more {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--btn-solid);
+}
+
 .ag-panel__cat {
   display: block;
   margin-bottom: 2px;
@@ -900,6 +1090,21 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   will-change: transform;
 }
 
+/* 作品区底部的整本作品集下载 */
+.works-more {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.works-more-note {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .glow-field span { animation: none; }
@@ -995,6 +1200,11 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
     padding-top: 32px;
   }
 
+  .campus-grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
   .contact-body { gap: 40px; }
   .contact-qr img {
     width: 150px;
@@ -1043,6 +1253,7 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
     <li><a href="#about" data-section="about">About</a></li>
     <li><a href="#experience" data-section="experience">Experience</a></li>
     <li><a href="#works" data-section="works">Works</a></li>
+    <li><a href="#campus" data-section="campus">Campus</a></li>
     <li><a href="#contact" data-section="contact">Contact</a></li>
   </ul>
 
@@ -1067,8 +1278,8 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
     <!-- 替换点：文字 —— 个人简介 -->
     <p class="hero-desc" data-reveal="up" style="--rv-delay:.34s">
-      每一次按下快门、每一张设计稿，都是我对世界观察的切片。
-      欢迎浏览我的作品集，感受设计的力量。
+      福州大学 · 数字媒体艺术 · 2026 届。擅长 UI、三维、动效与插画等多风格设计，
+      关注视觉与体验之间的平衡，可独立完成项目全流程。
     </p>
 
     <div class="hero-actions" data-reveal="up" style="--rv-delay:.42s">
@@ -1098,27 +1309,116 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Work Experience<em> / 工作经历</em></h2>
   <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">个人经历 / 每一段经历都在形成现在的我</p>
 
-  <!-- 替换点：工作经历 —— 复制一组 <li class="tl-item"> 就能多加一段 -->
+  <!-- 替换点：项目经历 —— 复制一组 <li class="tl-item"> 就能多加一段 -->
   <ol class="timeline">
     <li class="tl-item" data-reveal="up">
       <div class="tl-card">
-        <h3 class="tl-title">公司 / 项目名称</h3>
-        <p class="tl-role">职位名称</p>
-        <p class="tl-desc">介绍这段经历的工作内容与成果。</p>
+        <h3 class="tl-title">母语感教育科技有限公司</h3>
+        <p class="tl-role">游戏 UI 设计师</p>
+        <ul class="tl-points">
+          <li>负责公司 App 家长端与儿童端的界面设计，统一双端视觉语言与设计规范</li>
+          <li>完成一阶至六阶课程的游戏界面设计，统一六阶游戏风格并搭建游戏化学习场景的界面体系</li>
+          <li>负责界面动效与交互设计，输出动效方案并优化儿童、家长两侧的操作路径</li>
+        </ul>
       </div>
       <span class="tl-node">1</span>
-      <p class="tl-date">2023 — 至今</p>
+      <p class="tl-date">2026.07 — 至今</p>
     </li>
     <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
       <div class="tl-card">
-        <h3 class="tl-title">公司 / 项目名称</h3>
-        <p class="tl-role">职位名称</p>
-        <p class="tl-desc">介绍这段经历的工作内容与成果。</p>
+        <h3 class="tl-title">惠商品牌 APP 小程序与网页设计项目</h3>
+        <p class="tl-role">UI 设计师</p>
+        <ul class="tl-points">
+          <li>完成小程序客户版与商家版多链路高保真页面，实现功能与体验的高效落地</li>
+          <li>负责 C 端官网视觉设计，统一品牌调性，强化品牌视觉识别</li>
+        </ul>
       </div>
       <span class="tl-node">2</span>
-      <p class="tl-date">2021 — 2023</p>
+      <p class="tl-date">2026.01 — 2026.07</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">建发会展 H5 小程序项目</h3>
+        <p class="tl-role">UI 设计师</p>
+        <ul class="tl-points">
+          <li>设计并搭建小程序门禁系统页面，实现功能与视觉的高效落地</li>
+          <li>打造展会签到系统界面，优化交互体验，适配多场景使用</li>
+          <li>完成 C 端活动定制网页的视觉设计，保障品牌调性与用户体验的统一</li>
+        </ul>
+      </div>
+      <span class="tl-node">3</span>
+      <p class="tl-date">2025.10 — 2026.01</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">深圳兔展 AI card 项目</h3>
+        <p class="tl-role">UI 设计师</p>
+        <ul class="tl-points">
+          <li>借助 AIGC 生成多风格卡片并优化排版，丰富视觉选择</li>
+          <li>完成定稿卡片的系统配置与标注，保障设计落地与流程规范</li>
+        </ul>
+      </div>
+      <span class="tl-node">4</span>
+      <p class="tl-date">2025.09 — 2025.10</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">安踏电商 618 大促视觉项目</h3>
+        <p class="tl-role">网页设计师</p>
+        <ul class="tl-points">
+          <li>完成优惠券页面及移动端店铺视觉设计与搭建，贴合大促营销场景</li>
+          <li>辅助项目前期调研分析，输出视觉参考，支撑大促页面策略落地</li>
+          <li>设计活动氛围视觉元素，强化营销感知，提升页面视觉冲击力</li>
+        </ul>
+      </div>
+      <span class="tl-node">5</span>
+      <p class="tl-date">2025.04 — 2025.09</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">应星记游戏项目制作</h3>
+        <p class="tl-role">视觉设计师</p>
+        <ul class="tl-points">
+          <li>完成用户研究、策划案撰写与项目汇报</li>
+          <li>确定风格规范，统筹建模并独立完成动效设计</li>
+          <li>协调多模块协作，保障游戏内容与体验一致性落地</li>
+        </ul>
+      </div>
+      <span class="tl-node">6</span>
+      <p class="tl-date">2025.02 — 2025.06</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">咔么租赁 APP 改版设计</h3>
+        <p class="tl-role">UI 设计师</p>
+        <ul class="tl-points">
+          <li>调研用户需求，确定改版目标，优化交互体验</li>
+          <li>制定视觉规范与动效设计，提升产品视觉体验</li>
+          <li>参与设计迭代，搭建功能框架，制作 AE 动效视频</li>
+        </ul>
+      </div>
+      <span class="tl-node">7</span>
+      <p class="tl-date">2023.10 — 2023.12</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">厦门市集美学村 IP 项目</h3>
+        <p class="tl-role">视觉设计师</p>
+        <ul class="tl-points">
+          <li>完成 IP 定位与风格探索，输出视觉方案</li>
+          <li>独立搭建 IP 三维模型，制作延展视觉</li>
+          <li>负责 IP 展示最终排版</li>
+        </ul>
+      </div>
+      <span class="tl-node">8</span>
+      <p class="tl-date">2023.09 — 2023.10</p>
     </li>
   </ol>
+
+  <!-- 替换点：文字 —— 教育经历 -->
+  <p class="edu-line" data-reveal="up">
+    <span>教育经历</span>福州大学（211）·  数字媒体艺术 ·  2022.9 — 2026.6
+  </p>
 </section>
 
 <!-- ==========================================
@@ -1129,10 +1429,16 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
   <!-- 替换点：文字 —— 章节标题 -->
   <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Selected Works<em> / 作品集</em></h2>
-  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">六组项目 · 设计与视觉的实践切片。</p>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">九组项目 · 从用户调研、视觉方案到最终落地。点击封面进入完整项目。</p>
 
   <!-- 作品画廊：内容与动效参数在下方 GALLERY_ITEMS / GALLERY_CONFIG 中配置 -->
   <div class="accordion-gallery ag-no-anim" id="accordionGallery" role="list" aria-label="作品画廊" data-reveal="up" style="--rv-delay:.22s"></div>
+
+  <!-- 完整作品集下载：文件是 portfolio.pdf，换文件直接替换同名文件即可 -->
+  <p class="works-more" data-reveal="up" style="--rv-delay:.30s">
+    <a class="btn btn-outline" href="portfolio.pdf" download="陈芷曦作品集.pdf">下载完整作品集 · PDF</a>
+    <span class="works-more-note">65 页 · 网页浏览版</span>
+  </p>
 </section>
 
 <!-- ==========================================
@@ -1148,8 +1454,8 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   <div class="adv-grid">
     <article class="adv" data-reveal="up">
       <p class="adv-index">01 / CORE</p>
-      <h3 class="adv-title">审美好<br>创意强<br>执行力高</h3>
-      <p class="adv-desc">描述 / 不填写</p>
+      <h3 class="adv-title">美术功底扎实</h3>
+      <p class="adv-desc">多年美术经验，设计认知扎实，热衷探索视觉与体验的平衡。</p>
       <span class="adv-icon" aria-hidden="true">
         <svg viewBox="0 0 44 44" fill="none">
           <path d="M9 31 Q 13 12 35 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -1160,8 +1466,8 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
     <article class="adv" data-reveal="up" style="--rv-delay:.08s">
       <p class="adv-index">02 / CORE</p>
-      <h3 class="adv-title">深耕 xx 行业<br>3 年</h3>
-      <p class="adv-desc">1、擅长 xxxxx<br>2、具备 xxxx</p>
+      <h3 class="adv-title">多风格设计</h3>
+      <p class="adv-desc">擅长三维、动效、插画等多风格设计，注重实用性。</p>
       <span class="adv-icon" aria-hidden="true">
         <svg viewBox="0 0 44 44" fill="none">
           <path d="M22 4 L26 18 L40 22 L26 26 L22 40 L18 26 L4 22 L18 18 Z"
@@ -1172,8 +1478,8 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
     <article class="adv" data-reveal="up" style="--rv-delay:.16s">
       <p class="adv-index">03 / CORE</p>
-      <h3 class="adv-title">优势名称</h3>
-      <p class="adv-desc">描述 / 不填写</p>
+      <h3 class="adv-title">全流程独立</h3>
+      <p class="adv-desc">沟通协作能力强，学习高效，可独立完成项目全流程设计。</p>
       <span class="adv-icon" aria-hidden="true">
         <svg viewBox="0 0 44 44" fill="none">
           <path d="M9 31 Q 13 12 35 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -1182,13 +1488,54 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
       </span>
     </article>
   </div>
+
+  <!-- 替换点：文字 —— 软件技能与兴趣爱好 -->
+  <div class="fact-rows" data-reveal="up">
+    <p class="fact-row"><span>软件技能</span>界面设计 · AIGC 运用 · 三维建模 · 动效设计 · 用户体验</p>
+    <p class="fact-row"><span>兴趣爱好</span>绘画 · 剪辑 · 建模 · 唱歌</p>
+  </div>
 </section>
 
 <!-- ==========================================
-     05 / CONTACT
+     05 / CAMPUS
+     ========================================== -->
+<section class="sec sec-campus" id="campus">
+  <p class="eyebrow" data-reveal="up">05 — CAMPUS / 校园经历</p>
+
+  <!-- 替换点：文字 —— 章节标题 -->
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Campus<em> / 校园经历</em></h2>
+
+  <div class="campus-grid" data-reveal="up" style="--rv-delay:.14s">
+    <div class="campus-edu">
+      <p class="campus-label">教育经历</p>
+      <p class="campus-school">福州大学 <em>211</em></p>
+      <p class="campus-major">数字媒体艺术</p>
+      <p class="campus-date">2022.9 — 2026.6</p>
+    </div>
+
+    <div class="campus-lists">
+      <p class="campus-label">荣誉奖项</p>
+      <ul class="campus-list">
+        <li><span>中国大学生计算机设计大赛 福建省二等奖</span><em>2025.05</em></li>
+        <li><span>全国大学生“区块链”应用大赛 一等奖</span><em>2024.10</em></li>
+        <li><span>校级二等奖学金</span><em>2023.1</em></li>
+      </ul>
+
+      <p class="campus-label campus-label--gap">校园职位</p>
+      <ul class="campus-list">
+        <li><span>青梦福州大学厦门工艺美术学院支部主席</span><em>2022.12 — 2025.1</em></li>
+        <li><span>艺术团声乐协会会长</span><em>2023.9 — 2024.9</em></li>
+        <li><span>院自律会企划宣传部美工组长</span><em>2022.9 — 2024.9</em></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     06 / CONTACT
      ========================================== -->
 <section class="sec sec-contact" id="contact">
-  <p class="eyebrow" data-reveal="up">05 — CONTACT / 联系</p>
+  <p class="eyebrow" data-reveal="up">06 — CONTACT / 联系</p>
   <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Let's Talk<em> / 坐等合作</em></h2>
   <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">
     欢迎通过邮件、电话或微信联系我，聊聊新的项目、工作机会与创意想法。
@@ -1200,6 +1547,8 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
       <a class="contact-mail" href="mailto:3013154988@qq.com">3013154988@qq.com</a>
       <!-- 替换点：文字 —— 电话 -->
       <p class="contact-phone"><span>Phone</span>18020835639</p>
+      <!-- 替换点：文字 —— 所在地 -->
+      <p class="contact-phone"><span>Base</span>福建 厦门</p>
     </div>
 
     <!-- 微信二维码：图片在 images/wechat-qr.png -->
@@ -1282,7 +1631,7 @@ window.addEventListener('scroll', () => {
             tags 筛选标签 / image 图片地址 / link 点击跳转）
    ========================================== */
 const GALLERY_CONFIG = {
-  defaultIndex: 2,          // 默认展开第几个作品（从 0 开始）
+  defaultIndex: 0,          // 默认展开第几个作品（从 0 开始）
   expandRatio: 0.52,        // 展开面板占整行的比例
   trigger: 'hover',         // 展开触发方式：hover | click
   accentColor: '#FFFFFF',   // 作品名前面的小竖条
@@ -1302,49 +1651,70 @@ const GALLERY_CONFIG = {
   narrowBreakpoint: 520     // 窄于该宽度自动改为纵向堆叠
 };
 
-/* 替换点：作品内容 —— 把 image 换成仓库里的图片路径即可，如 'images/work-1.jpg' */
+/* 替换点：作品内容 —— 图片放在 images/works/ 下，换成别的文件改 image 即可 */
 const GALLERY_ITEMS = [
   {
-    label: 'Interior Planting Service System',
-    category: 'Presentation',
-    tags: ['presentation', 'plant', 'portfolio'],
-    image: 'https://picsum.photos/id/1015/900/1200',
-    link: '#'
+    label: 'NativeLike 儿童英语学习 App',
+    category: '教育产品',
+    tags: ['app', 'game', 'ui'],
+    image: 'images/works/nativelike.jpg',
+    link: 'projects/nativelike.html'
   },
   {
-    label: 'Urban Landscape Master Plan',
-    category: 'Rendering',
-    tags: ['rendering', 'presentation'],
-    image: 'https://picsum.photos/id/1018/900/1200',
-    link: '#'
+    label: '咔么租赁 APP 改版',
+    category: 'APP 改版',
+    tags: ['app', 'ui'],
+    image: 'images/works/kame-app.jpg',
+    link: 'projects/kame-app.html'
   },
   {
-    label: 'Botanical Garden Exhibition Design',
-    category: 'Plant Display',
-    tags: ['plant', 'portfolio'],
-    image: 'https://picsum.photos/id/1039/900/1200',
-    link: '#'
+    label: '俄罗斯短剧 APP 落地页',
+    category: '落地页设计',
+    tags: ['web', 'visual'],
+    image: 'images/works/russian-drama.jpg',
+    link: 'projects/russian-drama.html'
   },
   {
-    label: 'Residential Courtyard Concept',
-    category: 'Rendering',
-    tags: ['rendering', 'portfolio'],
-    image: 'https://picsum.photos/id/1043/900/1200',
-    link: '#'
+    label: '惠商开放平台官网',
+    category: '官网设计',
+    tags: ['web', 'ui'],
+    image: 'images/works/huishang.jpg',
+    link: 'projects/huishang.html'
   },
   {
-    label: 'Rooftop Garden Terrace',
-    category: 'Presentation',
-    tags: ['presentation', 'plant'],
-    image: 'https://picsum.photos/id/1044/900/1200',
-    link: '#'
+    label: '兔展智能 AI CARD',
+    category: 'AIGC 设计',
+    tags: ['aigc', 'visual'],
+    image: 'images/works/tuzhan-ai.jpg',
+    link: 'projects/tuzhan-ai.html'
   },
   {
-    label: 'Public Park Wayfinding System',
-    category: 'Portfolio',
-    tags: ['portfolio', 'presentation'],
-    image: 'https://picsum.photos/id/1041/900/1200',
-    link: '#'
+    label: 'KOOK「小酷」IP 设计',
+    category: 'IP 设计',
+    tags: ['ip', '3d'],
+    image: 'images/works/kook-ip.jpg',
+    link: 'projects/kook-ip.html'
+  },
+  {
+    label: '集美学村 IP「舟舟」',
+    category: 'IP 设计',
+    tags: ['ip', '3d'],
+    image: 'images/works/zhouzhou-ip.jpg',
+    link: 'projects/zhouzhou-ip.html'
+  },
+  {
+    label: '安踏电商 618 大促视觉',
+    category: '电商视觉',
+    tags: ['ecommerce', 'visual'],
+    image: 'images/works/anta-618.jpg',
+    link: 'projects/anta-618.html'
+  },
+  {
+    label: '应星记 · 拼图游戏',
+    category: '游戏 UI',
+    tags: ['game', 'ui'],
+    image: 'images/works/yingxingji.jpg',
+    link: 'projects/yingxingji.html'
   }
 ];
 
@@ -1403,6 +1773,7 @@ const AccordionGallery = (() => {
             '<span class="ag-panel__text">' +
               (cfg.showCategory && item.category ? '<span class="ag-panel__cat">' + esc(item.category) + '</span>' : '') +
               '<span class="ag-panel__name">' + esc(item.label) + '</span>' +
+              (item.link && item.link !== '#' ? '<span class="ag-panel__more">查看项目 ↗</span>' : '') +
             '</span>' +
           '</span>'
         : '';

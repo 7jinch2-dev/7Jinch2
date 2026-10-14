@@ -1,0 +1,454 @@
+/* ==========================================
+   项目详情页样式
+   首页之外只有这里用到，配色和首页共用一套变量
+   ========================================== */
+:root {
+  --bg:              #0E0E11;
+  --text-primary:    #F5E9F2;
+  --text-secondary:  #C9A8BC;
+  --text-tertiary:   #8F7687;
+  --btn-solid:       #FF69B4;
+  --btn-outline:     #5C3A4C;
+  --border-light:    #3A2A34;
+  --nav-height:      64px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height); }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ---------- 背景光晕，跟首页保持一致 ---------- */
+.glow-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.glow-field span {
+  position: absolute;
+  display: block;
+  width: 62vw;
+  height: 62vw;
+  border-radius: 50%;
+  opacity: 0.42;
+}
+.glow-field .g1 {
+  top: -24vw;
+  left: -16vw;
+  background: radial-gradient(circle, rgba(255, 105, 180, 0.22) 0%, rgba(255, 105, 180, 0) 68%);
+}
+.glow-field .g2 {
+  right: -22vw;
+  bottom: -28vw;
+  background: radial-gradient(circle, rgba(126, 78, 255, 0.18) 0%, rgba(126, 78, 255, 0) 68%);
+}
+
+/* ---------- 导航 ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  padding: 0 32px;
+  background: rgba(14, 14, 17, 0.82);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.nav-brand .cross {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.nav-back {
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.25s;
+}
+
+.nav-back:hover { color: var(--btn-solid); }
+
+/* ---------- 项目页头 ---------- */
+.proj-head {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 84px 32px 52px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.eyebrow::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 28px;
+  height: 1px;
+  background: var(--btn-solid);
+}
+
+.proj-title {
+  font-size: clamp(2rem, 5.4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+
+.proj-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.proj-meta em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--btn-solid);
+}
+
+.proj-points {
+  display: grid;
+  gap: 8px;
+  max-width: 720px;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proj-points li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.proj-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--btn-outline);
+}
+
+/* ---------- 作品图 ---------- */
+.shots {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+/* 超长页拆成几段，拼回去时不能有缝 */
+.shot-group {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.shot-group img {
+  border: none;
+  border-radius: 0;
+}
+
+/* ---------- 上一个 / 下一个 ---------- */
+.proj-nav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 32px 0;
+}
+
+.proj-nav a {
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: 1.5px solid var(--btn-outline);
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+}
+
+.proj-nav a:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+  box-shadow: 0 12px 28px -18px rgba(255, 105, 180, 0.5);
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 72px auto 0;
+  padding: 30px 32px 40px;
+  border-top: 1px solid var(--border-light);
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* ---------- 案例页（项目背景 → 设计过程 → 设计展示） ---------- */
+.cs-sec {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 32px 0;
+}
+
+.cs-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.cs-label::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 22px;
+  height: 1px;
+  background: var(--btn-solid);
+}
+
+.cs-lead {
+  max-width: 720px;
+  margin-top: 26px;
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.cs-lead strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* 背景里的三个问题 */
+.cs-problems {
+  display: grid;
+  gap: 14px;
+  max-width: 780px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cs-problems li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.cs-problems li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--btn-solid);
+}
+
+.cs-problems b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* 过程三栏 */
+.cs-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 44px 38px;
+  margin-top: 34px;
+}
+
+.cs-step-index {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--text-tertiary);
+}
+
+.cs-step h3 {
+  margin-top: 14px;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.cs-step p {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+/* 结果 */
+.cs-quote {
+  max-width: 780px;
+  margin-top: 26px;
+  padding: 26px 30px;
+  border-left: 2px solid var(--btn-solid);
+  border-radius: 0 12px 12px 0;
+  background: rgba(43, 31, 40, 0.45);
+  font-size: 15.5px;
+  line-height: 1.9;
+  color: var(--text-primary);
+}
+
+.cs-placeholder {
+  max-width: 780px;
+  margin-top: 26px;
+  padding: 34px;
+  border: 1px dashed var(--btn-outline);
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+/* 展示图组 */
+.cs-sub {
+  margin-top: 46px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.cs-note {
+  max-width: 760px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.cs-gallery {
+  display: grid;
+  gap: 20px;
+  margin-top: 22px;
+}
+
+.cs-gallery--5 { grid-template-columns: repeat(5, 1fr); }
+.cs-gallery--3 { grid-template-columns: repeat(3, 1fr); }
+.cs-gallery--2 { grid-template-columns: repeat(2, 1fr); }
+
+.cs-gallery figure { margin: 0; }
+
+.cs-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: #14121a;
+}
+
+.cs-gallery figcaption,
+.cs-board figcaption {
+  margin-top: 10px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: var(--text-tertiary);
+}
+
+/* 竖向长图（过程图）单独处理 */
+.cs-board {
+  max-width: 620px;
+  margin: 24px 0 0;
+}
+
+.cs-board img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 768px) {
+  .nav { padding: 0 20px; }
+  .proj-head { padding: 52px 20px 36px; }
+  .shots { gap: 12px; padding: 0 20px; }
+  .shots img, .shot-group { border-radius: 8px; }
+  .proj-nav { padding: 40px 20px 0; }
+  .footer { padding: 26px 20px 36px; }
+
+  .cs-sec { padding: 44px 20px 0; }
+  .cs-steps { grid-template-columns: 1fr; gap: 34px; }
+  .cs-quote { padding: 22px; }
+  .cs-gallery--5 { grid-template-columns: repeat(3, 1fr); }
+  .cs-gallery--3 { grid-template-columns: repeat(2, 1fr); }
+  .cs-gallery { gap: 12px; }
+}
