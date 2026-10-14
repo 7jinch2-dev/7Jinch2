@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PORTFOLIO – Bao Long</title>
+<title>PORTFOLIO – 陈芷曦</title>
 
 <!--
   ============================================
   替换点总览（搜索「替换点」即可定位所有可修改内容）
-  1. CONFIG 对象：所有文字集中配置
-  2. 图片占位符：搜索「替换点：图片」
-  3. 文字内容：搜索「替换点：文字」
-  4. 上传功能：所有图片区域支持点击/拖拽上传，自动存 localStorage
+  1. 文字内容：搜索「替换点：文字」
+  2. 头像：把 images/avatar.jpg 放进仓库，就会自动替换掉字母占位
+  3. 作品：搜索「GALLERY_ITEMS」改作品名、分类、图片地址
+  4. 画廊配色与动效参数：搜索「GALLERY_CONFIG」
+  5. 全站配色：搜索 CSS 变量 :root
   ============================================
 -->
 
@@ -114,22 +115,6 @@ img { display: block; max-width: 100%; }
   border-bottom-color: var(--text-primary);
 }
 
-.nav-toggle-mode {
-  margin-left: 12px;
-  padding: 6px 16px;
-  border-radius: 20px;
-  background: var(--tag-bg);
-  color: var(--text-secondary);
-  font-size: 13px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.nav-toggle-mode:hover {
-  background: var(--btn-outline);
-}
-
 /* 移动端汉堡菜单 */
 .nav-hamburger {
   display: none;
@@ -150,103 +135,352 @@ img { display: block; max-width: 100%; }
 }
 
 /* ==========================================
-   Hero Section
+   章节通用排版
+   编号眉标 + 超大标题 + 衬底说明，是参考站的核心排版思路
    ========================================== */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 32px 80px;
-  align-items: center;
-}
-
-/* 左侧文字区 */
-.hero-left {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* 头像 */
-.hero-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3A1F2F 0%, #1A1118 100%);
-  flex-shrink: 0;
+.sec {
   position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  border: 3px solid var(--border-light);
-  transition: border-color 0.25s, box-shadow 0.25s;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 150px auto 0;
+  padding: 0 32px;
 }
 
-.hero-avatar:hover {
-  border-color: var(--text-tertiary);
-  box-shadow: 0 0 0 4px rgba(255,105,180,0.20);
-}
-
-.hero-avatar.has-image {
-  border-color: transparent;
-  background: none;
-}
-
-.hero-pill {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: var(--tag-bg);
-  color: var(--text-tertiary);
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
   font-size: 12px;
-  letter-spacing: 1px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  width: fit-content;
+  color: var(--text-tertiary);
 }
 
-.hero-name {
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -1px;
+.eyebrow::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 28px;
+  height: 1px;
+  background: var(--btn-solid);
+}
+
+.display {
+  font-size: clamp(2.3rem, 6.2vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: var(--text-primary);
 }
 
-.hero-subtitle {
-  font-size: 16px;
+.display em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-tertiary);
+}
+
+.sec-caption {
+  max-width: 560px;
+  margin-top: 20px;
+  font-size: 15px;
+  line-height: 1.8;
   color: var(--text-secondary);
-  font-weight: 400;
-  margin-top: -8px;
+}
+
+/* 描边大字：只勾边不填充，衬在章节底下 */
+.ghost-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ghost-word {
+  position: absolute;
+  left: 32px;
+  bottom: -0.14em;
+  font-size: clamp(3.2rem, 13vw, 11rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 233, 242, 0.075);
+  user-select: none;
+}
+
+/* ==========================================
+   工作经历 —— 竖向时间轴
+   中间一条竖线，左右交替，节点带序号
+   ========================================== */
+.timeline {
+  position: relative;
+  margin: 72px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 50%;
+  width: 1px;
+  margin-left: -0.5px;
+  background: linear-gradient(180deg,
+    rgba(255, 105, 180, 0.6) 0%,
+    rgba(255, 105, 180, 0.22) 62%,
+    rgba(255, 105, 180, 0) 100%);
+}
+
+.tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 84px 1fr;
+  align-items: start;
+}
+
+.tl-item + .tl-item {
+  margin-top: 76px;
+}
+
+.tl-node {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 4px;
+  border-radius: 50%;
+  border: 1px solid var(--btn-solid);
+  background: var(--bg);
+  color: var(--btn-solid);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tl-card {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 10px;
+  text-align: right;
+}
+
+.tl-date {
+  grid-column: 3;
+  grid-row: 1;
+  padding: 10px 0 0 14px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* 偶数条左右互换，做出交替的节奏 */
+.tl-item:nth-child(even) .tl-card {
+  grid-column: 3;
+  padding-right: 0;
+  padding-left: 10px;
+  text-align: left;
+}
+
+.tl-item:nth-child(even) .tl-date {
+  grid-column: 1;
+  padding-left: 0;
+  padding-right: 14px;
+  text-align: right;
+}
+
+.tl-title {
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.tl-role {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--btn-solid);
+}
+
+.tl-desc {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+/* ==========================================
+   个人优势 —— 三栏
+   ========================================== */
+.adv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 56px 40px;
+  margin-top: 72px;
+}
+
+.adv {
+  display: flex;
+  flex-direction: column;
+}
+
+.adv-index {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.adv-title {
+  margin-top: 28px;
+  font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.adv-desc {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+.adv-icon {
+  align-self: center;
+  margin-top: auto;
+  padding-top: 48px;
+  color: rgba(255, 105, 180, 0.5);
+}
+
+.adv-icon svg {
+  display: block;
+  width: 42px;
+  height: 42px;
+}
+
+/* ==========================================
+   Hero —— 01 / HELLO
+   ========================================== */
+.hero {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 104px 32px 104px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hero-name {
+  font-size: clamp(2.6rem, 7.4vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+.hero-role {
+  margin-top: 24px;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--btn-solid);
 }
 
 .hero-desc {
+  max-width: 440px;
+  margin-top: 18px;
   font-size: 15px;
+  line-height: 1.85;
   color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 480px;
 }
 
-/* 按钮组 */
-.hero-buttons {
+.hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 14px;
+  margin-top: 36px;
 }
 
+/* 头像：圆形大图，图片缺失时露出字母占位 */
+.hero-portrait-wrap {
+  justify-self: center;
+  width: min(370px, 76vw);
+  perspective: 1200px;
+}
+
+.hero-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(150deg, #5C2A45 0%, #3A1F2F 46%, #1A1118 100%);
+  box-shadow: 0 50px 90px -60px rgba(255, 105, 180, 0.75);
+}
+
+.hero-portrait img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-portrait-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(245, 233, 242, 0.32);
+}
+
+/* 按钮 */
 .btn {
+  --btn-tx: 0px;
+  --btn-ty: 0px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.25s;
   border: none;
   white-space: nowrap;
+  text-decoration: none;
+  /* 位移由 JS 写入 --btn-tx / --btn-ty，做出轻微磁性吸附 */
+  transform: translate3d(var(--btn-tx), var(--btn-ty), 0);
+  transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s,
+              transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn-solid {
@@ -256,7 +490,7 @@ img { display: block; max-width: 100%; }
 
 .btn-solid:hover {
   background: var(--btn-solid-hover);
-  transform: translateY(-1px);
+  box-shadow: 0 14px 32px -14px rgba(255, 105, 180, 0.85);
 }
 
 .btn-outline {
@@ -268,527 +502,418 @@ img { display: block; max-width: 100%; }
 .btn-outline:hover {
   border-color: var(--text-secondary);
   color: var(--text-primary);
-  transform: translateY(-1px);
-}
-
-/* 数据统计卡片 */
-.hero-stats {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 20px;
-  border-radius: var(--radius-md);
-  background: var(--card-bg);
-  border: 1px solid var(--border-light);
-  min-width: 120px;
-}
-
-.stat-number {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-/* 右侧大图 */
-.hero-right {
-  position: relative;
-}
-
-.hero-image {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  /* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
-  background: linear-gradient(135deg, #5C2A45 0%, #3A1F2F 30%, #1A1118 60%, #462033 100%);
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.hero-image::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.15) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* 浮动信息卡片 */
-.featured-card {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  right: 24px;
-  background: rgba(24, 15, 21, 0.92);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  box-shadow: var(--card-shadow);
-  z-index: 2;
-}
-
-.featured-card .fc-tag {
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.featured-card .fc-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
-
-.featured-card .fc-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  box-shadow: 0 14px 32px -18px rgba(255, 105, 180, 0.5);
 }
 
 /* ==========================================
-   上传通用样式
+   联系 —— 03 / CONTACT
    ========================================== */
-.uploadable {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
+.sec-contact {
+  padding-bottom: 130px;
 }
 
-/* 上传遮罩层 */
-.upload-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0);
+.contact-mail {
+  display: inline-block;
+  padding-bottom: 6px;
+  font-size: clamp(1.15rem, 3vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--btn-outline);
+  transition: color 0.25s, border-color 0.25s;
+}
+
+.contact-mail:hover {
+  color: var(--btn-solid);
+  border-color: var(--btn-solid);
+}
+
+/* 左：邮箱 + 电话；右：微信二维码 */
+.contact-body {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 56px;
+  margin-top: 40px;
+}
+
+.contact-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  z-index: 3;
-  transition: background 0.3s;
-  pointer-events: none;
+  align-items: flex-start;
+  gap: 26px;
 }
 
-.uploadable:hover .upload-overlay,
-.uploadable.drag-over .upload-overlay {
-  background: rgba(0,0,0,0.45);
-}
-
-.upload-icon {
-  font-size: 32px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.3s, transform 0.3s;
-  line-height: 1;
-}
-
-.upload-text {
-  font-size: 13px;
-  color: #FFFFFF;
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.3s, transform 0.3s 0.05s;
-  letter-spacing: 0.5px;
-}
-
-.uploadable:hover .upload-icon,
-.uploadable:hover .upload-text,
-.uploadable.drag-over .upload-icon,
-.uploadable.drag-over .upload-text {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* 头像专用上传遮罩 */
-.hero-avatar .upload-icon {
-  font-size: 20px;
-}
-
-.hero-avatar .upload-text {
-  font-size: 11px;
-}
-
-/* 大图上传提示稍大 */
-.hero-image .upload-icon {
-  font-size: 40px;
-}
-
-.hero-image .upload-text {
-  font-size: 14px;
-}
-
-/* 已上传状态：hover 时提示可重新上传 */
-.uploadable.has-image:hover .upload-overlay {
-  background: rgba(0,0,0,0.5);
-}
-
-/* 拖拽高亮边框 */
-.uploadable.drag-over {
-  outline: 3px dashed var(--btn-solid);
-  outline-offset: -3px;
-}
-
-/* 隐藏的 file input */
-.upload-input {
-  display: none;
-}
-
-/* 上传中 toasts */
-.upload-toast {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--btn-solid);
-  color: #FFF;
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  z-index: 9999;
-  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.upload-toast.error {
-  background: #C0392B;
-}
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-@keyframes toastOut {
-  from { opacity: 1; transform: translateX(-50%) translateY(0); }
-  to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
-}
-
-/* ==========================================
-   Selected Works Section
-   ========================================== */
-.works {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 32px 100px;
-}
-
-.works-header {
-  margin-bottom: 32px;
-}
-
-.works-title {
-  font-size: 42px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 24px;
-}
-
-/* 布局模式切换 */
-.layout-toggles {
+.contact-phone {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.layout-toggle {
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1.5px solid var(--btn-outline);
-  background: transparent;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 15px;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
-  transition: all 0.25s;
 }
 
-.layout-toggle.active {
-  background: var(--btn-solid);
-  color: #2A0A1A;
-  border-color: var(--btn-solid);
-}
-
-.layout-toggle:hover:not(.active) {
-  border-color: var(--text-secondary);
-  color: var(--text-primary);
-}
-
-/* 分类筛选标签 */
-.filter-tags {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.filter-tag {
-  padding: 7px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  border: 1.5px solid var(--btn-outline);
-  background: transparent;
-  color: var(--text-secondary);
-  transition: all 0.25s;
-}
-
-.filter-tag.active {
-  background: var(--btn-solid);
-  color: #2A0A1A;
-  border-color: var(--btn-solid);
-}
-
-.filter-tag:hover:not(.active) {
-  border-color: var(--text-secondary);
-  color: var(--text-primary);
-}
-
-/* 作品网格 */
-.works-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 28px;
-}
-
-.works-grid.waterfall {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.works-grid.magazine {
-  grid-template-columns: 2fr 1fr 1fr;
-}
-
-/* 作品卡片 */
-.work-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.work-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--card-shadow-hover);
-}
-
-.work-card-image {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  position: relative;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-}
-
-/* 替换点：图片 —— 默认占位渐变，上传后自动替换 */
-.work-card-image.img-1 {
-  background-image: linear-gradient(160deg, #6E2A4E 0%, #462033 50%, #241019 100%);
-}
-.work-card-image.img-2 {
-  background-image: linear-gradient(160deg, #52304A 0%, #381F35 50%, #1C1019 100%);
-}
-.work-card-image.img-3 {
-  background-image: linear-gradient(160deg, #5C2A45 0%, #3E1D31 50%, #1F0E1A 100%);
-}
-.work-card-image.img-4 {
-  background-image: linear-gradient(160deg, #7A2D56 0%, #4A2040 50%, #241219 100%);
-}
-.work-card-image.img-5 {
-  background-image: linear-gradient(160deg, #4A2840 0%, #331C2E 50%, #1A0F17 100%);
-}
-.work-card-image.img-6 {
-  background-image: linear-gradient(160deg, #642E50 0%, #402038 50%, #1E1018 100%);
-}
-
-.work-card-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(20, 12, 18, 0.9);
-  color: #FF8FC8;
+.contact-phone span {
   font-size: 11px;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  letter-spacing: 0.5px;
-  z-index: 4;
-}
-
-.work-card-body {
-  padding: 16px 20px 20px;
-}
-
-.work-card-category {
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--text-tertiary);
+  font-weight: 600;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  color: var(--text-tertiary);
 }
 
-.work-card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-  line-height: 1.3;
+.contact-qr {
+  margin: 0;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: rgba(26, 23, 27, 0.55);
 }
 
-.work-card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.contact-qr img {
+  display: block;
+  width: 168px;
+  height: 168px;
+  border-radius: 10px;
 }
 
-.work-card-tag {
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: var(--tag-bg);
-  color: var(--tag-text);
+.contact-qr figcaption {
+  margin-top: 12px;
   font-size: 12px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--text-tertiary);
 }
 
 /* ==========================================
    Footer
    ========================================== */
 .footer {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 32px 40px;
   border-top: 1px solid var(--border-light);
-  padding: 32px;
-  text-align: center;
   font-size: 13px;
   color: var(--text-tertiary);
 }
 
-.footer a {
-  color: var(--text-secondary);
-  transition: color 0.2s;
+/* ==========================================
+   作品画廊 Accordion Gallery
+   React Bits「Accordion Gallery」的纯 CSS/JS 实现
+   颜色与动效参数由 JS 里的 GALLERY_CONFIG 注入
+   ========================================== */
+@property --ag-gray { syntax: '<number>'; inherits: false; initial-value: 1; }
+@property --ag-dim  { syntax: '<number>'; inherits: true;  initial-value: 0; }
+
+.accordion-gallery {
+  --ag-accent: #FFFFFF;
+  --ag-accent-rgb: 255, 255, 255;
+  --ag-overlay-rgb: 6, 0, 16;
+  --ag-text: #FFFFFF;
+  --ag-gap: 10px;
+  --ag-radius: 16px;
+  --ag-media-size: 320px;
+  --ag-dur: 0.6s;
+  --ag-ease: cubic-bezier(0.215, 0.61, 0.355, 1); /* 等价于 GSAP 的 power3.out */
+  --ag-stagger: 0.06s;
+
+  display: flex;
+  flex-direction: row;
+  gap: var(--ag-gap);
+  width: 100%;
+  max-width: 100%;
+  margin-top: 28px;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
 }
 
-.footer a:hover {
-  color: var(--text-primary);
+.accordion-gallery--vertical { flex-direction: column; }
+
+/* 首帧与尺寸变化时关掉过渡，避免加载抖动 */
+.accordion-gallery.ag-no-anim .ag-panel,
+.accordion-gallery.ag-no-anim .ag-panel__media,
+.accordion-gallery.ag-no-anim .ag-panel__bar,
+.accordion-gallery.ag-no-anim .ag-panel__text { transition: none !important; }
+
+.ag-panel {
+  /* 标签动画：未展开时淡出更快，展开时竖条与文字依次出现 */
+  --ag-label-dur: calc(var(--ag-dur) * 0.6);
+  --ag-bar-delay: 0s;
+  --ag-text-delay: 0s;
+
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--ag-radius);
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  background-color: #0A0713;
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+  will-change: flex-grow, transform;
+  transition: flex-grow var(--ag-dur) var(--ag-ease), transform var(--ag-dur) var(--ag-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ag-panel--active {
+  --ag-label-dur: var(--ag-dur);
+  --ag-text-delay: var(--ag-stagger);
+}
+
+.ag-panel:focus-visible {
+  box-shadow: 0 0 0 2px var(--ag-accent), 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* 替换点：图片 —— 图片没加载出来时显示的兜底渐变 */
+.ag-panel:nth-child(6n+1) { background-image: linear-gradient(160deg, #6E2A4E 0%, #462033 50%, #241019 100%); }
+.ag-panel:nth-child(6n+2) { background-image: linear-gradient(160deg, #52304A 0%, #381F35 50%, #1C1019 100%); }
+.ag-panel:nth-child(6n+3) { background-image: linear-gradient(160deg, #5C2A45 0%, #3E1D31 50%, #1F0E1A 100%); }
+.ag-panel:nth-child(6n+4) { background-image: linear-gradient(160deg, #7A2D56 0%, #4A2040 50%, #241219 100%); }
+.ag-panel:nth-child(6n+5) { background-image: linear-gradient(160deg, #4A2840 0%, #331C2E 50%, #1A0F17 100%); }
+.ag-panel:nth-child(6n+6) { background-image: linear-gradient(160deg, #642E50 0%, #402038 50%, #1E1018 100%); }
+
+.ag-panel__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.ag-panel__media {
+  --ag-gray: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ag-media-size);
+  height: 100%;
+  filter: grayscale(var(--ag-gray));
+  will-change: transform, filter;
+  transition: transform var(--ag-dur) var(--ag-ease), filter var(--ag-dur) var(--ag-ease);
+}
+
+.accordion-gallery--vertical .ag-panel__media {
+  width: 100%;
+  height: var(--ag-media-size);
+}
+
+.ag-panel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ag-panel__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: rgba(var(--ag-overlay-rgb), var(--ag-dim, 0.35));
+  background-image: linear-gradient(180deg, transparent 45%, rgba(var(--ag-overlay-rgb), 0.78) 100%);
+  transition: background-color var(--ag-dur) var(--ag-ease);
+}
+
+.ag-panel__label {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ag-panel__bar {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 26px;
+  border-radius: 3px;
+  background: var(--ag-accent);
+  box-shadow: 0 0 12px rgba(var(--ag-accent-rgb), 0.6);
+  opacity: 0;
+  transform: translateX(-14px);
+  transition: opacity var(--ag-label-dur) var(--ag-ease) var(--ag-bar-delay),
+              transform var(--ag-label-dur) var(--ag-ease) var(--ag-bar-delay);
+}
+
+.ag-panel__text {
+  min-width: 0;
+  color: var(--ag-text);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(-14px);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  transition: opacity var(--ag-label-dur) var(--ag-ease) var(--ag-text-delay),
+              transform var(--ag-label-dur) var(--ag-ease) var(--ag-text-delay);
+}
+
+.ag-panel__name {
+  display: block;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ag-panel__cat {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.ag-panel--active .ag-panel__bar,
+.ag-panel--active .ag-panel__text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 纵向（窄屏）时的标签排布 */
+.accordion-gallery--vertical .ag-panel__label { left: 16px; right: 16px; bottom: 14px; gap: 10px; }
+.accordion-gallery--vertical .ag-panel__bar { height: 20px; }
+.accordion-gallery--vertical .ag-panel__name { font-size: clamp(0.95rem, 3.6vw, 1.15rem); }
+
+/* ==========================================
+   动效系统 Motion
+   只动 transform / opacity；开了「减弱动态效果」就整体关闭
+   ========================================== */
+:root {
+  --rv-dur: 0.9s;
+  --rv-ease: cubic-bezier(0.22, 1, 0.36, 1); /* easeOutQuint，收尾干净不弹 */
+}
+
+/* 待入场：只有 JS 就绪时才隐藏，脚本失效也不会白屏 */
+html.js-ready [data-reveal]:not([data-reveal="mask"]) {
+  opacity: 0;
+  transition:
+    opacity var(--rv-dur) var(--rv-ease) var(--rv-delay, 0s),
+    transform var(--rv-dur) var(--rv-ease) var(--rv-delay, 0s);
+}
+html.js-ready [data-reveal="up"]:not(.rv-in)    { transform: translate3d(0, 32px, 0); }
+html.js-ready [data-reveal="down"]:not(.rv-in)  { transform: translate3d(0, -26px, 0); }
+html.js-ready [data-reveal="left"]:not(.rv-in)  { transform: translate3d(-36px, 0, 0); }
+html.js-ready [data-reveal="right"]:not(.rv-in) { transform: translate3d(36px, 0, 0); }
+html.js-ready [data-reveal="zoom"]:not(.rv-in)  { transform: scale(1.06); }
+html.js-ready [data-reveal].rv-in { opacity: 1; transform: none; }
+
+/* 遮罩式标题入场：文字从下往上推出来 */
+.rv-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+}
+.rv-mask > .rv-mask-inner { display: block; }
+html.js-ready .rv-mask > .rv-mask-inner {
+  transform: translate3d(0, 112%, 0);
+  transition: transform 1.05s var(--rv-ease) var(--rv-delay, 0s);
+}
+html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
+
+/* ---------- 顶部滚动进度条 ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 300;
+  pointer-events: none;
+}
+.scroll-progress i {
+  display: block;
+  height: 100%;
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #FF1493, var(--btn-solid), #FFC2E2);
+  will-change: transform;
+}
+
+/* ---------- 导航栏滚动后收成毛玻璃 ---------- */
+.nav {
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+}
+.nav.scrolled {
+  background: rgba(14, 14, 17, 0.72);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  box-shadow: 0 14px 40px -28px rgba(0, 0, 0, 0.95);
+}
+
+/* ---------- 背景光晕（慢速漂移，让深色底不板） ---------- */
+.glow-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.glow-field span {
+  position: absolute;
+  display: block;
+  width: 62vw;
+  height: 62vw;
+  border-radius: 50%;
+  opacity: 0.42;
+  will-change: transform;
+}
+.glow-field .g1 {
+  top: -24vw;
+  left: -16vw;
+  background: radial-gradient(circle, rgba(255, 105, 180, 0.22) 0%, rgba(255, 105, 180, 0) 68%);
+  animation: glowDriftA 30s ease-in-out infinite;
+}
+.glow-field .g2 {
+  right: -22vw;
+  bottom: -28vw;
+  background: radial-gradient(circle, rgba(126, 78, 255, 0.18) 0%, rgba(126, 78, 255, 0) 68%);
+  animation: glowDriftB 38s ease-in-out infinite;
+}
+@keyframes glowDriftA {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(7vw, 5vw, 0) scale(1.14); }
+}
+@keyframes glowDriftB {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.08); }
+  50%      { transform: translate3d(-6vw, -5vw, 0) scale(1); }
+}
+
+/* 正文压在光晕之上 */
+.hero, .sec, .footer { position: relative; z-index: 1; }
+
+/* ---------- 指针交互：头像轻微倾斜 ---------- */
+.hero-portrait {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .glow-field span { animation: none; }
+  .hero-portrait { transition: none; }
 }
 
 /* ==========================================
    响应式
    ========================================== */
-/* ==========================================
-   查看模式
-   ========================================== */
-body.view-mode .hide-in-view {
-  display: none !important;
-}
-
-/* 查看模式：隐藏导航栏编辑相关按钮 */
-body.view-mode .nav-toggle-mode,
-body.view-mode .share-btn {
-  display: none !important;
-}
-
-/* 查看模式：隐藏头像区域 */
-body.view-mode .hero-avatar {
-  display: none !important;
-}
-
-body.view-mode .uploadable {
-  cursor: default;
-  pointer-events: none;
-}
-
-body.view-mode .upload-overlay {
-  display: none !important;
-}
-
-body.view-mode .upload-input {
-  display: none !important;
-}
-
-/* 查看模式提示条 */
-.view-mode-banner {
-  display: none;
-  position: fixed;
-  top: var(--nav-height);
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: rgba(14, 14, 17, 0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border-light);
-  padding: 7px 24px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  letter-spacing: 0.8px;
-}
-
-.view-mode-banner::before {
-  content: "◍";
-  margin-right: 6px;
-  color: var(--text-tertiary);
-}
-
-body.view-mode .view-mode-banner {
-  display: block;
-}
-
-/* 分享按钮 */
-.share-btn {
-  display: none;
-  background: none;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  padding: 6px 14px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  letter-spacing: 0.5px;
-  margin-left: auto;
-  margin-right: 12px;
-}
-
-.share-btn:hover {
-  background: var(--btn-solid);
-  color: #2A0A1A;
-  border-color: var(--btn-solid);
-}
-
-body:not(.view-mode) .share-btn {
-  display: inline-flex;
-  align-items: center;
-}
-
 @media (max-width: 1024px) {
   .hero {
-    gap: 32px;
-    padding: 40px 24px 60px;
+    gap: 40px;
+    padding: 80px 24px 88px;
   }
-  .hero-name { font-size: 42px; }
-  .works-grid { grid-template-columns: repeat(2, 1fr); }
-  .works-grid.waterfall { grid-template-columns: 1fr 1fr; }
-  .works-grid.magazine { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -807,521 +932,317 @@ body:not(.view-mode) .share-btn {
     border-bottom: 1px solid var(--border-light);
   }
   .nav-hamburger { display: flex; }
-  .nav-toggle-mode { display: none; }
 
   .hero {
     grid-template-columns: 1fr;
-    padding: 32px 20px 48px;
-    gap: 32px;
+    gap: 44px;
+    padding: 56px 20px 72px;
   }
-  .hero-avatar { width: 60px; height: 60px; }
-  .hero-name { font-size: 36px; }
-  .hero-right { order: -1; }
-  .hero-image { aspect-ratio: 3 / 2; }
-  .featured-card { bottom: 12px; left: 12px; right: 12px; padding: 14px 16px; }
-  .featured-card .fc-title { font-size: 15px; }
+  .hero-portrait-wrap {
+    order: -1;
+    width: min(236px, 62vw);
+  }
+  .hero-desc { max-width: none; }
 
-  .works { padding: 0 20px 60px; }
-  .works-title { font-size: 30px; }
-  .works-grid,
-  .works-grid.waterfall,
-  .works-grid.magazine {
+  .sec {
+    margin-top: 104px;
+    padding: 0 20px;
+  }
+  .ghost-word { left: 20px; }
+  .sec-contact { padding-bottom: 88px; }
+  .footer { padding: 26px 20px 36px; }
+
+  /* 时间轴在窄屏收成单列，竖线靠左 */
+  .timeline::before { left: 15px; }
+  .tl-item {
+    grid-template-columns: 32px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .tl-node {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+  .tl-date {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 10px 0 0 16px;
+    text-align: left;
+  }
+  .tl-card {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 12px 0 0 16px;
+    text-align: left;
+  }
+  .tl-item:nth-child(even) .tl-card {
+    grid-column: 2;
+    padding-left: 16px;
+    text-align: left;
+  }
+  .tl-item:nth-child(even) .tl-date {
+    grid-column: 2;
+    padding-left: 16px;
+    text-align: left;
+  }
+
+  .adv-grid {
     grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .adv-icon {
+    align-self: flex-start;
+    padding-top: 32px;
+  }
+
+  .contact-body { gap: 40px; }
+  .contact-qr img {
+    width: 150px;
+    height: 150px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-name { font-size: 30px; }
-  .hero-buttons { flex-direction: column; }
-  .hero-buttons .btn { width: 100%; }
-  .hero-stats { flex-direction: column; }
-  .stat-card { min-width: auto; }
+  .hero-name { font-size: 2.4rem; }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-actions .btn { width: 100%; }
 }
+
 </style>
+<script>
+  /* 动效总开关：脚本可用、且用户没有开启「减弱动态效果」时，才隐藏待入场元素。
+     放在这里是为了让隐藏状态在第一帧就生效，避免元素先闪一下再重播动画。 */
+  if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('js-ready');
+  }
+</script>
 </head>
+
 <body>
 
-<!-- 查看模式提示条 -->
-<div class="view-mode-banner">此链接仅用于作品展示</div>
+<!-- 背景光晕（纯装饰） -->
+<div class="glow-field" aria-hidden="true"><span class="g1"></span><span class="g2"></span></div>
+
+<!-- 顶部滚动进度条 -->
+<div class="scroll-progress" aria-hidden="true"><i></i></div>
 
 <!-- ==========================================
      导航栏
      ========================================== -->
-<nav class="nav" id="nav">
+<nav class="nav" id="nav" data-reveal="down">
   <!-- 替换点：品牌名 -->
-  <a href="#" class="nav-brand">
-    <span class="cross">✦</span> PORTFOLIO
+  <a href="#about" class="nav-brand">
+    <span class="cross">✦</span> 陈芷曦
   </a>
 
   <ul class="nav-links" id="navLinks">
     <!-- 替换点：导航菜单项 -->
     <li><a href="#about" data-section="about">About</a></li>
-    <li><a href="#resume" data-section="resume">Resume</a></li>
+    <li><a href="#experience" data-section="experience">Experience</a></li>
     <li><a href="#works" data-section="works">Works</a></li>
     <li><a href="#contact" data-section="contact">Contact</a></li>
   </ul>
 
-  <button class="nav-toggle-mode" id="navToggleMode" title="切换展示模式">切换展示模式</button>
-  <button class="share-btn" id="btnShare" title="复制分享链接">复制分享链接</button>
   <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
 <!-- ==========================================
-     Hero Section
+     01 / HELLO
      ========================================== -->
 <section class="hero" id="about">
-  <div class="hero-left">
-    <!-- 头像上传区域 -->
-    <div class="hero-avatar uploadable" data-store-key="pf_avatar" title="点击上传头像">
-      <div class="upload-overlay">
-        <span class="upload-icon">📷</span>
-        <span class="upload-text">上传头像</span>
-      </div>
-      <input type="file" accept="image/*" class="upload-input" hidden>
-    </div>
-
-    <!-- 替换点：文字 -->
-    <span class="hero-pill">PERSONAL WEBSITE PORTFOLIO</span>
+  <div class="hero-copy">
+    <!-- 替换点：文字 —— 眉标 -->
+    <p class="eyebrow" data-reveal="up">01 — HELLO / 你好</p>
 
     <!-- 替换点：文字 —— 姓名 -->
-    <h1 class="hero-name">Bao Long</h1>
+    <h1 class="hero-name" data-reveal="mask" style="--rv-delay:.10s">陈芷曦</h1>
 
-    <!-- 替换点：文字 —— 副标题 -->
-    <p class="hero-subtitle">Landscape / Visual / Brand Portfolio</p>
+    <!-- 替换点：文字 —— 身份 -->
+    <p class="hero-role" data-reveal="up" style="--rv-delay:.26s">UI 设计师</p>
 
     <!-- 替换点：文字 —— 个人简介 -->
-    <p class="hero-desc">
-      专注于景观设计、视觉传达与品牌策划的创意工作者。
+    <p class="hero-desc" data-reveal="up" style="--rv-delay:.34s">
       每一次按下快门、每一张设计稿，都是我对世界观察的切片。
       欢迎浏览我的作品集，感受设计的力量。
     </p>
 
-    <!-- 按钮组 -->
-    <div class="hero-buttons">
-      <button class="btn btn-solid hide-in-view" id="btnUpload">上传作品图片</button>
-      <button class="btn btn-outline hide-in-view" id="btnReset">重置示例</button>
-      <button class="btn btn-outline hide-in-view" id="btnAvatar">上传头像</button>
-      <button class="btn btn-outline hide-in-view" id="btnDownloadPDF">下载简历 PDF</button>
-    </div>
-
-    <!-- 数据卡片 -->
-    <div class="hero-stats">
-      <div class="stat-card">
-        <span class="stat-number" id="statImages">9</span>
-        <span class="stat-label">IMAGES</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-number" id="statProjects">3</span>
-        <span class="stat-label">PROJECTS</span>
-      </div>
+    <div class="hero-actions" data-reveal="up" style="--rv-delay:.42s">
+      <a class="btn btn-solid" href="#works">查看作品 ↗</a>
+      <a class="btn btn-outline" href="#contact">联系我</a>
     </div>
   </div>
 
-  <div class="hero-right">
-    <!-- Hero 大图上传区域 -->
-    <div class="hero-image uploadable" data-store-key="pf_hero_image" title="点击或拖拽上传封面图">
-      <div class="upload-overlay">
-        <span class="upload-icon">📷</span>
-        <span class="upload-text">点击或拖拽上传封面图</span>
-      </div>
-      <input type="file" accept="image/*" class="upload-input" hidden>
-    </div>
-
-    <!-- 浮动卡片 -->
-    <div class="featured-card">
-      <!-- 替换点：文字 -->
-      <div class="fc-tag">FEATURED PROJECT</div>
-      <div class="fc-title">Interior Planting Service System</div>
-      <div class="fc-desc">每次上传的一张照片都将自动更新在此处，作为精选项目的封面展示。</div>
+  <!-- 头像：把 images/avatar.jpg 放进仓库就会自动替换掉字母占位 -->
+  <div class="hero-portrait-wrap" data-reveal="zoom" style="--rv-delay:.22s">
+    <div class="hero-portrait">
+      <img src="images/avatar.jpg" alt="陈芷曦" data-fallback>
+      <span class="hero-portrait-fallback">陈</span>
     </div>
   </div>
+
+  <span class="ghost-wrap" aria-hidden="true"><span class="ghost-word">PORTFOLIO</span></span>
 </section>
 
 <!-- ==========================================
-     Resume Section（页内锚点）
+     02 / THE JOURNEY
      ========================================== -->
-<section id="resume" style="display:none;"></section>
+<section class="sec sec-exp" id="experience">
+  <p class="eyebrow" data-reveal="up">02 — THE JOURNEY / 工作经历</p>
+
+  <!-- 替换点：文字 —— 章节标题 -->
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Work Experience<em> / 工作经历</em></h2>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">个人经历 / 每一段经历都在形成现在的我</p>
+
+  <!-- 替换点：工作经历 —— 复制一组 <li class="tl-item"> 就能多加一段 -->
+  <ol class="timeline">
+    <li class="tl-item" data-reveal="up">
+      <div class="tl-card">
+        <h3 class="tl-title">公司 / 项目名称</h3>
+        <p class="tl-role">职位名称</p>
+        <p class="tl-desc">介绍这段经历的工作内容与成果。</p>
+      </div>
+      <span class="tl-node">1</span>
+      <p class="tl-date">2023 — 至今</p>
+    </li>
+    <li class="tl-item" data-reveal="up" style="--rv-delay:.08s">
+      <div class="tl-card">
+        <h3 class="tl-title">公司 / 项目名称</h3>
+        <p class="tl-role">职位名称</p>
+        <p class="tl-desc">介绍这段经历的工作内容与成果。</p>
+      </div>
+      <span class="tl-node">2</span>
+      <p class="tl-date">2021 — 2023</p>
+    </li>
+  </ol>
+</section>
 
 <!-- ==========================================
-     Selected Works
+     03 / WORKS
      ========================================== -->
-<section class="works" id="works">
-  <div class="works-header">
-    <h2 class="works-title">作品集</h2>
+<section class="sec sec-works" id="works">
+  <p class="eyebrow" data-reveal="up">03 — THE PRACTITIONER / 作品</p>
 
-    <div class="layout-toggles">
-      <button class="layout-toggle active" data-layout="grid">网格</button>
-      <button class="layout-toggle" data-layout="magazine">杂志风</button>
-      <button class="layout-toggle" data-layout="waterfall">瀑布流</button>
-    </div>
+  <!-- 替换点：文字 —— 章节标题 -->
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Selected Works<em> / 作品集</em></h2>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">六组项目 · 设计与视觉的实践切片。</p>
 
-    <div class="filter-tags" id="filterTags">
-      <button class="filter-tag active" data-filter="all">All</button>
-      <button class="filter-tag" data-filter="presentation">Presentation</button>
-      <button class="filter-tag" data-filter="plant">Plant Display</button>
-      <button class="filter-tag" data-filter="portfolio">Portfolio</button>
-      <button class="filter-tag" data-filter="rendering">Rendering</button>
-    </div>
-  </div>
+  <!-- 作品画廊：内容与动效参数在下方 GALLERY_ITEMS / GALLERY_CONFIG 中配置 -->
+  <div class="accordion-gallery ag-no-anim" id="accordionGallery" role="list" aria-label="作品画廊" data-reveal="up" style="--rv-delay:.22s"></div>
+</section>
 
-  <div class="works-grid" id="worksGrid">
-    <!-- Card 1 -->
-    <article class="work-card" data-category="presentation plant portfolio">
-      <div class="work-card-image img-1 uploadable" data-store-key="pf_work_0" title="点击上传作品封面">
-        <span class="work-card-badge">3 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">PRESENTATION</div>
-        <h3 class="work-card-title">Interior Planting Service System</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Presentation</span>
-          <span class="work-card-tag">Plant Display</span>
-          <span class="work-card-tag">Portfolio</span>
-        </div>
-      </div>
+<!-- ==========================================
+     04 / WHAT I DO BEST
+     ========================================== -->
+<section class="sec sec-adv" id="advantages">
+  <p class="eyebrow" data-reveal="up">04 — WHAT I DO BEST / 个人优势</p>
+
+  <!-- 替换点：文字 —— 章节标题 -->
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Advantages<em> / 个人优势</em></h2>
+
+  <!-- 替换点：个人优势 —— 三栏文字都可以直接改 -->
+  <div class="adv-grid">
+    <article class="adv" data-reveal="up">
+      <p class="adv-index">01 / CORE</p>
+      <h3 class="adv-title">审美好<br>创意强<br>执行力高</h3>
+      <p class="adv-desc">描述 / 不填写</p>
+      <span class="adv-icon" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none">
+          <path d="M9 31 Q 13 12 35 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="9" cy="34" r="2.8" fill="currentColor"/>
+        </svg>
+      </span>
     </article>
 
-    <!-- Card 2 -->
-    <article class="work-card" data-category="rendering presentation">
-      <div class="work-card-image img-2 uploadable" data-store-key="pf_work_1" title="点击上传作品封面">
-        <span class="work-card-badge">5 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">RENDERING</div>
-        <h3 class="work-card-title">Urban Landscape Master Plan</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Rendering</span>
-          <span class="work-card-tag">Presentation</span>
-        </div>
-      </div>
+    <article class="adv" data-reveal="up" style="--rv-delay:.08s">
+      <p class="adv-index">02 / CORE</p>
+      <h3 class="adv-title">深耕 xx 行业<br>3 年</h3>
+      <p class="adv-desc">1、擅长 xxxxx<br>2、具备 xxxx</p>
+      <span class="adv-icon" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none">
+          <path d="M22 4 L26 18 L40 22 L26 26 L22 40 L18 26 L4 22 L18 18 Z"
+                stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </span>
     </article>
 
-    <!-- Card 3 -->
-    <article class="work-card" data-category="plant portfolio">
-      <div class="work-card-image img-3 uploadable" data-store-key="pf_work_2" title="点击上传作品封面">
-        <span class="work-card-badge">4 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">PLANT DISPLAY</div>
-        <h3 class="work-card-title">Botanical Garden Exhibition Design</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Plant Display</span>
-          <span class="work-card-tag">Portfolio</span>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 4 -->
-    <article class="work-card" data-category="rendering portfolio">
-      <div class="work-card-image img-4 uploadable" data-store-key="pf_work_3" title="点击上传作品封面">
-        <span class="work-card-badge">6 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">RENDERING</div>
-        <h3 class="work-card-title">Residential Courtyard Concept</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Rendering</span>
-          <span class="work-card-tag">Portfolio</span>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 5 -->
-    <article class="work-card" data-category="presentation plant">
-      <div class="work-card-image img-5 uploadable" data-store-key="pf_work_4" title="点击上传作品封面">
-        <span class="work-card-badge">7 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">PRESENTATION</div>
-        <h3 class="work-card-title">Rooftop Garden Terrace</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Presentation</span>
-          <span class="work-card-tag">Plant Display</span>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 6 -->
-    <article class="work-card" data-category="portfolio presentation">
-      <div class="work-card-image img-6 uploadable" data-store-key="pf_work_5" title="点击上传作品封面">
-        <span class="work-card-badge">8 IMAGES</span>
-        <div class="upload-overlay">
-          <span class="upload-icon">📷</span>
-          <span class="upload-text">点击上传</span>
-        </div>
-        <input type="file" accept="image/*" class="upload-input" hidden>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-category">PORTFOLIO</div>
-        <h3 class="work-card-title">Public Park Wayfinding System</h3>
-        <div class="work-card-tags">
-          <span class="work-card-tag">Portfolio</span>
-          <span class="work-card-tag">Presentation</span>
-        </div>
-      </div>
+    <article class="adv" data-reveal="up" style="--rv-delay:.16s">
+      <p class="adv-index">03 / CORE</p>
+      <h3 class="adv-title">优势名称</h3>
+      <p class="adv-desc">描述 / 不填写</p>
+      <span class="adv-icon" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none">
+          <path d="M9 31 Q 13 12 35 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="9" cy="34" r="2.8" fill="currentColor"/>
+        </svg>
+      </span>
     </article>
   </div>
 </section>
 
 <!-- ==========================================
-     Contact Section
+     05 / CONTACT
      ========================================== -->
-<section id="contact"></section>
+<section class="sec sec-contact" id="contact">
+  <p class="eyebrow" data-reveal="up">05 — CONTACT / 联系</p>
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Let's Talk<em> / 坐等合作</em></h2>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">
+    欢迎通过邮件、电话或微信联系我，聊聊新的项目、工作机会与创意想法。
+  </p>
+
+  <div class="contact-body">
+    <div class="contact-info" data-reveal="up" style="--rv-delay:.20s">
+      <!-- 替换点：文字 —— 邮箱 -->
+      <a class="contact-mail" href="mailto:3013154988@qq.com">3013154988@qq.com</a>
+      <!-- 替换点：文字 —— 电话 -->
+      <p class="contact-phone"><span>Phone</span>18020835639</p>
+    </div>
+
+    <!-- 微信二维码：图片在 images/wechat-qr.png -->
+    <figure class="contact-qr" data-reveal="up" style="--rv-delay:.28s">
+      <img src="images/wechat-qr.png" alt="微信二维码" data-fallback>
+      <figcaption>扫码加我微信</figcaption>
+    </figure>
+  </div>
+
+  <span class="ghost-wrap" aria-hidden="true"><span class="ghost-word">LET'S BUILD</span></span>
+</section>
 
 <!-- ==========================================
      Footer
      ========================================== -->
 <footer class="footer">
   <!-- 替换点：文字 —— 版权信息 -->
-  <p>&copy; 2026 Bao Long. All Rights Reserved. &nbsp;|&nbsp;
-  <a href="mailto:hello@baolong.com">hello@baolong.com</a></p>
+  <p data-reveal="up">&copy; 2026 陈芷曦. All Rights Reserved.</p>
 </footer>
 
 <!-- ==========================================
      JavaScript
      ========================================== -->
+
 <script>
 /* ==========================================
-   Toast 提示工具
+   图片兜底 —— 文件不存在时藏掉 img，露出容器自带的占位
    ========================================== */
-function showToast(msg, isError = false) {
-  const existing = document.querySelector('.upload-toast');
-  if (existing) existing.remove();
-
-  const toast = document.createElement('div');
-  toast.className = 'upload-toast' + (isError ? ' error' : '');
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 3000);
-}
+document.querySelectorAll('img[data-fallback]').forEach(img => {
+  // 必须用 display:none —— 用 hidden 属性会被样式表里的 display:block 覆盖，
+  // 浏览器会把 alt 文字（也就是姓名）直接画在头像上
+  img.addEventListener('error', () => { img.style.display = 'none'; });
+});
 
 /* ==========================================
-   图片上传管理器
+   导航交互
    ========================================== */
-const ImageUploader = {
-  // 已上传过的 key 集合（用于跟踪哪些区域已上传过）
-  _uploadedKeys: new Set(),
-
-  /**
-   * 初始化所有可上传区域
-   */
-  init() {
-    const uploadables = document.querySelectorAll('.uploadable');
-    uploadables.forEach(el => this._bindElement(el));
-    // 从 localStorage 恢复已保存的图片
-    this._restoreAll();
-  },
-
-  /**
-   * 绑定单个上传元素
-   */
-  _bindElement(el) {
-    const input = el.querySelector('.upload-input');
-    const key = el.dataset.storeKey;
-    if (!input || !key) return;
-
-    // 点击元素 → 触发 file input
-    el.addEventListener('click', (e) => {
-      // 如果点的是已有的 file input 不处理（防止双击 input）
-      if (e.target === input) return;
-      e.stopPropagation();
-      input.click();
-    });
-
-    // file input 选择文件后处理
-    input.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        this._handleFile(e.target.files[0], el, key);
-        input.value = ''; // 清空以便重复选择同一文件
-      }
-    });
-
-    // 拖拽事件
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      el.classList.add('drag-over');
-    });
-
-    el.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      el.classList.remove('drag-over');
-    });
-
-    el.addEventListener('drop', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      el.classList.remove('drag-over');
-
-      const files = e.dataTransfer.files;
-      if (files && files[0]) {
-        this._handleFile(files[0], el, key);
-      }
-    });
-  },
-
-  /**
-   * 处理上传文件
-   */
-  _handleFile(file, el, key) {
-    // 校验文件类型
-    if (!file.type.startsWith('image/')) {
-      showToast('请选择图片文件（JPG / PNG / WebP 等）', true);
-      return;
-    }
-
-    // 校验文件大小（限制 5MB，localStorage 一般 5-10MB 上限）
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('图片大小不能超过 5MB，请压缩后重试', true);
-      return;
-    }
-
-    // 用 FileReader 读取为 base64
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target.result;
-      const saved = this._saveToStorage(key, base64);
-      if (saved) {
-        this._applyImage(el, base64);
-        this._uploadedKeys.add(key);
-        showToast('图片上传成功！已自动保存');
-      } else {
-        showToast('存储空间不足，请清理浏览器缓存后重试', true);
-      }
-    };
-    reader.onerror = () => {
-      showToast('图片读取失败，请重试', true);
-    };
-    reader.readAsDataURL(file);
-  },
-
-  /**
-   * 将 base64 图片应用到元素上
-   */
-  _applyImage(el, base64) {
-    el.style.backgroundImage = `url(${base64})`;
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
-    el.classList.add('has-image');
-  },
-
-  /**
-   * 清除元素上的图片，恢复默认渐变
-   */
-  _clearImage(el) {
-    el.style.backgroundImage = '';
-    el.style.backgroundSize = '';
-    el.style.backgroundPosition = '';
-    el.classList.remove('has-image');
-  },
-
-  /**
-   * 保存到 localStorage
-   */
-  _saveToStorage(key, base64) {
-    try {
-      localStorage.setItem(key, base64);
-      return true;
-    } catch (e) {
-      // QuotaExceededError
-      if (e.name === 'QuotaExceededError' || e.code === 22) {
-        return false;
-      }
-      // 其他错误也返回 false
-      return false;
-    }
-  },
-
-  /**
-   * 从 localStorage 读取
-   */
-  _loadFromStorage(key) {
-    try {
-      return localStorage.getItem(key);
-    } catch (e) {
-      return null;
-    }
-  },
-
-  /**
-   * 页面加载时恢复所有已保存图片
-   */
-  _restoreAll() {
-    const uploadables = document.querySelectorAll('.uploadable');
-    uploadables.forEach(el => {
-      const key = el.dataset.storeKey;
-      if (!key) return;
-      const saved = this._loadFromStorage(key);
-      if (saved) {
-        this._applyImage(el, saved);
-        this._uploadedKeys.add(key);
-      }
-    });
-  },
-
-  /**
-   * 清除所有上传的图片
-   */
-  clearAll() {
-    const uploadables = document.querySelectorAll('.uploadable');
-    uploadables.forEach(el => {
-      const key = el.dataset.storeKey;
-      if (!key) return;
-      localStorage.removeItem(key);
-      this._clearImage(el);
-    });
-    this._uploadedKeys.clear();
-    showToast('已清除所有上传图片，恢复默认样式');
-  },
-
-  /**
-   * 触发指定 key 的上传
-   */
-  triggerUpload(key) {
-    const el = document.querySelector(`[data-store-key="${key}"]`);
-    if (el) {
-      const input = el.querySelector('.upload-input');
-      if (input) input.click();
-    }
-  },
-};
 
 /* ==========================================
    导航交互
    ========================================== */
 const navLinks = document.getElementById('navLinks');
 const navHamburger = document.getElementById('navHamburger');
-const navToggleMode = document.getElementById('navToggleMode');
-
 navHamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
 });
@@ -1336,156 +1257,488 @@ const sections = document.querySelectorAll('section[id]');
 window.addEventListener('scroll', () => {
   let current = '';
   sections.forEach(section => {
+    const id = section.getAttribute('id');
+    // 没有对应导航项的章节跳过，否则经过它时导航会整段失去高亮
+    if (!navLinks.querySelector('a[data-section="' + id + '"]')) return;
     const top = section.offsetTop - 100;
     if (window.scrollY >= top) {
-      current = section.getAttribute('id');
+      current = id;
     }
   });
+  // 滚到页面底部就直接高亮最后一个章节，否则最后一个导航项永远点不亮
+  if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+    current = sections[sections.length - 1].getAttribute('id');
+  }
   navLinks.querySelectorAll('a').forEach(a => {
     a.classList.toggle('active', a.getAttribute('data-section') === current);
   });
 });
 
 /* ==========================================
-   布局模式切换
+   作品画廊 Accordion Gallery
+   React Bits「Accordion Gallery」的纯 CSS/JS 实现
+   替换点：动效参数 —— 改 GALLERY_CONFIG（对应组件 props）
+   替换点：作品内容 —— 改 GALLERY_ITEMS（label 作品名 / category 分类 /
+            tags 筛选标签 / image 图片地址 / link 点击跳转）
    ========================================== */
-const worksGrid = document.getElementById('worksGrid');
-const layoutToggles = document.querySelectorAll('.layout-toggle');
+const GALLERY_CONFIG = {
+  defaultIndex: 2,          // 默认展开第几个作品（从 0 开始）
+  expandRatio: 0.52,        // 展开面板占整行的比例
+  trigger: 'hover',         // 展开触发方式：hover | click
+  accentColor: '#FFFFFF',   // 作品名前面的小竖条
+  overlayColor: '#060010',  // 图片上的压暗层
+  textColor: '#FFFFFF',     // 作品名颜色
+  grayscale: true,          // 未展开的面板是否黑白
+  showLabels: true,         // 是否显示作品名
+  showCategory: true,       // 作品名上方是否显示分类
+  duration: 0.6,            // 动画时长（秒）
+  parallax: 0.5,            // 图片视差强度
+  tilt: 8,                  // 未展开面板的倾斜角度（度）
+  stagger: 0.06,            // 竖条与文字的出现间隔（秒）
+  height: 460,              // 画廊高度（px）
+  gap: 10,                  // 面板间距（px）
+  radius: 16,               // 圆角（px）
+  orientation: 'horizontal', // horizontal | vertical
+  narrowBreakpoint: 520     // 窄于该宽度自动改为纵向堆叠
+};
 
-layoutToggles.forEach(toggle => {
-  toggle.addEventListener('click', () => {
-    layoutToggles.forEach(t => t.classList.remove('active'));
-    toggle.classList.add('active');
-    const layout = toggle.dataset.layout;
-    worksGrid.classList.remove('waterfall', 'magazine');
-    if (layout === 'waterfall') worksGrid.classList.add('waterfall');
-    if (layout === 'magazine') worksGrid.classList.add('magazine');
-  });
-});
+/* 替换点：作品内容 —— 把 image 换成仓库里的图片路径即可，如 'images/work-1.jpg' */
+const GALLERY_ITEMS = [
+  {
+    label: 'Interior Planting Service System',
+    category: 'Presentation',
+    tags: ['presentation', 'plant', 'portfolio'],
+    image: 'https://picsum.photos/id/1015/900/1200',
+    link: '#'
+  },
+  {
+    label: 'Urban Landscape Master Plan',
+    category: 'Rendering',
+    tags: ['rendering', 'presentation'],
+    image: 'https://picsum.photos/id/1018/900/1200',
+    link: '#'
+  },
+  {
+    label: 'Botanical Garden Exhibition Design',
+    category: 'Plant Display',
+    tags: ['plant', 'portfolio'],
+    image: 'https://picsum.photos/id/1039/900/1200',
+    link: '#'
+  },
+  {
+    label: 'Residential Courtyard Concept',
+    category: 'Rendering',
+    tags: ['rendering', 'portfolio'],
+    image: 'https://picsum.photos/id/1043/900/1200',
+    link: '#'
+  },
+  {
+    label: 'Rooftop Garden Terrace',
+    category: 'Presentation',
+    tags: ['presentation', 'plant'],
+    image: 'https://picsum.photos/id/1044/900/1200',
+    link: '#'
+  },
+  {
+    label: 'Public Park Wayfinding System',
+    category: 'Portfolio',
+    tags: ['portfolio', 'presentation'],
+    image: 'https://picsum.photos/id/1041/900/1200',
+    link: '#'
+  }
+];
 
-navToggleMode.addEventListener('click', () => {
-  const layouts = ['grid', 'magazine', 'waterfall'];
-  const current = [...layoutToggles].findIndex(t => t.classList.contains('active'));
-  const next = (current + 1) % layouts.length;
-  layoutToggles.forEach(t => t.classList.remove('active'));
-  layoutToggles[next].classList.add('active');
-  worksGrid.classList.remove('waterfall', 'magazine');
-  if (layouts[next] === 'waterfall') worksGrid.classList.add('waterfall');
-  if (layouts[next] === 'magazine') worksGrid.classList.add('magazine');
-});
+const AccordionGallery = (() => {
+  const root = document.getElementById('accordionGallery');
+  if (!root) return { applyFilter() {}, reset() {} };
 
-/* ==========================================
-   分类筛选
-   ========================================== */
-const filterTags = document.querySelectorAll('.filter-tag');
-const workCards = document.querySelectorAll('.work-card');
+  const cfg = GALLERY_CONFIG;
+  const items = GALLERY_ITEMS;
+  const ease = 'cubic-bezier(0.215, 0.61, 0.355, 1)'; // 等价于 GSAP 的 power3.out
+  const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const hexToRgb = hex => {
+    const h = String(hex).replace('#', '');
+    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    return [0, 2, 4].map(i => parseInt(full.slice(i, i + 2), 16)).join(', ');
+  };
 
-filterTags.forEach(tag => {
-  tag.addEventListener('click', () => {
-    filterTags.forEach(t => t.classList.remove('active'));
-    tag.classList.add('active');
-    const filter = tag.dataset.filter;
+  const panels = [];
+  let visible = items.map((_, i) => i);
+  let activeItem = clamp(cfg.defaultIndex, 0, items.length - 1);
+  let mediaSize = 320;
+  let narrow = window.innerWidth <= cfg.narrowBreakpoint;
+  let wasVertical = false;
+  let firstRun = true;
+  let lastWidth = 0;
+  const isVertical = () => cfg.orientation === 'vertical' || narrow;
 
-    workCards.forEach(card => {
-      if (filter === 'all') {
-        card.style.display = '';
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(10px)';
-        requestAnimationFrame(() => {
-          card.style.transition = 'opacity 0.3s, transform 0.3s';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        });
-      } else {
-        const categories = card.dataset.category.split(' ');
-        if (categories.includes(filter)) {
-          card.style.display = '';
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(10px)';
-          requestAnimationFrame(() => {
-            card.style.transition = 'opacity 0.3s, transform 0.3s';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          });
-        } else {
-          card.style.display = 'none';
+  /* ---------- 生成面板 ---------- */
+  function build() {
+    root.style.setProperty('--ag-accent', cfg.accentColor);
+    root.style.setProperty('--ag-accent-rgb', hexToRgb(cfg.accentColor));
+    root.style.setProperty('--ag-overlay-rgb', hexToRgb(cfg.overlayColor));
+    root.style.setProperty('--ag-text', cfg.textColor);
+    root.style.setProperty('--ag-gap', cfg.gap + 'px');
+    root.style.setProperty('--ag-radius', cfg.radius + 'px');
+    root.style.setProperty('--ag-dur', (reduced ? 0 : cfg.duration) + 's');
+    root.style.setProperty('--ag-stagger', (reduced ? 0 : cfg.stagger) + 's');
+
+    const frag = document.createDocumentFragment();
+
+    items.forEach((item, i) => {
+      const panel = document.createElement(item.link ? 'a' : 'div');
+      panel.className = 'ag-panel';
+      panel.style.borderRadius = cfg.radius + 'px';
+      if (item.link) panel.setAttribute('href', item.link);
+      panel.setAttribute('role', 'listitem');
+      panel.setAttribute('tabindex', '0');
+      panel.setAttribute('aria-label', item.label);
+      panel.dataset.index = String(i);
+
+      const labelHTML = cfg.showLabels
+        ? '<span class="ag-panel__label" aria-hidden="true">' +
+            '<span class="ag-panel__bar"></span>' +
+            '<span class="ag-panel__text">' +
+              (cfg.showCategory && item.category ? '<span class="ag-panel__cat">' + esc(item.category) + '</span>' : '') +
+              '<span class="ag-panel__name">' + esc(item.label) + '</span>' +
+            '</span>' +
+          '</span>'
+        : '';
+
+      panel.innerHTML =
+        '<span class="ag-panel__frame">' +
+          '<span class="ag-panel__media">' +
+            '<img src="' + esc(item.image) + '" alt="' + esc(item.alt || item.label) + '" draggable="false">' +
+          '</span>' +
+          '<span class="ag-panel__overlay" aria-hidden="true"></span>' +
+        '</span>' + labelHTML;
+
+      // 图片没加载出来时露出兜底渐变
+      const img = panel.querySelector('img');
+      if (img) img.addEventListener('error', () => { img.style.visibility = 'hidden'; });
+
+      panel.addEventListener('mouseenter', () => { if (cfg.trigger === 'hover') activate(i); });
+      panel.addEventListener('focus', () => activate(i));
+      panel.addEventListener('click', e => {
+        if (visible.indexOf(i) !== visible.indexOf(activeItem)) {
+          e.preventDefault();
+          activate(i);
+          return;
         }
-      }
+        // 占位链接不跳转，避免点一下弹回页首
+        if (!item.link || item.link === '#') e.preventDefault();
+      });
+      panel.addEventListener('keydown', e => {
+        const step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1
+                   : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!step) return;
+        e.preventDefault();
+        const pos = visible.indexOf(activeItem);
+        activate(visible[(pos + step + visible.length) % visible.length]);
+      });
+
+      panels.push({
+        el: panel,
+        media: panel.querySelector('.ag-panel__media'),
+        img: img,
+        item: item
+      });
+      frag.appendChild(panel);
     });
-  });
-});
 
-/* ==========================================
-   按钮交互 —— 对接上传功能
-   ========================================== */
-
-// 「上传作品图片」→ 触发 Hero 大图上传
-document.getElementById('btnUpload')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  ImageUploader.triggerUpload('pf_hero_image');
-});
-
-// 「上传头像」→ 触发头像上传
-document.getElementById('btnAvatar')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  ImageUploader.triggerUpload('pf_avatar');
-});
-
-// 「重置示例」→ 清除所有上传图片 + 重置筛选和布局
-document.getElementById('btnReset')?.addEventListener('click', () => {
-  ImageUploader.clearAll();
-
-  filterTags.forEach(t => t.classList.remove('active'));
-  filterTags[0].classList.add('active');
-  workCards.forEach(card => {
-    card.style.display = '';
-    card.style.opacity = '1';
-    card.style.transform = 'translateY(0)';
-  });
-
-  layoutToggles.forEach(t => t.classList.remove('active'));
-  layoutToggles[0].classList.add('active');
-  worksGrid.classList.remove('waterfall', 'magazine');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// 「下载简历 PDF」
-document.getElementById('btnDownloadPDF')?.addEventListener('click', () => {
-  showToast('请将简历 PDF 放在网站同目录下，命名为 resume.pdf，然后修改按钮链接');
-});
-
-/* ==========================================
-   页面加载初始化
-   ========================================== */
-document.addEventListener('DOMContentLoaded', () => {
-  ImageUploader.init();
-
-  // 检测查看模式
-  if (new URLSearchParams(window.location.search).has('view')) {
-    document.body.classList.add('view-mode');
+    root.appendChild(frag);
   }
 
-  // 分享链接按钮
-  const btnShare = document.getElementById('btnShare');
-  if (btnShare) {
-    btnShare.addEventListener('click', () => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('edit');
-      url.searchParams.set('view', '');
-      navigator.clipboard.writeText(url.toString()).then(() => {
-        showToast('分享链接已复制');
-      }).catch(() => {
-        showToast('复制失败，请手动复制地址栏链接', true);
+  /* ---------- 计算尺寸 + 应用布局 ---------- */
+  function measure(animate) {
+    const vertical = isVertical();
+    root.classList.toggle('accordion-gallery--vertical', vertical);
+    root.style.height = (vertical ? Math.round(cfg.height * 1.6) : cfg.height) + 'px';
+
+    if (vertical !== wasVertical) { animate = false; wasVertical = vertical; }
+
+    const rect = root.getBoundingClientRect();
+    lastWidth = rect.width;
+    const n = Math.max(visible.length, 1);
+    const total = vertical ? rect.height : rect.width;
+    const usable = Math.max(total - cfg.gap * (n - 1), 120);
+    mediaSize = Math.max(140, usable * clamp(cfg.expandRatio, 0.2, 0.9) * 1.22);
+    root.style.setProperty('--ag-media-size', mediaSize + 'px');
+
+    applyLayout(animate && !firstRun);
+    firstRun = false;
+  }
+
+  function applyLayout(animate) {
+    const n = visible.length;
+    if (!n) return;
+
+    const vertical = isVertical();
+    const r = clamp(cfg.expandRatio, 0.2, 0.9);
+    const grow = n > 1 ? (r * (n - 1)) / (1 - r) : 1;
+    const activePos = Math.max(visible.indexOf(activeItem), 0);
+
+    root.classList.toggle('ag-no-anim', !animate);
+
+    panels.forEach((p, i) => {
+      const pos = visible.indexOf(i);
+      const shown = pos !== -1;
+      p.el.style.display = shown ? '' : 'none';
+      if (!shown) return;
+
+      const isActive = pos === activePos;
+      p.el.classList.toggle('ag-panel--active', isActive);
+      p.el.setAttribute('aria-current', isActive ? 'true' : 'false');
+
+      // 展开的摆正，左侧向右倾、右侧向左倾
+      const rot = isActive ? 0 : (pos < activePos ? cfg.tilt : -cfg.tilt);
+      p.el.style.flexGrow = isActive ? grow : 1;
+      p.el.style.transform = vertical ? 'rotateX(' + (-rot) + 'deg)' : 'rotateY(' + rot + 'deg)';
+      p.el.style.setProperty('--ag-dim', isActive ? 0 : 0.35);
+
+      if (p.media) {
+        const drift = clamp(activePos - pos, -1.5, 1.5);
+        const shift = drift * cfg.parallax * mediaSize * 0.06;
+        p.media.style.setProperty('--ag-gray', cfg.grayscale ? (isActive ? 0 : 1) : 0);
+        p.media.style.transform = vertical
+          ? 'translate(-50%, -50%) translateY(' + (isActive ? 0 : shift) + 'px)'
+          : 'translate(-50%, -50%) translateX(' + (isActive ? 0 : shift) + 'px)';
+      }
+    });
+
+    if (!animate) requestAnimationFrame(() => root.classList.remove('ag-no-anim'));
+  }
+
+  function activate(index) {
+    if (visible.indexOf(index) === -1 || index === activeItem) return;
+    activeItem = index;
+    applyLayout(true);
+  }
+
+  function applyFilter(filter) {
+    visible = items
+      .map((_, i) => i)
+      .filter(i => filter === 'all' || (items[i].tags || []).indexOf(filter) !== -1);
+    if (!visible.length) visible = items.map((_, i) => i); // 兜底：不出现空画廊
+    if (visible.indexOf(activeItem) === -1) activeItem = visible[0];
+    measure(true);
+  }
+
+  function reset() {
+    activeItem = clamp(cfg.defaultIndex, 0, items.length - 1);
+    applyFilter('all');
+  }
+
+  build();
+  measure(false);
+
+  // 容器宽度变化（窗口缩放、面板开合）时重算
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => {
+      const w = root.getBoundingClientRect().width;
+      if (Math.abs(w - lastWidth) < 0.5) return;
+      measure(true);
+    }).observe(root);
+  } else {
+    window.addEventListener('resize', () => measure(true));
+  }
+
+  window.addEventListener('resize', () => {
+    const nowNarrow = window.innerWidth <= cfg.narrowBreakpoint;
+    if (nowNarrow !== narrow) {
+      narrow = nowNarrow;
+      measure(true);
+    }
+  });
+
+  return { applyFilter, reset };
+})();
+
+/* ==========================================
+   动效 Motion —— 入场 / 数字滚动 / 滚动反馈 / 指针交互
+   只动 transform 与 opacity；开了「减弱动态效果」自动全部关闭
+   替换点：动效强度 —— 下面的时长、角度、位移量都可以直接调
+   ========================================== */
+const Motion = (() => {
+  const mq = q => !!(window.matchMedia && window.matchMedia(q).matches);
+  const reduced = mq('(prefers-reduced-motion: reduce)');
+  const finePointer = mq('(hover: hover) and (pointer: fine)');
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+  /* 遮罩式标题：给文字套一层 span，才能做「从下往上推」 */
+  function wrapMasks() {
+    document.querySelectorAll('[data-reveal="mask"]').forEach(el => {
+      if (el.querySelector(':scope > .rv-mask-inner')) return;
+      const inner = document.createElement('span');
+      inner.className = 'rv-mask-inner';
+      while (el.firstChild) inner.appendChild(el.firstChild);
+      el.appendChild(inner);
+      el.classList.add('rv-mask');
+    });
+  }
+
+  // 跳转式滚动时用来补播的钩子，由 playReveal 赋值
+  let catchUp = () => {};
+
+  /* 进入视口时播放一次 */
+  function playReveal() {
+    let pending = [...document.querySelectorAll('[data-reveal]:not(.rv-in)')];
+    if (!pending.length) return;
+    if (reduced || !('IntersectionObserver' in window)) {
+      pending.forEach(el => el.classList.add('rv-in'));
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('rv-in');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    pending.forEach(el => io.observe(el));
+
+    // 点导航跳转、拖滚动条会整段越过视口，IntersectionObserver 不触发，
+    // 所以在滚动时补一次：已经越过视口底部的元素直接显示，避免留下空白
+    catchUp = () => {
+      if (!pending.length) return;
+      // 只要露出一角就算进过视口，宁可早一点也不要留下空白
+      const limit = (window.innerHeight || 0) - 4;
+      pending = pending.filter(el => {
+        if (el.getBoundingClientRect().top >= limit) return true;
+        el.classList.add('rv-in');
+        io.unobserve(el);
+        return false;
+      });
+    };
+  }
+
+  /* 数字滚动 */
+  function runCounters() {
+    const els = [...document.querySelectorAll('.stat-number')];
+    if (!els.length || reduced || !('IntersectionObserver' in window)) return;
+    const DUR = 1200;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        io.unobserve(el);
+        const target = parseFloat(el.textContent) || 0;
+        const t0 = performance.now();
+        el.textContent = '0';
+        const tick = now => {
+          const p = clamp((now - t0) / DUR, 0, 1);
+          el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.6 });
+    els.forEach(el => io.observe(el));
+  }
+
+  /* 滚动反馈：导航毛玻璃 / 顶部进度条 / 首屏轻微淡出 */
+  function scrollFx() {
+    const nav = document.getElementById('nav');
+    const bar = document.querySelector('.scroll-progress i');
+    const hero = document.querySelector('.hero');
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY || window.pageYOffset || 0;
+      catchUp();
+      if (nav) nav.classList.toggle('scrolled', y > 20);
+      const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      if (bar) bar.style.setProperty('--p', clamp(y / max, 0, 1).toFixed(4));
+      if (hero && !reduced) {
+        const p = clamp(y / ((hero.offsetHeight || 1) * 0.85), 0, 1);
+        if (p < 0.002) {
+          // 回到顶部就撤掉变换，否则整块首屏会被强行提层，文字容易发虚
+          hero.style.opacity = '';
+          hero.style.transform = '';
+        } else {
+          hero.style.opacity = (1 - p * 0.55).toFixed(3);
+          hero.style.transform = 'translate3d(0,' + (-p * 28).toFixed(1) + 'px,0)';
+        }
+      }
+    };
+
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
+    update();
+  }
+
+  /* 指针交互：头像跟随鼠标轻微倾斜 + 按钮磁性吸附（仅桌面） */
+  function pointerFx() {
+    if (reduced || !finePointer) return;
+
+    const zone = document.querySelector('.hero');
+    const tilt = document.querySelector('.hero-portrait');
+    if (zone && tilt) {
+      let raf = 0;
+      let nx = 0;
+      let ny = 0;
+      const apply = () => {
+        raf = 0;
+        tilt.style.transform =
+          'rotateY(' + (nx * 7).toFixed(2) + 'deg) rotateX(' + (-ny * 7).toFixed(2) + 'deg)';
+      };
+      const track = e => {
+        const r = zone.getBoundingClientRect();
+        nx = clamp((e.clientX - r.left) / r.width - 0.5, -0.5, 0.5);
+        ny = clamp((e.clientY - r.top) / r.height - 0.5, -0.5, 0.5);
+        if (!raf) raf = requestAnimationFrame(apply);
+      };
+      zone.addEventListener('pointermove', track);
+      zone.addEventListener('pointerleave', () => {
+        nx = 0;
+        ny = 0;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+    }
+
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('pointermove', e => {
+        const r = btn.getBoundingClientRect();
+        const mx = (e.clientX - r.left) / r.width - 0.5;
+        const my = (e.clientY - r.top) / r.height - 0.5;
+        btn.style.setProperty('--btn-tx', (mx * 9).toFixed(2) + 'px');
+        btn.style.setProperty('--btn-ty', (my * 7).toFixed(2) + 'px');
+      });
+      btn.addEventListener('pointerleave', () => {
+        btn.style.setProperty('--btn-tx', '0px');
+        btn.style.setProperty('--btn-ty', '0px');
       });
     });
   }
 
-  console.log('PORTFOLIO 网站已就绪。');
-  console.log('所有图片区域支持点击或拖拽上传（自动保存到浏览器本地存储）。');
-  console.log('替换文字：搜索「替换点：文字」');
-  console.log('修改配色：搜索 CSS 变量 :root');
-});
+  function init() {
+    if (!reduced) wrapMasks();
+    playReveal();
+    runCounters();
+    scrollFx();
+    pointerFx();
+  }
+
+  return { init };
+})();
+
+// 立刻初始化：脚本就在 </body> 前，此时元素都已解析完，
+// 遮罩标题能在第一帧前包好，不会闪一下再重播
+Motion.init();
+
+/* ==========================================
+   就绪提示
+   ========================================== */
+console.log('PORTFOLIO 网站已就绪。');
+console.log('换作品：搜索「GALLERY_ITEMS」；画廊配色与动效：搜索「GALLERY_CONFIG」');
+console.log('换头像：把 images/avatar.jpg 放进仓库；改全站配色：搜索 CSS 变量 :root');
+
 </script>
 
 </body>
