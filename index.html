@@ -13,7 +13,8 @@
   3. 作品与轮播参数：assets/carousel.js 顶部的 ITEMS / CONFIG
   4. 项目详情页：projects/ 目录，样式在 assets/project.css
   5. 轮播样式与高度：assets/carousel.css 末尾「站内适配」
-  6. 全站配色：搜索 CSS 变量 :root
+  6. 开屏动效：搜索「OPENING_CONFIG」改文案与节奏（次数、跳过规则也在附近）
+  7. 全站配色：搜索 CSS 变量 :root
   ============================================
 -->
 
@@ -1420,6 +1421,130 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   .hero-name { font-size: 2.4rem; }
 }
 
+/* ==========================================
+   开屏 Opening —— 遮罩文字 Masked Heading
+   React Bits「MaskedHeading」的纯 CSS/JS 实现（在组件基础上改成了整站开屏）
+   文字里透出真实影像（照片 / 作品图），逐字浮现 → 停留 → 溶解
+   替换点：文案与动效参数 —— 改脚本里的 OPENING_CONFIG，样式只改这里的观感
+   ========================================== */
+.opening {
+  display: none;                       /* 默认不出现，只有 <html class="opening-on"> 时才铺开 */
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(58% 38% at 50% 47%, rgba(255, 105, 180, 0.11), transparent 72%),
+    radial-gradient(46% 32% at 63% 60%, rgba(124, 111, 255, 0.11), transparent 74%),
+    #060010;
+  opacity: 1;
+  transition: opacity var(--open-dissolve, 0.7s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.opening-on .opening { display: grid; }
+html.opening-on { overflow: hidden; }             /* 开屏时锁住页面滚动 */
+html.opening-off .opening { display: none; }
+
+.opening.is-dissolving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opening__inner {
+  display: grid;
+  gap: 26px;
+  justify-items: center;
+  padding: 0 6vw;
+  text-align: center;
+}
+
+.opening__heading {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: translate3d(0, 0, 0);
+}
+
+.opening__line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* 每个字自己一块，背景互相错位对齐 —— 拼起来就是一整张连续影像 */
+.opening__char {
+  display: inline-block;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  opacity: 0;
+  transform: translate3d(0, var(--open-drift, 18px), 0) scale(var(--open-from-scale, 0.88));
+  filter: blur(var(--open-blur, 12px)) brightness(var(--open-bright, 1)) saturate(var(--open-sat, 1))
+    grayscale(var(--open-gray, 0));
+  transition:
+    opacity calc(var(--open-dur, 1s) * 0.8) ease,
+    transform var(--open-dur, 1s) cubic-bezier(0.22, 1, 0.36, 1),
+    filter calc(var(--open-dur, 1s) * 0.8) ease;
+  transition-delay: var(--open-delay, 0s);
+}
+
+.opening.is-in .opening__char {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0) brightness(var(--open-bright, 1)) saturate(var(--open-sat, 1)) grayscale(var(--open-gray, 0));
+}
+
+/* 溶解：整行化开、轻轻推近，同时网页内容在下面浮出来 */
+.opening.is-dissolving .opening__char {
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(1.07);
+  filter: blur(16px) brightness(var(--open-bright, 1)) saturate(var(--open-sat, 1)) grayscale(var(--open-gray, 0));
+  transition-delay: 0s;
+  transition-duration: var(--open-dissolve, 0.7s);
+}
+
+.opening__hint {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(245, 233, 242, 0.38);
+  opacity: 0;
+  transition: opacity 0.7s ease 0.55s;
+}
+
+.opening.is-in .opening__hint { opacity: 1; }
+.opening.is-dissolving .opening__hint { opacity: 0; transition-delay: 0s; }
+
+/* 影像加载失败时的兜底：回到纯色文字，不影响可读 */
+.opening--plain .opening__char {
+  background-image: none !important;
+  color: var(--text-primary);
+  -webkit-text-fill-color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening { display: none !important; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 </style>
 <link rel="stylesheet" href="assets/carousel.css">
 <script>
@@ -1428,6 +1553,16 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.classList.add('js-ready');
   }
+
+  /* 开屏总开关：开了「减弱动态效果」、带着锚点进来（从项目页返回）、
+     或本次会话已经看过，就直接跳过，不做开屏。 */
+  (() => {
+    const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let seen = false;
+    try { seen = sessionStorage.getItem('czx-opening') === '1'; } catch (e) { seen = false; }
+    const skip = reduced || seen || !!location.hash || window.scrollY > 4;
+    document.documentElement.classList.add(skip ? 'opening-off' : 'opening-on');
+  })();
 </script>
 </head>
 
@@ -1441,6 +1576,18 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
 <!-- 顶部滚动进度条 -->
 <div class="scroll-progress" aria-hidden="true"><i></i></div>
+
+<!-- ==========================================
+     开屏：遮罩文字（文字里透出镭射光影，然后溶解进网页）
+     替换点：文案与参数 —— 改脚本里的 OPENING_CONFIG；
+             只要在 <html> 上加了 opening-off，或带锚点进来，就不会播
+     ========================================== -->
+<div class="opening" id="opening">
+  <div class="opening__inner">
+    <h2 class="opening__heading" id="openingHeading"></h2>
+    <p class="opening__hint" aria-hidden="true">Click to enter</p>
+  </div>
+</div>
 
 <!-- ==========================================
      导航栏
@@ -2017,8 +2164,311 @@ const Motion = (() => {
 })();
 
 // 立刻初始化：脚本就在 </body> 前，此时元素都已解析完，
-// 遮罩标题能在第一帧前包好，不会闪一下再重播
-Motion.init();
+// 遮罩标题能在第一帧前包好，不会闪一下再重播。
+// 有开屏时先等开屏溶解，网页内容再跟着浮起来，不会在帘子后面偷跑完。
+(() => {
+  let started = false;
+  const start = () => {
+    if (started) return;
+    started = true;
+    Motion.init();
+  };
+  if (document.documentElement.classList.contains('opening-on')) {
+    window.addEventListener('opening:done', start, { once: true });
+    setTimeout(start, 6000); // 兜底：开屏脚本万一没跑起来，也不能让内容一直藏着
+  } else {
+    start();
+  }
+})();
+
+/* ==========================================
+   开屏 Opening —— 遮罩文字 Masked Heading
+   React Bits「MaskedHeading」的纯 CSS/JS 实现，改成了整站开屏：
+   文字里透出真实影像（照片 / 作品图），逐字浮现 → 停留 → 溶解进网页
+   替换点：文案、影像与节奏 —— 改下面 OPENING_CONFIG
+   ========================================== */
+const OPENING_CONFIG = {
+  lines: ['Welcome to my', 'world of design.'], // 开屏文字，一行一个（写成一行就只留一个）
+  hint: 'Click to enter',        // 文字下方的小字
+  mediaType: 'image',            // image = 文字里透出图片（想用视频就给我 mp4，我加一层视频遮罩）
+  src: 'images/works/nativelike.jpg', // 文字里透出的影像：作品图 / 照片 / 截图，换一行就能替换
+  fillScale: 1.25,               // 影像比文字大多少（留出缓慢漂移与视差的余量）
+  parallax: 26,                  // 鼠标视差强度（px），0 = 关掉
+  brightness: 1.06,              // 影像亮度（1 = 原样）
+  saturation: 1.06,              // 影像饱和度
+  grayscale: false,              // 影像是否黑白
+  drift: 18,                     // 逐字入场时从下方浮起的距离（px）
+  fromScale: 0.88,               // 逐字入场时的起始缩放
+  blur: 12,                      // 逐字入场时的起始模糊（px）
+  duration: 0.9,                 // 单个字的入场时长（秒）
+  spread: 0.95,                  // 第一个字到最后一个字之间铺开多久（秒）—— 字多字少都自动分配
+  stagger: 0.11,                 // 没有 spread 时才用它：字与字之间的固定间隔（秒）
+  hold: 0.35,                    // 全部出现后停留多久再溶解（秒）
+  dissolve: 0.7,                 // 溶解时长（秒）
+  textScale: 0.115,              // 字号 = 屏宽 × 这个比例（放不下会自动缩）
+  lineHeight: 1.08,              // 行高
+  panSeconds: 13,                // 影像缓慢漂移一轮的时间（秒）
+  sessionKey: 'czx-opening'      // 本次会话看过就不再播
+};
+
+const Opening = (() => {
+  const root = document.getElementById('opening');
+  const docEl = document.documentElement;
+  if (!root || !docEl.classList.contains('opening-on')) return { active: false, finish() {} };
+
+  const CFG = OPENING_CONFIG;
+  const heading = document.getElementById('openingHeading');
+  const hintEl = root.querySelector('.opening__hint');
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+  let chars = [];
+  let offX = [];
+  let offY = [];
+  let mediaW = 1;
+  let mediaH = 1;
+  let boxW = 1;
+  let boxH = 1;
+  let imgAspect = 0;
+  let mediaReady = false;
+  let imgX = 1;
+  let imgY = 1;
+  let panX = 0;
+  let panY = 0;
+  let parX = 0;
+  let parY = 0;
+  let parTX = 0;
+  let parTY = 0;
+  let last = 0;
+  let raf = 0;
+  let alive = true;
+  let done = false;
+  let timers = [];
+  let resizeTimer = 0;
+  let step = CFG.stagger;    // 相邻两个字的入场间隔
+  let visibleChars = 1;      // 参与计时的字数（空格不算）
+
+  /* 逐字拆开：中文一字一块、英文按字母 */
+  function build() {
+    const lines = CFG.lines && CFG.lines.length ? CFG.lines : [CFG.text || ''];
+    const frag = document.createDocumentFragment();
+    const sr = document.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = lines.join('');
+    frag.appendChild(sr);
+    visibleChars = Math.max(1, lines.join('').replace(/\s/g, '').length);
+    step = CFG.spread > 0 && visibleChars > 1 ? CFG.spread / (visibleChars - 1) : CFG.stagger;
+    let n = 0;
+    chars = [];
+    lines.forEach(line => {
+      const row = document.createElement('span');
+      row.className = 'opening__line';
+      [...String(line)].forEach(ch => {
+        const span = document.createElement('span');
+        span.className = 'opening__char';
+        span.setAttribute('aria-hidden', 'true');
+        span.textContent = ch === ' ' ? '\u00A0' : ch;
+        span.style.setProperty('--open-delay', (n * step).toFixed(3) + 's');
+        row.appendChild(span);
+        chars.push(span);
+        if (ch !== ' ') n += 1; // 空格不占节奏，免得句子里出现空拍
+      });
+      frag.appendChild(row);
+    });
+    heading.replaceChildren(frag);
+    if (hintEl) hintEl.textContent = CFG.hint || '';
+    heading.style.lineHeight = String(CFG.lineHeight);
+  }
+
+  function widestLine() {
+    const rows = [...heading.querySelectorAll('.opening__line')];
+    return rows.reduce((w, row) => Math.max(w, row.offsetWidth), 1);
+  }
+
+  /* 字号：先按屏宽给一版，一行放不下再等比缩 */
+  function fit() {
+    if (!chars.length) return;
+    const maxW = root.clientWidth * 0.84;
+    const minSize = Math.max(26, Math.min(root.clientWidth * 0.08, 40));
+    let size = Math.max(minSize, Math.min(window.innerWidth * CFG.textScale, window.innerHeight * 0.2));
+    heading.style.fontSize = size + 'px';
+    const w = widestLine();
+    if (w > maxW) {
+      size = size * (maxW / w);
+      heading.style.fontSize = size + 'px';
+    }
+  }
+
+  /* 影像先量一次原始尺寸，才能算「铺满文字块」要放多大 */
+  function loadMedia() {
+    if (!CFG.src) return;
+    const probe = new Image();
+    probe.onload = () => {
+      imgAspect = probe.naturalWidth / Math.max(1, probe.naturalHeight);
+      mediaReady = true;
+      if (alive && !done) layout();
+    };
+    probe.onerror = () => {
+      mediaReady = false;
+      root.classList.add('opening--plain'); // 图挂了就退回纯色字，至少读得清
+    };
+    probe.src = CFG.src;
+  }
+
+  /* 每个字的背景互相错位，拼起来才是一整张连续影像 */
+  function layout() {
+    if (!chars.length) return;
+    boxW = Math.max(1, heading.offsetWidth);
+    boxH = Math.max(1, heading.offsetHeight);
+    /* cover：先按高度铺满，宽度不够再按宽度放大，保证字里一直是满满的影像 */
+    if (mediaReady && imgAspect > 0) {
+      mediaH = Math.max(1, boxH * CFG.fillScale);
+      mediaW = Math.max(1, mediaH * imgAspect);
+      if (mediaW < boxW * CFG.fillScale) {
+        mediaW = boxW * CFG.fillScale;
+        mediaH = Math.max(1, mediaW / imgAspect);
+      }
+    } else {
+      mediaW = boxW * CFG.fillScale;
+      mediaH = boxH * CFG.fillScale;
+    }
+    imgX = -(mediaW - boxW) / 2;
+    imgY = -(mediaH - boxH) / 2;
+    const image = CFG.src ? 'url("' + CFG.src + '")' : 'none';
+    /* offsetLeft 是相对 offsetParent 的：标题带 transform 时它就是标题自己，
+       所以要按同一个参照系取基准，否则每个字会整体错位一整块 */
+    const sameParent = chars[0].offsetParent === heading;
+    const baseLeft = sameParent ? 0 : heading.offsetLeft;
+    const baseTop = sameParent ? 0 : heading.offsetTop;
+    offX = chars.map(c => c.offsetLeft - baseLeft);
+    offY = chars.map(c => c.offsetTop - baseTop);
+    chars.forEach((c, i) => {
+      c.style.backgroundImage = image;
+      c.style.backgroundSize = mediaW.toFixed(1) + 'px ' + mediaH.toFixed(1) + 'px';
+      c.style.backgroundPosition = (imgX - offX[i]).toFixed(1) + 'px ' + (imgY - offY[i]).toFixed(1) + 'px';
+    });
+    /* 亮度 / 饱和度 / 黑白放在每个字上，标题上不加 filter：
+       标题加 filter 会和 background-clip: text 打架，文字会整行消失 */
+    root.style.setProperty('--open-bright', String(CFG.brightness));
+    root.style.setProperty('--open-sat', String(CFG.saturation));
+    root.style.setProperty('--open-gray', CFG.grayscale ? '1' : '0');
+    root.style.setProperty('--open-dur', CFG.duration + 's');
+    root.style.setProperty('--open-dissolve', CFG.dissolve + 's');
+    root.style.setProperty('--open-drift', CFG.drift + 'px');
+    root.style.setProperty('--open-from-scale', String(CFG.fromScale));
+    root.style.setProperty('--open-blur', CFG.blur + 'px');
+  }
+
+  /* 影像在字里慢慢漂移 + 鼠标视差（两张皮，看起来像镜头在动） */
+  function tick(now) {
+    raf = 0;
+    if (!alive) return;
+    const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+    last = now;
+    const slackX = Math.max(0, (mediaW - boxW) / 2);
+    const slackY = Math.max(0, (mediaH - boxH) / 2);
+    const t = now / 1000;
+    const cycle = Math.max(2, CFG.panSeconds);
+    panX = Math.sin((t / cycle) * Math.PI * 2) * slackX * 0.85;
+    panY = Math.cos((t / (cycle * 1.4)) * Math.PI * 2) * slackY * 0.5;
+    parX += (parTX - parX) * Math.min(1, dt * 6);
+    parY += (parTY - parY) * Math.min(1, dt * 6);
+    const moveX = panX + clamp(parX * CFG.parallax, -slackX, slackX);
+    const moveY = panY + clamp(parY * CFG.parallax * 0.7, -slackY, slackY);
+    const bgX = imgX + moveX;
+    const bgY = imgY + moveY;
+    for (let i = 0; i < chars.length; i++) {
+      chars[i].style.backgroundPosition = (bgX - offX[i]).toFixed(1) + 'px ' + (bgY - offY[i]).toFixed(1) + 'px';
+    }
+    if (CFG.parallax) {
+      heading.style.transform =
+        'translate3d(' + (parX * CFG.parallax * -0.35).toFixed(2) + 'px,' + (parY * CFG.parallax * -0.22).toFixed(2) + 'px,0)';
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function play() {
+    fit();
+    layout();
+    requestAnimationFrame(() => root.classList.add('is-in'));
+    last = performance.now();
+    raf = requestAnimationFrame(tick);
+    const total = (CFG.duration + step * Math.max(0, visibleChars - 1) + CFG.hold) * 1000;
+    timers.push(setTimeout(() => dissolve(false), total));
+  }
+
+  /* 点开屏那一下不要顺手点到网页里的按钮上 */
+  function swallow(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  /* 溶解：文字化开的同时，网页内容开始浮上来 */
+  function dissolve(instant) {
+    if (done) return;
+    done = true;
+    timers.forEach(clearTimeout);
+    timers = [];
+    window.addEventListener('click', swallow, true);
+    window.dispatchEvent(new Event('opening:done'));
+    if (instant) {
+      finish();
+      return;
+    }
+    root.classList.add('is-dissolving');
+    timers.push(setTimeout(finish, CFG.dissolve * 1000 + 80));
+  }
+
+  function finish() {
+    alive = false;
+    cancelAnimationFrame(raf);
+    window.removeEventListener('click', swallow, true);
+    docEl.classList.remove('opening-on');
+    if (root.parentNode) root.remove();
+    try { sessionStorage.setItem(CFG.sessionKey, '1'); } catch (e) {}
+  }
+
+  build();
+  loadMedia();
+  play();
+
+  /* 字体就绪后再量一次，避免用到替换字体时的宽度 */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      if (!alive || done) return;
+      fit();
+      layout();
+    });
+  }
+
+  /* 鼠标视差（触屏上不动） */
+  if (CFG.parallax && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    window.addEventListener('pointermove', e => {
+      parTX = (e.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
+      parTY = (e.clientY / Math.max(1, window.innerHeight)) * 2 - 1;
+    }, { passive: true });
+  }
+
+  /* 点一下 / 按键盘 / 滚轮 / 摸一下，都可以马上跳过开屏 */
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(type => {
+    window.addEventListener(type, () => dissolve(false), { passive: true, once: true });
+  });
+
+  /* 切到别的标签页就先收掉，回来不占时间 */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) dissolve(true);
+  });
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (!alive || done) return;
+      fit();
+      layout();
+    }, 140);
+  });
+
+  return { active: true, finish };
+})();
 
 /* ==========================================
    全站背景 FluxLines
