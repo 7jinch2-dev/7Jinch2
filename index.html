@@ -599,6 +599,7 @@ img { display: block; max-width: 100%; }
 
 .profile-card { justify-self: center; }
 
+
 /* ==========================================
    个人信息卡 ProfileCard
    React Bits「ProfileCard」的纯 CSS/JS 复刻
@@ -709,9 +710,8 @@ img { display: block; max-width: 100%; }
 }
 
 .profile-card__holo {
-  /* 原组件里这层在照片之前，照片会把它盖住（demo 头像是透明底 PNG 才透得出来）。
-     你的头像是实拍照片，所以把这层提到照片之上，镭射才看得见。 */
-  z-index: 2;
+  /* 保持原组件的层序：箔片在照片之前。照片是羽化透明底的 PNG，
+     所以镭射会从人物四周透出来，而不是盖在脸上。 */
   --pc-spectrum: repeating-linear-gradient(
     0deg,
     hsl(2, 100%, 73%) 5%,
@@ -1445,6 +1445,23 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   overflow: hidden;
   pointer-events: none;
 }
+
+/* ---------- 全站背景：动态流线（压在光晕之上、正文之下） ---------- */
+.flux-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.flux-field canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .glow-field span {
   position: absolute;
   display: block;
@@ -1615,6 +1632,9 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 <!-- 背景光晕（纯装饰） -->
 <div class="glow-field" aria-hidden="true"><span class="g1"></span><span class="g2"></span></div>
 
+<!-- 全站背景：动态流线（WebGL，纯装饰） -->
+<div class="flux-field" id="fluxField" aria-hidden="true"><canvas></canvas></div>
+
 <!-- 顶部滚动进度条 -->
 <div class="scroll-progress" aria-hidden="true"><i></i></div>
 
@@ -1669,7 +1689,7 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
           <span class="profile-card__holo-glow"></span>
           <span class="profile-card__holo-shift"></span>
         </span>
-        <img class="profile-card__photo" src="images/avatar.jpg" alt="陈芷曦" draggable="false">
+        <img class="profile-card__photo" src="images/portrait.png" alt="陈芷曦" draggable="false">
         <span class="profile-card__scrim"></span>
         <div class="profile-card__info">
           <h3 class="profile-card__name">陈芷曦</h3>
@@ -2487,6 +2507,370 @@ const Motion = (() => {
 // 立刻初始化：脚本就在 </body> 前，此时元素都已解析完，
 // 遮罩标题能在第一帧前包好，不会闪一下再重播
 Motion.init();
+
+/* ==========================================
+   全站背景 FluxLines
+   React Bits「FluxLines」的纯 JS/WebGL 复刻，零依赖
+   替换点：外观参数 —— 改下面 FLUX_CONFIG 即可
+   ========================================== */
+const FLUX_CONFIG = {
+  colors: ['#ffffff', '#ffffff', '#ffffff'],
+  glow: 2,
+  rimWidth: 0.2,
+  lineWidth: 1,
+  flowDirection: 'down',
+  speed: 0.5,
+  scale: 1.6,
+  turbulence: 1,
+  fluidity: 0.1,
+  sharpness: 2.5,
+  shimmer: 0.55,
+  opacity: 0.16,          // 线条亮度，越低越含蓄
+  mouseInteraction: true,
+  mouseStrength: 1,
+  mouseRadius: 0.35,
+  mouseDampening: 0.15,
+  clickSwirl: true,
+  intro: true,
+  lightMode: false
+};
+
+const FLUX_MAX_COLORS = 8;
+const FLUX_INTRO_SECONDS = 1.8;
+const FLUX_FLOW = { up: [0, 1], down: [0, -1], left: [-1, 0], right: [1, 0] };
+
+const FLUX_VERTEX = `#version 300 es
+in vec2 aPosition;
+void main() {
+  gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const FLUX_FIELD = `
+float hash(vec3 p3) {
+  p3 = fract(p3 * 0.1031);
+  p3 += dot(p3, p3.zyx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float smin(float a, float b, float k) {
+  float r = exp2(-a / k) + exp2(-b / k);
+  return -k * log2(r);
+}
+
+float sinlerp(float a, float b, float w) {
+  return mix(a, b, (sin(w * 3.14159265 - 3.14159265 / 2.0) + 1.0) / 2.0);
+}
+
+float vn(vec2 p, float s, float seed) {
+  vec2 cellp = floor(p / s);
+  vec2 relp = mod(p, s);
+  float g1 = hash(vec3(cellp, seed));
+  float g2 = hash(vec3(cellp.x + 1.0, cellp.y, seed));
+  float g3 = hash(vec3(cellp.x + 1.0, cellp.y + 1.0, seed));
+  float g4 = hash(vec3(cellp.x, cellp.y + 1.0, seed));
+  float bx = sinlerp(g1, g2, relp.x / s);
+  float tx = sinlerp(g4, g3, relp.x / s);
+  return sinlerp(bx, tx, relp.y / s);
+}
+
+float dbn(vec2 p, float s, float seed) {
+  float o = s / 2.0;
+  float n0 = vn(p, s, seed);
+  float n1 = vn(p + vec2(o, o), s, seed + 0.1);
+  float n2 = vn(p + vec2(-o, o), s, seed + 0.2);
+  float n3 = vn(p + vec2(o, -o), s, seed + 0.3);
+  float n4 = vn(p + vec2(-o, -o), s, seed + 0.4);
+  return (2.0 * n0 + 1.5 * n1 + 1.25 * n2 + 1.125 * n3 + n4) / 7.0;
+}
+`;
+
+const FLUX_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 uResolution;
+uniform float uTime;
+uniform vec2 uFlow;
+uniform float uSpeed;
+uniform float uScale;
+uniform float uTurbulence;
+uniform float uFluidity;
+uniform float uRimWidth;
+uniform float uSharpness;
+uniform float uShimmer;
+uniform float uGlow;
+uniform float uLine;
+uniform float uMaxHalf;
+uniform vec3 uColors[${FLUX_MAX_COLORS}];
+uniform int uColorCount;
+uniform vec4 uMagnet;
+uniform vec4 uSwirl;
+uniform float uReveal;
+uniform float uLight;
+uniform float uOpaque;
+uniform vec3 uBackground;
+uniform float uOpacity;
+out vec4 outColor;
+${FLUX_FIELD}
+
+vec3 palette(float h) {
+  float x = clamp(h, 0.0, 1.0) * float(uColorCount - 1);
+  int i = int(floor(x));
+  int j = min(i + 1, uColorCount - 1);
+  return mix(uColors[i], uColors[j], smoothstep(0.0, 1.0, x - float(i)));
+}
+
+void main() {
+  float ref = 700.0 / max(uScale, 0.05);
+  vec2 frag = gl_FragCoord.xy;
+  vec2 toMagnet = (frag - uMagnet.xy) / uResolution.y;
+  float pull = uMagnet.z * exp(-dot(toMagnet, toMagnet) / (uMagnet.w * uMagnet.w));
+  if (pull > 0.001) {
+    float angle = pull * 0.55;
+    float c = cos(angle);
+    float s = sin(angle);
+    frag = uMagnet.xy + mat2(c, s, -s, c) * (frag - uMagnet.xy);
+  }
+  if (uSwirl.w > 0.0) {
+    vec2 d = frag - uSwirl.xy;
+    float reach = uSwirl.z;
+    float angle = uSwirl.w * exp(-dot(d, d) / (reach * reach));
+    float c = cos(angle);
+    float s = sin(angle);
+    frag = uSwirl.xy + mat2(c, s, -s, c) * d;
+  }
+  vec2 p = frag / uResolution.y * ref;
+
+  float spd = 200.0 * uSpeed;
+  float t = uTime;
+  vec2 dir = uFlow;
+  vec2 perp = vec2(-dir.y, dir.x);
+  float distort1 = vn(p + perp * (t * spd), 60.0, 10.0) * 50.0 * uTurbulence;
+  float distort2 = vn(p - perp * (t * spd), 120.0, 15.0) * 100.0 * uTurbulence;
+  float peaks = dbn(p + distort1 + dir * (t * spd * 0.5), 40.0, 1.0);
+  float peaks2 = dbn(p + distort2 - dir * (t * spd * 0.5), 40.0, 0.0);
+  float field = smin(peaks, peaks2, max(uFluidity, 0.001));
+
+  float slope = length(vec2(dFdx(field), dFdy(field)));
+  float gap = abs(field - 0.4);
+  float pixels = gap / max(slope, 1e-6);
+  float halfBand = max(uRimWidth, 0.001) * 0.5;
+  float across = max(gap / halfBand, pixels / uMaxHalf);
+  float band = 5.0 * uRimWidth * (1.0 - across);
+  float reveal = smoothstep(0.2, 0.85, pull);
+  float shimmer = vn(p + dir * (t * spd * 0.5), 60.0, 12.0) * uShimmer * (1.0 - reveal * 0.75);
+  float lit = clamp(band - shimmer, 0.0, 1.0);
+  float glow = pow(lit, uSharpness) * uGlow * (1.0 + reveal * 0.25);
+  float core = uLine > 0.0 ? smoothstep(uLine + 0.75, uLine - 0.75, pixels) * max(smoothstep(0.08, 0.6, glow), reveal) : 0.0;
+  float shine = clamp(glow, 0.0, 1.0);
+  float energy = max(shine * shine, core * 0.85) * uReveal;
+
+  float h = clamp(0.5 + (peaks - peaks2) * 0.8, 0.0, 1.0);
+  vec3 tint = palette(h);
+
+  if (uLight > 0.5) {
+    float chroma = max(tint.r, max(tint.g, tint.b)) - min(tint.r, min(tint.g, tint.b));
+    vec3 ink = mix(vec3(0.07, 0.07, 0.08), tint * 0.55, clamp(chroma * 1.6, 0.0, 1.0));
+    float cover = energy * uOpacity;
+    outColor = uOpaque > 0.5 ? vec4(mix(uBackground, ink, cover), 1.0) : vec4(ink * cover, cover);
+    return;
+  }
+
+  vec3 light = tint * energy * uOpacity;
+  outColor = uOpaque > 0.5 ? vec4(uBackground + light, 1.0) : vec4(light, max(light.r, max(light.g, light.b)));
+}`;
+
+const FluxLines = (() => {
+  const container = document.getElementById('fluxField');
+  const canvas = container ? container.querySelector('canvas') : null;
+  if (!container || !canvas) return;
+
+  const gl = canvas.getContext('webgl2', {
+    alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false
+  });
+  if (!gl) { container.style.display = 'none'; return; }   // 不支持 WebGL2 就整体隐藏
+
+  const cfg = FLUX_CONFIG;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  const compile = (type, source) => {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+    gl.deleteShader(shader);
+    return null;
+  };
+  const vertex = compile(gl.VERTEX_SHADER, FLUX_VERTEX);
+  const fragment = compile(gl.FRAGMENT_SHADER, FLUX_FRAGMENT);
+  const program = gl.createProgram();
+  if (!vertex || !fragment || !program) { container.style.display = 'none'; return; }
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.bindAttribLocation(program, 0, 'aPosition');
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { container.style.display = 'none'; return; }
+
+  const u = {};
+  const count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < count; i++) {
+    const info = gl.getActiveUniform(program, i);
+    if (info) u[info.name.replace('[0]', '')] = gl.getUniformLocation(program, info.name);
+  }
+
+  const buffer = gl.createBuffer();
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+  // 颜色解析：先用 2D canvas 归一化各种写法，再缓存
+  const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  const cache = new Map();
+  const parse = (value, fallback) => {
+    if (!value) return fallback;
+    if (cache.has(value)) return cache.get(value);
+    probe.clearRect(0, 0, 1, 1);
+    probe.fillStyle = '#000000';
+    probe.fillStyle = value;
+    probe.fillRect(0, 0, 1, 1);
+    const d = probe.getImageData(0, 0, 1, 1).data;
+    const rgb = [d[0] / 255, d[1] / 255, d[2] / 255];
+    cache.set(value, rgb);
+    return rgb;
+  };
+  const palette = new Float32Array(FLUX_MAX_COLORS * 3);
+  const colors = (Array.isArray(cfg.colors) && cfg.colors.length ? cfg.colors : ['#ffffff']).slice(0, FLUX_MAX_COLORS);
+  const flow = FLUX_FLOW[cfg.flowDirection] || FLUX_FLOW.down;
+
+  const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const pointer = { x: 0, y: 0, inside: false };
+  const magnet = { x: 0, y: 0, active: 0 };
+  const swirl = { x: 0, y: 0, age: 10 };
+  let time = 0;
+  let reveal = cfg.intro && !reduced ? 0 : 1;
+  let raf = 0;
+  let last = 0;
+  let visible = true;
+
+  function render() {
+    colors.forEach((value, index) => palette.set(parse(value, [1, 1, 1]), index * 3));
+    const intro = Math.min(1, reveal);
+    const ratio = canvas.width / Math.max(1, container.clientWidth);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.useProgram(program);
+    gl.bindVertexArray(vao);
+    gl.uniform2f(u.uResolution, canvas.width, canvas.height);
+    gl.uniform1f(u.uTime, time);
+    gl.uniform2f(u.uFlow, flow[0], flow[1]);
+    gl.uniform1f(u.uSpeed, cfg.speed);
+    gl.uniform1f(u.uScale, Math.max(0.05, cfg.scale));
+    gl.uniform1f(u.uTurbulence, cfg.turbulence);
+    gl.uniform1f(u.uFluidity, Math.max(0.001, cfg.fluidity));
+    gl.uniform1f(u.uRimWidth, Math.max(0.001, cfg.rimWidth));
+    gl.uniform1f(u.uSharpness, Math.max(0.1, cfg.sharpness));
+    gl.uniform1f(u.uShimmer, Math.max(0, cfg.shimmer));
+    gl.uniform1f(u.uGlow, Math.max(0, cfg.glow));
+    gl.uniform1f(u.uLine, Math.max(0, cfg.lineWidth) * ratio * 0.5);
+    gl.uniform1f(u.uMaxHalf, 28 * ratio);
+    gl.uniform3fv(u.uColors, palette);
+    gl.uniform1i(u.uColorCount, colors.length);
+    gl.uniform4f(u.uMagnet, magnet.x, magnet.y, magnet.active * Math.max(0, cfg.mouseStrength), Math.max(0.01, cfg.mouseRadius));
+    const age = swirl.age;
+    const twist = 1.9 * Math.min(1, age / 0.23) * Math.exp(-Math.max(0, age - 0.23) * 1.1);
+    gl.uniform4f(u.uSwirl, swirl.x, swirl.y, canvas.height * 0.22 * (1 + age * 0.5), age < 6 ? twist : 0);
+    gl.uniform1f(u.uReveal, intro * intro * (3 - 2 * intro));
+    gl.uniform1f(u.uLight, cfg.lightMode ? 1 : 0);
+    gl.uniform1f(u.uOpaque, 0);
+    gl.uniform3fv(u.uBackground, parse(null, [0.0706, 0.0588, 0.0902]));
+    gl.uniform1f(u.uOpacity, clamp(cfg.opacity, 0, 1));
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (!visible || document.hidden) return;
+    const dt = last ? clamp((now - last) / 1000, 0.0005, 0.05) : 1 / 60;
+    last = now;
+    const motion = reduced ? 0 : 1;
+    time += dt * motion;
+    swirl.age += dt;
+    if (cfg.intro && !reduced && reveal < 1) reveal = Math.min(1, reveal + dt / FLUX_INTRO_SECONDS);
+    else reveal = 1;
+
+    const engaged = cfg.mouseInteraction && pointer.inside;
+    const follow = cfg.mouseDampening > 0 ? 1 - Math.exp(-dt / cfg.mouseDampening) : 1;
+    if (engaged) {
+      magnet.x += (pointer.x - magnet.x) * follow;
+      magnet.y += (pointer.y - magnet.y) * follow;
+    }
+    const target = engaged ? 1 : 0;
+    magnet.active += (target - magnet.active) * (1 - Math.exp(-dt / 0.3));
+    if (Math.abs(target - magnet.active) < 0.001) magnet.active = target;
+
+    render();
+    const busy = motion > 0 || magnet.active !== target || reveal < 1 || swirl.age < 6;
+    if (busy) raf = requestAnimationFrame(frame);
+    else last = 0;
+  }
+
+  function wake() {
+    if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame);
+  }
+
+  function resize() {
+    const w = Math.max(1, container.clientWidth);
+    const h = Math.max(1, container.clientHeight);
+    const r = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.max(1, Math.round(w * r));
+    canvas.height = Math.max(1, Math.round(h * r));
+    render();
+    wake();
+  }
+
+  function locate(event) {
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const ratio = canvas.width / Math.max(1, rect.width);
+    pointer.inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
+    pointer.x = x * ratio;
+    pointer.y = (rect.height - y) * ratio;
+  }
+
+  window.addEventListener('pointermove', event => {
+    const wasInside = pointer.inside;
+    locate(event);
+    if (pointer.inside && !wasInside && magnet.active < 0.05) {
+      magnet.x = pointer.x;
+      magnet.y = pointer.y;
+    }
+    wake();
+  }, { passive: true });
+
+  window.addEventListener('pointerdown', event => {
+    locate(event);
+    if (!pointer.inside || !cfg.clickSwirl || reduced) return;
+    swirl.x = pointer.x;
+    swirl.y = pointer.y;
+    swirl.age = 0;
+    wake();
+  }, { passive: true });
+
+  window.addEventListener('pointerup', event => {
+    if (event.pointerType !== 'mouse') pointer.inside = false;
+  }, { passive: true });
+  window.addEventListener('pointercancel', () => { pointer.inside = false; }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => { pointer.inside = false; });
+  document.addEventListener('visibilitychange', () => { last = 0; wake(); });
+
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(container);
+  else window.addEventListener('resize', resize);
+  resize();
+})();
 
 /* ==========================================
    个人信息卡 ProfileCard
