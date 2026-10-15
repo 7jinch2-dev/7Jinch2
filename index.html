@@ -10,9 +10,9 @@
   替换点总览（搜索「替换点」即可定位所有可修改内容）
   1. 文字内容：搜索「替换点：文字」
   2. 头像：把 images/avatar.jpg 放进仓库，就会自动替换掉字母占位
-  3. 作品：搜索「GALLERY_ITEMS」改作品名、分类、图片地址、详情页链接
+  3. 作品与轮播参数：assets/carousel.js 顶部的 ITEMS / CONFIG
   4. 项目详情页：projects/ 目录，样式在 assets/project.css
-  5. 画廊配色与动效参数：搜索「GALLERY_CONFIG」
+  5. 轮播样式与高度：assets/carousel.css 末尾「站内适配」
   6. 全站配色：搜索 CSS 变量 :root
   ============================================
 -->
@@ -1174,203 +1174,6 @@ img { display: block; max-width: 100%; }
 }
 
 /* ==========================================
-   作品画廊 Accordion Gallery
-   React Bits「Accordion Gallery」的纯 CSS/JS 实现
-   颜色与动效参数由 JS 里的 GALLERY_CONFIG 注入
-   ========================================== */
-@property --ag-gray { syntax: '<number>'; inherits: false; initial-value: 1; }
-@property --ag-dim  { syntax: '<number>'; inherits: true;  initial-value: 0; }
-
-.accordion-gallery {
-  --ag-accent: #FFFFFF;
-  --ag-accent-rgb: 255, 255, 255;
-  --ag-overlay-rgb: 6, 0, 16;
-  --ag-text: #FFFFFF;
-  --ag-gap: 10px;
-  --ag-radius: 16px;
-  --ag-media-size: 320px;
-  --ag-dur: 0.6s;
-  --ag-ease: cubic-bezier(0.215, 0.61, 0.355, 1); /* 等价于 GSAP 的 power3.out */
-  --ag-stagger: 0.06s;
-
-  display: flex;
-  flex-direction: row;
-  gap: var(--ag-gap);
-  width: 100%;
-  max-width: 100%;
-  margin-top: 28px;
-  perspective: 1400px;
-  perspective-origin: 50% 50%;
-}
-
-.accordion-gallery--vertical { flex-direction: column; }
-
-/* 首帧与尺寸变化时关掉过渡，避免加载抖动 */
-.accordion-gallery.ag-no-anim .ag-panel,
-.accordion-gallery.ag-no-anim .ag-panel__media,
-.accordion-gallery.ag-no-anim .ag-panel__bar,
-.accordion-gallery.ag-no-anim .ag-panel__text { transition: none !important; }
-
-.ag-panel {
-  /* 标签动画：未展开时淡出更快，展开时竖条与文字依次出现 */
-  --ag-label-dur: calc(var(--ag-dur) * 0.6);
-  --ag-bar-delay: 0s;
-  --ag-text-delay: 0s;
-
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 0;
-  display: block;
-  overflow: hidden;
-  border-radius: var(--ag-radius);
-  cursor: pointer;
-  text-decoration: none;
-  outline: none;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  background-color: #0A0713;
-  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
-  will-change: flex-grow, transform;
-  transition: flex-grow var(--ag-dur) var(--ag-ease), transform var(--ag-dur) var(--ag-ease);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ag-panel--active {
-  --ag-label-dur: var(--ag-dur);
-  --ag-text-delay: var(--ag-stagger);
-}
-
-.ag-panel:focus-visible {
-  box-shadow: 0 0 0 2px var(--ag-accent), 0 10px 30px -18px rgba(0, 0, 0, 0.8);
-}
-
-/* 替换点：图片 —— 图片没加载出来时显示的兜底渐变 */
-.ag-panel:nth-child(6n+1) { background-image: linear-gradient(160deg, #6E2A4E 0%, #462033 50%, #241019 100%); }
-.ag-panel:nth-child(6n+2) { background-image: linear-gradient(160deg, #52304A 0%, #381F35 50%, #1C1019 100%); }
-.ag-panel:nth-child(6n+3) { background-image: linear-gradient(160deg, #5C2A45 0%, #3E1D31 50%, #1F0E1A 100%); }
-.ag-panel:nth-child(6n+4) { background-image: linear-gradient(160deg, #7A2D56 0%, #4A2040 50%, #241219 100%); }
-.ag-panel:nth-child(6n+5) { background-image: linear-gradient(160deg, #4A2840 0%, #331C2E 50%, #1A0F17 100%); }
-.ag-panel:nth-child(6n+6) { background-image: linear-gradient(160deg, #642E50 0%, #402038 50%, #1E1018 100%); }
-
-.ag-panel__frame {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.ag-panel__media {
-  --ag-gray: 1;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--ag-media-size);
-  height: 100%;
-  filter: grayscale(var(--ag-gray));
-  will-change: transform, filter;
-  transition: transform var(--ag-dur) var(--ag-ease), filter var(--ag-dur) var(--ag-ease);
-}
-
-.accordion-gallery--vertical .ag-panel__media {
-  width: 100%;
-  height: var(--ag-media-size);
-}
-
-.ag-panel__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.ag-panel__overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-color: rgba(var(--ag-overlay-rgb), var(--ag-dim, 0.35));
-  background-image: linear-gradient(180deg, transparent 45%, rgba(var(--ag-overlay-rgb), 0.78) 100%);
-  transition: background-color var(--ag-dur) var(--ag-ease);
-}
-
-.ag-panel__label {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.ag-panel__bar {
-  flex: 0 0 auto;
-  width: 3px;
-  height: 26px;
-  border-radius: 3px;
-  background: var(--ag-accent);
-  box-shadow: 0 0 12px rgba(var(--ag-accent-rgb), 0.6);
-  opacity: 0;
-  transform: translateX(-14px);
-  transition: opacity var(--ag-label-dur) var(--ag-ease) var(--ag-bar-delay),
-              transform var(--ag-label-dur) var(--ag-ease) var(--ag-bar-delay);
-}
-
-.ag-panel__text {
-  min-width: 0;
-  color: var(--ag-text);
-  font-weight: 600;
-  opacity: 0;
-  transform: translateX(-14px);
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
-  transition: opacity var(--ag-label-dur) var(--ag-ease) var(--ag-text-delay),
-              transform var(--ag-label-dur) var(--ag-ease) var(--ag-text-delay);
-}
-
-.ag-panel__name {
-  display: block;
-  font-size: clamp(1rem, 1.4vw, 1.4rem);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ag-panel__more {
-  display: block;
-  margin-top: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--btn-solid);
-}
-
-.ag-panel__cat {
-  display: block;
-  margin-bottom: 2px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
-.ag-panel--active .ag-panel__bar,
-.ag-panel--active .ag-panel__text {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* 纵向（窄屏）时的标签排布 */
-.accordion-gallery--vertical .ag-panel__label { left: 16px; right: 16px; bottom: 14px; gap: 10px; }
-.accordion-gallery--vertical .ag-panel__bar { height: 20px; }
-.accordion-gallery--vertical .ag-panel__name { font-size: clamp(0.95rem, 3.6vw, 1.15rem); }
-
-/* ==========================================
    动效系统 Motion
    只动 transform / opacity；开了「减弱动态效果」就整体关闭
    ========================================== */
@@ -1618,6 +1421,7 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 }
 
 </style>
+<link rel="stylesheet" href="assets/carousel.css">
 <script>
   /* 动效总开关：脚本可用、且用户没有开启「减弱动态效果」时，才隐藏待入场元素。
      放在这里是为了让隐藏状态在第一帧就生效，避免元素先闪一下再重播动画。 */
@@ -1859,10 +1663,22 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
   <!-- 替换点：文字 —— 章节标题 -->
   <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Selected Works<em> / 作品集</em></h2>
-  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">九组项目 · 从用户调研、视觉方案到最终落地。点击封面进入完整项目。</p>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">九组项目 · 从用户调研、视觉方案到最终落地。拖动或滚轮切换，点击封面进入完整项目。</p>
 
-  <!-- 作品画廊：内容与动效参数在下方 GALLERY_ITEMS / GALLERY_CONFIG 中配置 -->
-  <div class="accordion-gallery ag-no-anim" id="accordionGallery" role="list" aria-label="作品画廊" data-reveal="up" style="--rv-delay:.22s"></div>
+  <!-- 作品轮播：作品与参数在 assets/carousel.js 的 ITEMS / CONFIG 里配置；样式在 assets/carousel.css -->
+  <div class="flex-carousel" id="flexCarousel" role="region" aria-roledescription="carousel" aria-label="作品轮播" tabindex="0"
+       data-reveal="up" style="--rv-delay:.22s; --flex-carousel-half: 25%">
+    <div class="flex-carousel__caption" hidden>
+      <span class="flex-carousel__title"></span>
+      <span class="flex-carousel__count">
+        <span class="flex-carousel__digits"></span>
+        <span class="flex-carousel__slash">/</span>
+        <span class="flex-carousel__count-total"></span>
+      </span>
+      <a class="flex-carousel__hint" href="projects/nativelike.html">点击查看项目 ↗</a>
+    </div>
+    <div class="flex-carousel__live" aria-live="polite" aria-atomic="true"></div>
+  </div>
 
   <!-- 完整作品集下载：文件是 portfolio.pdf，换文件直接替换同名文件即可 -->
   <p class="works-more" data-reveal="up" style="--rv-delay:.30s">
@@ -2052,310 +1868,6 @@ window.addEventListener('scroll', () => {
     a.classList.toggle('active', a.getAttribute('data-section') === current);
   });
 });
-
-/* ==========================================
-   作品画廊 Accordion Gallery
-   React Bits「Accordion Gallery」的纯 CSS/JS 实现
-   替换点：动效参数 —— 改 GALLERY_CONFIG（对应组件 props）
-   替换点：作品内容 —— 改 GALLERY_ITEMS（label 作品名 / category 分类 /
-            tags 筛选标签 / image 图片地址 / link 点击跳转）
-   ========================================== */
-const GALLERY_CONFIG = {
-  defaultIndex: 0,          // 默认展开第几个作品（从 0 开始）
-  expandRatio: 0.52,        // 展开面板占整行的比例
-  trigger: 'hover',         // 展开触发方式：hover | click
-  accentColor: '#FFFFFF',   // 作品名前面的小竖条
-  overlayColor: '#060010',  // 图片上的压暗层
-  textColor: '#FFFFFF',     // 作品名颜色
-  grayscale: true,          // 未展开的面板是否黑白
-  showLabels: true,         // 是否显示作品名
-  showCategory: true,       // 作品名上方是否显示分类
-  duration: 0.6,            // 动画时长（秒）
-  parallax: 0.5,            // 图片视差强度
-  tilt: 8,                  // 未展开面板的倾斜角度（度）
-  stagger: 0.06,            // 竖条与文字的出现间隔（秒）
-  height: 460,              // 画廊高度（px）
-  gap: 10,                  // 面板间距（px）
-  radius: 16,               // 圆角（px）
-  orientation: 'horizontal', // horizontal | vertical
-  narrowBreakpoint: 520     // 窄于该宽度自动改为纵向堆叠
-};
-
-/* 替换点：作品内容 —— 图片放在 images/works/ 下，换成别的文件改 image 即可 */
-const GALLERY_ITEMS = [
-  {
-    label: 'NativeLike 儿童英语学习 App',
-    category: '教育产品',
-    tags: ['app', 'game', 'ui'],
-    image: 'images/works/nativelike.jpg',
-    link: 'projects/nativelike.html'
-  },
-  {
-    label: '咔么租赁 APP 改版',
-    category: 'APP 改版',
-    tags: ['app', 'ui'],
-    image: 'images/works/kame-app.jpg',
-    link: 'projects/kame-app.html'
-  },
-  {
-    label: '俄罗斯短剧 APP 落地页',
-    category: '落地页设计',
-    tags: ['web', 'visual'],
-    image: 'images/works/russian-drama.jpg',
-    link: 'projects/russian-drama.html'
-  },
-  {
-    label: '惠商开放平台官网',
-    category: '官网设计',
-    tags: ['web', 'ui'],
-    image: 'images/works/huishang.jpg',
-    link: 'projects/huishang.html'
-  },
-  {
-    label: '兔展智能 AI CARD',
-    category: 'AIGC 设计',
-    tags: ['aigc', 'visual'],
-    image: 'images/works/tuzhan-ai.jpg',
-    link: 'projects/tuzhan-ai.html'
-  },
-  {
-    label: 'KOOK「小酷」IP 设计',
-    category: 'IP 设计',
-    tags: ['ip', '3d'],
-    image: 'images/works/kook-ip.jpg',
-    link: 'projects/kook-ip.html'
-  },
-  {
-    label: '集美学村 IP「舟舟」',
-    category: 'IP 设计',
-    tags: ['ip', '3d'],
-    image: 'images/works/zhouzhou-ip.jpg',
-    link: 'projects/zhouzhou-ip.html'
-  },
-  {
-    label: '安踏电商 618 大促视觉',
-    category: '电商视觉',
-    tags: ['ecommerce', 'visual'],
-    image: 'images/works/anta-618.jpg',
-    link: 'projects/anta-618.html'
-  },
-  {
-    label: '应星记 · 拼图游戏',
-    category: '游戏 UI',
-    tags: ['game', 'ui'],
-    image: 'images/works/yingxingji.jpg',
-    link: 'projects/yingxingji.html'
-  }
-];
-
-const AccordionGallery = (() => {
-  const root = document.getElementById('accordionGallery');
-  if (!root) return { applyFilter() {}, reset() {} };
-
-  const cfg = GALLERY_CONFIG;
-  const items = GALLERY_ITEMS;
-  const ease = 'cubic-bezier(0.215, 0.61, 0.355, 1)'; // 等价于 GSAP 的 power3.out
-  const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const hexToRgb = hex => {
-    const h = String(hex).replace('#', '');
-    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-    return [0, 2, 4].map(i => parseInt(full.slice(i, i + 2), 16)).join(', ');
-  };
-
-  const panels = [];
-  let visible = items.map((_, i) => i);
-  let activeItem = clamp(cfg.defaultIndex, 0, items.length - 1);
-  let mediaSize = 320;
-  let narrow = window.innerWidth <= cfg.narrowBreakpoint;
-  let wasVertical = false;
-  let firstRun = true;
-  let lastWidth = 0;
-  const isVertical = () => cfg.orientation === 'vertical' || narrow;
-
-  /* ---------- 生成面板 ---------- */
-  function build() {
-    root.style.setProperty('--ag-accent', cfg.accentColor);
-    root.style.setProperty('--ag-accent-rgb', hexToRgb(cfg.accentColor));
-    root.style.setProperty('--ag-overlay-rgb', hexToRgb(cfg.overlayColor));
-    root.style.setProperty('--ag-text', cfg.textColor);
-    root.style.setProperty('--ag-gap', cfg.gap + 'px');
-    root.style.setProperty('--ag-radius', cfg.radius + 'px');
-    root.style.setProperty('--ag-dur', (reduced ? 0 : cfg.duration) + 's');
-    root.style.setProperty('--ag-stagger', (reduced ? 0 : cfg.stagger) + 's');
-
-    const frag = document.createDocumentFragment();
-
-    items.forEach((item, i) => {
-      const panel = document.createElement(item.link ? 'a' : 'div');
-      panel.className = 'ag-panel';
-      panel.style.borderRadius = cfg.radius + 'px';
-      if (item.link) panel.setAttribute('href', item.link);
-      panel.setAttribute('role', 'listitem');
-      panel.setAttribute('tabindex', '0');
-      panel.setAttribute('aria-label', item.label);
-      panel.dataset.index = String(i);
-
-      const labelHTML = cfg.showLabels
-        ? '<span class="ag-panel__label" aria-hidden="true">' +
-            '<span class="ag-panel__bar"></span>' +
-            '<span class="ag-panel__text">' +
-              (cfg.showCategory && item.category ? '<span class="ag-panel__cat">' + esc(item.category) + '</span>' : '') +
-              '<span class="ag-panel__name">' + esc(item.label) + '</span>' +
-              (item.link && item.link !== '#' ? '<span class="ag-panel__more">查看项目 ↗</span>' : '') +
-            '</span>' +
-          '</span>'
-        : '';
-
-      panel.innerHTML =
-        '<span class="ag-panel__frame">' +
-          '<span class="ag-panel__media">' +
-            '<img src="' + esc(item.image) + '" alt="' + esc(item.alt || item.label) + '" draggable="false">' +
-          '</span>' +
-          '<span class="ag-panel__overlay" aria-hidden="true"></span>' +
-        '</span>' + labelHTML;
-
-      // 图片没加载出来时露出兜底渐变
-      const img = panel.querySelector('img');
-      if (img) img.addEventListener('error', () => { img.style.visibility = 'hidden'; });
-
-      panel.addEventListener('mouseenter', () => { if (cfg.trigger === 'hover') activate(i); });
-      panel.addEventListener('focus', () => activate(i));
-      panel.addEventListener('click', e => {
-        if (visible.indexOf(i) !== visible.indexOf(activeItem)) {
-          e.preventDefault();
-          activate(i);
-          return;
-        }
-        // 占位链接不跳转，避免点一下弹回页首
-        if (!item.link || item.link === '#') e.preventDefault();
-      });
-      panel.addEventListener('keydown', e => {
-        const step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1
-                   : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
-        if (!step) return;
-        e.preventDefault();
-        const pos = visible.indexOf(activeItem);
-        activate(visible[(pos + step + visible.length) % visible.length]);
-      });
-
-      panels.push({
-        el: panel,
-        media: panel.querySelector('.ag-panel__media'),
-        img: img,
-        item: item
-      });
-      frag.appendChild(panel);
-    });
-
-    root.appendChild(frag);
-  }
-
-  /* ---------- 计算尺寸 + 应用布局 ---------- */
-  function measure(animate) {
-    const vertical = isVertical();
-    root.classList.toggle('accordion-gallery--vertical', vertical);
-    root.style.height = (vertical ? Math.round(cfg.height * 1.6) : cfg.height) + 'px';
-
-    if (vertical !== wasVertical) { animate = false; wasVertical = vertical; }
-
-    const rect = root.getBoundingClientRect();
-    lastWidth = rect.width;
-    const n = Math.max(visible.length, 1);
-    const total = vertical ? rect.height : rect.width;
-    const usable = Math.max(total - cfg.gap * (n - 1), 120);
-    mediaSize = Math.max(140, usable * clamp(cfg.expandRatio, 0.2, 0.9) * 1.22);
-    root.style.setProperty('--ag-media-size', mediaSize + 'px');
-
-    applyLayout(animate && !firstRun);
-    firstRun = false;
-  }
-
-  function applyLayout(animate) {
-    const n = visible.length;
-    if (!n) return;
-
-    const vertical = isVertical();
-    const r = clamp(cfg.expandRatio, 0.2, 0.9);
-    const grow = n > 1 ? (r * (n - 1)) / (1 - r) : 1;
-    const activePos = Math.max(visible.indexOf(activeItem), 0);
-
-    root.classList.toggle('ag-no-anim', !animate);
-
-    panels.forEach((p, i) => {
-      const pos = visible.indexOf(i);
-      const shown = pos !== -1;
-      p.el.style.display = shown ? '' : 'none';
-      if (!shown) return;
-
-      const isActive = pos === activePos;
-      p.el.classList.toggle('ag-panel--active', isActive);
-      p.el.setAttribute('aria-current', isActive ? 'true' : 'false');
-
-      // 展开的摆正，左侧向右倾、右侧向左倾
-      const rot = isActive ? 0 : (pos < activePos ? cfg.tilt : -cfg.tilt);
-      p.el.style.flexGrow = isActive ? grow : 1;
-      p.el.style.transform = vertical ? 'rotateX(' + (-rot) + 'deg)' : 'rotateY(' + rot + 'deg)';
-      p.el.style.setProperty('--ag-dim', isActive ? 0 : 0.35);
-
-      if (p.media) {
-        const drift = clamp(activePos - pos, -1.5, 1.5);
-        const shift = drift * cfg.parallax * mediaSize * 0.06;
-        p.media.style.setProperty('--ag-gray', cfg.grayscale ? (isActive ? 0 : 1) : 0);
-        p.media.style.transform = vertical
-          ? 'translate(-50%, -50%) translateY(' + (isActive ? 0 : shift) + 'px)'
-          : 'translate(-50%, -50%) translateX(' + (isActive ? 0 : shift) + 'px)';
-      }
-    });
-
-    if (!animate) requestAnimationFrame(() => root.classList.remove('ag-no-anim'));
-  }
-
-  function activate(index) {
-    if (visible.indexOf(index) === -1 || index === activeItem) return;
-    activeItem = index;
-    applyLayout(true);
-  }
-
-  function applyFilter(filter) {
-    visible = items
-      .map((_, i) => i)
-      .filter(i => filter === 'all' || (items[i].tags || []).indexOf(filter) !== -1);
-    if (!visible.length) visible = items.map((_, i) => i); // 兜底：不出现空画廊
-    if (visible.indexOf(activeItem) === -1) activeItem = visible[0];
-    measure(true);
-  }
-
-  function reset() {
-    activeItem = clamp(cfg.defaultIndex, 0, items.length - 1);
-    applyFilter('all');
-  }
-
-  build();
-  measure(false);
-
-  // 容器宽度变化（窗口缩放、面板开合）时重算
-  if (window.ResizeObserver) {
-    new ResizeObserver(() => {
-      const w = root.getBoundingClientRect().width;
-      if (Math.abs(w - lastWidth) < 0.5) return;
-      measure(true);
-    }).observe(root);
-  } else {
-    window.addEventListener('resize', () => measure(true));
-  }
-
-  window.addEventListener('resize', () => {
-    const nowNarrow = window.innerWidth <= cfg.narrowBreakpoint;
-    if (nowNarrow !== narrow) {
-      narrow = nowNarrow;
-      measure(true);
-    }
-  });
-
-  return { applyFilter, reset };
-})();
 
 /* ==========================================
    动效 Motion —— 入场 / 数字滚动 / 滚动反馈 / 指针交互
@@ -3034,10 +2546,13 @@ const ProfileCard = (() => {
    就绪提示
    ========================================== */
 console.log('PORTFOLIO 网站已就绪。');
-console.log('换作品：搜索「GALLERY_ITEMS」；画廊配色与动效：搜索「GALLERY_CONFIG」');
+console.log('换作品 / 改轮播参数：assets/carousel.js 顶部的 ITEMS 与 CONFIG');
 console.log('换头像：把 images/avatar.jpg 放进仓库；改全站配色：搜索 CSS 变量 :root');
 
 </script>
+
+<!-- 作品轮播（ESM 模块，内部引用内置的 ogl） -->
+<script type="module" src="assets/carousel.js"></script>
 
 </body>
 </html>
