@@ -1,4 +1,4 @@
-/* ==========================================
+﻿/* ==========================================
    作品轮播 FlexCarousel
    React Bits「FlexCarousel」的移植版：着色器与引擎逻辑逐字保留，
    只把 React 外壳换成了普通函数与 DOM 操作。
@@ -244,15 +244,15 @@ const CONFIG = {
 
 /* ---------- 作品数据 ---------- */
 const ITEMS = [
-  { src: 'images/works/nativelike.jpg', title: 'NativeLike', subtitle: '儿童英语学习 App', alt: 'NativeLike 儿童英语学习 App', link: 'projects/nativelike.html' },
-  { src: 'images/works/kame-app.jpg', title: '咔么租赁 APP 改版', subtitle: 'APP 改版', alt: '咔么租赁 APP 改版', link: 'projects/kame-app.html' },
-  { src: 'images/works/russian-drama.jpg', title: '俄罗斯短剧 APP 落地页', subtitle: '落地页设计', alt: '俄罗斯短剧 APP 落地页', link: 'projects/russian-drama.html' },
-  { src: 'images/works/huishang.jpg', title: '惠商开放平台官网', subtitle: '官网设计', alt: '惠商开放平台官网', link: 'projects/huishang.html' },
-  { src: 'images/works/tuzhan-ai.jpg', title: '兔展智能 AI CARD', subtitle: 'AIGC 设计', alt: '兔展智能 AI CARD', link: 'projects/tuzhan-ai.html' },
-  { src: 'images/works/kook-ip.jpg', title: 'KOOK「小酷」IP 设计', subtitle: 'IP 设计', alt: 'KOOK 小酷 IP 设计', link: 'projects/kook-ip.html' },
-  { src: 'images/works/zhouzhou-ip.jpg', title: '集美学村 IP「舟舟」', subtitle: 'IP 设计', alt: '集美学村 IP 舟舟', link: 'projects/zhouzhou-ip.html' },
-  { src: 'images/works/anta-618.jpg', title: '安踏电商 618 大促视觉', subtitle: '电商视觉', alt: '安踏电商 618 大促视觉', link: 'projects/anta-618.html' },
-  { src: 'images/works/yingxingji.jpg', title: '应星记 · 拼图游戏', subtitle: '游戏 UI', alt: '应星记 拼图游戏', link: 'projects/yingxingji.html' }
+  { src: 'images/works/nativelike.jpg', title: 'NativeLike', subtitle: '儿童英语学习 App', alt: 'NativeLike 儿童英语学习 App', cat: 'UI设计', link: 'projects/nativelike.html' },
+  { src: 'images/works/kame-app.jpg', title: '咔么租赁 APP 改版', subtitle: 'APP 改版', alt: '咔么租赁 APP 改版', cat: 'UI设计', link: 'projects/kame-app.html' },
+  { src: 'images/works/russian-drama.jpg', title: '俄罗斯短剧 APP 落地页', subtitle: '落地页设计', alt: '俄罗斯短剧 APP 落地页', cat: 'UI设计', link: 'projects/russian-drama.html' },
+  { src: 'images/works/huishang.jpg', title: '惠商开放平台官网', subtitle: '官网设计', alt: '惠商开放平台官网', cat: 'UI设计', link: 'projects/huishang.html' },
+  { src: 'images/works/tuzhan-ai.jpg', title: '兔展智能 AI CARD', subtitle: 'AIGC 设计', alt: '兔展智能 AI CARD', cat: 'UI设计', link: 'projects/tuzhan-ai.html' },
+  { src: 'images/works/kook-ip.jpg', title: 'KOOK「小酷」IP 设计', subtitle: 'IP 设计', alt: 'KOOK 小酷 IP 设计', cat: 'IP设计', link: 'projects/kook-ip.html' },
+  { src: 'images/works/zhouzhou-ip.jpg', title: '集美学村 IP「舟舟」', subtitle: 'IP 设计', alt: '集美学村 IP 舟舟', cat: 'IP设计', link: 'projects/zhouzhou-ip.html' },
+  { src: 'images/works/anta-618.jpg', title: '安踏电商 618 大促视觉', subtitle: '电商视觉', alt: '安踏电商 618 大促视觉', cat: '详情设计', link: 'projects/anta-618.html' },
+  { src: 'images/works/yingxingji.jpg', title: '应星记 · 拼图游戏', subtitle: '游戏 UI', alt: '应星记 拼图游戏', cat: '游戏设计', link: 'projects/yingxingji.html' }
 ];
 
 /* ---------- 启动 ---------- */
@@ -577,6 +577,10 @@ if (root) {
     };
 
     const setItems = next => {
+      /* 必须把新数组存回闭包变量 items —— caption 的标题、计数、
+         aria-live 文本、链接都读的是它。不赋值的话换类别后卡片变了、
+         标题和 "01 / 09" 还停在初始数据上（改过一版就是这样）。 */
+      items = next;
       slots.forEach(slot => slot.dispose());
       slots = next.map(loadSlot);
       activeIndex = -1;
@@ -588,6 +592,15 @@ if (root) {
       focus.pending = -1;
       setFocus(false);
       introState.readyAt = performance.now();
+      /* 新数据到位后把 caption 拉回第一项。
+         还要清掉 titleEl.dataset.index —— renderCaption 里有
+         `if (titleEl.dataset.index !== String(captionActive)) return` 的守卫，
+         换了数据但 index 同为 0 时会被判定"没变化"直接跳过，
+         标题就停在上一批作品的第一个（实测就是这样）。 */
+      captionActive = -1;
+      if (titleEl) titleEl.dataset.index = '';
+      if (digitsEl) digitsEl.textContent = '';
+      if (totalEl) totalEl.textContent = String(next.length).padStart(2, '0');
       dirty = true;
       start();
     };
@@ -1256,6 +1269,21 @@ if (root) {
         start();
       },
       setItems
+    };
+
+    /* 对外接口：售货机选中某个类别后，把该类别下的作品塞进来。
+       carousel 是自执行模块（自己找 #flexCarousel），
+       没有这个出口的话外部没法换数据。 */
+    window.FlexCarousel = {
+      setItems,
+      ITEMS,
+      wake: engine.wake,
+      /* 按类别筛选；不传就还原全部 */
+      filter(cat) {
+        const list = cat ? ITEMS.filter(it => it.cat === cat) : ITEMS;
+        setItems(list);
+        return list.length;
+      }
     };
 
     resize();
