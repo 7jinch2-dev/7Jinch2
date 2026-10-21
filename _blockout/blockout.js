@@ -3,7 +3,7 @@
    空间仍以灰模验证体块与机位；店员已接入带 PBR 贴图的网页模型。
    ========================================== */
 import * as THREE from './three.module.min.js';
-import { createClerk, createTableBadge } from './clerk.js';
+import { createTableBadge } from './badge.js';
 import { loadGlbModel } from './glb-loader.js';
 
 const stage = document.getElementById('stage');
@@ -251,8 +251,9 @@ box(0.4, 0.02, 0.3, M.glowSoft, 0, 0.37, -0.08, reg, { edges: false });
 groupPick(reg, 'register');
 labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-0.98, 1.17, 1.02), layer: 'int', station: 'register' });
 
-// 店员：先用程序化模型占位，网页专用 GLB 加载成功后无缝替换。
-const clerk = createClerk();
+// 店员：只使用当前高精度 PBR 模型，不再保留旧程序化版本。
+const clerk = new THREE.Group();
+clerk.name = 'clerk-chen-zhixi';
 clerk.position.set(-1.65, 0, -0.02);
 props.add(clerk);
 groupPick(clerk, 'clerk');
@@ -273,12 +274,11 @@ loadGlbModel('../assets/models/clerk-optimized.glb').then(model => {
     object.userData.root = clerk;
   });
   clerk.add(model);
-  clerk.userData.body.visible = false;
   clerk.userData.texturedModel = model;
   document.body.dataset.clerkModel = 'textured';
 }).catch(error => {
-  console.warn('Textured clerk could not load; using procedural fallback.', error);
-  document.body.dataset.clerkModel = 'fallback';
+  console.warn('Textured clerk could not load.', error);
+  document.body.dataset.clerkModel = 'unavailable';
 });
 
 /* ---------- 墙面证书 ---------- */
