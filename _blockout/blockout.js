@@ -434,7 +434,10 @@ function go(name, opts = {}) {
   document.body.dataset.mode = isExt ? 'ext' : 'int';
   const navStation = name === 'register' || name === 'notebook' || name === 'badge' ? 'counter' : name;
   document.querySelectorAll('.st').forEach(b => b.classList.toggle('is-active', b.dataset.go === navStation));
-  backBtn.classList.toggle('is-on', name !== 'inside');
+  backBtn.textContent = name === 'inside'
+    ? '← 回到店外'
+    : st.ext ? '进店 →' : '← 回到店内';
+  backBtn.classList.add('is-on');
   tween = {
     t: 0,
     dur: opts.dur || 1.0,
@@ -608,9 +611,16 @@ document.querySelectorAll('.st').forEach(b => {
     else go(b.dataset.go);
   });
 });
-backBtn.addEventListener('click', () => go(facade.visible ? 'street' : 'inside'));
+backBtn.addEventListener('click', () => {
+  if (facade.visible) enterThroughDoor();
+  else if (current === 'inside') go('street');
+  else go('inside');
+});
 window.addEventListener('keydown', e => {
-  if (e.key === 'Escape') go(facade.visible ? 'street' : 'inside');
+  if (e.key !== 'Escape') return;
+  if (facade.visible) enterThroughDoor();
+  else if (current === 'inside') go('street');
+  else go('inside');
 });
 
 /* ---------- 渲染循环 ---------- */
@@ -662,12 +672,11 @@ camera.position.set(...startStation.pos);
 camTarget.set(...startStation.target);
 applyMode(!!startStation.ext);
 document.body.dataset.mode = startStation.ext ? 'ext' : 'int';
+document.body.dataset.station = startName;
 resize();
 render();
 setTimeout(() => loader.classList.add('is-off'), 350);
 setTimeout(() => loader.remove(), 1200);
 if (asked && stations[asked]) {
   setTimeout(() => go(asked, { dur: 0.01 }), 120);
-} else {
-  setTimeout(() => go('inside', { dur: 1.6 }), 900);
 }

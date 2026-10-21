@@ -103,10 +103,10 @@
   .loader.is-off { opacity: 0; pointer-events: none; }
 
   /* 首页嵌入：只保留场景，不重复展示机位按钮和底部提示。 */
+  body[data-embed="1"] .brand,
   body[data-embed="1"] .hint,
   body[data-embed="1"] .stations { display: none; }
-  body[data-embed="1"] .brand { left: 18px; top: 14px; }
-  body[data-embed="1"] .back { right: 18px; top: 14px; }
+  body[data-embed="1"] .back { right: 24px; top: 86px; }
 </style>
 </head>
 <body>
@@ -136,6 +136,6 @@
 </div>
 <div class="loader" id="loader">LOADING BLOCKOUT…</div>
 
-<script type="module" src="./blockout.js?v=20261021-compact"></script>
+<script type="module" src="./blockout.js?v=20261021-exterior"></script>
 </body>
 </html>
