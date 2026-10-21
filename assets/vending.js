@@ -79,9 +79,12 @@ const VendingMachine = (() => {
       <div class="vm__balls">
         ${VM_CATS.map((c, i) => `
           <button type="button" class="vm-ball" data-cat="${c}" data-i="${i}"
-                  aria-label="查看「${c}」类别">
-            <span class="vm-ball__glass">
-              <img src="${VM_BALL_IMG[c]}" alt="" draggable="false">
+                  aria-label="查看「${c}」类别" style="--ball-i:${i}">
+            <span class="vm-ball__shadow" aria-hidden="true"></span>
+            <span class="vm-ball__float">
+              <span class="vm-ball__glass">
+                <img src="${VM_BALL_IMG[c]}" alt="" draggable="false">
+              </span>
             </span>
           </button>`).join('')}
       </div>

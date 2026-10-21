@@ -1497,3 +1497,90 @@ html[data-cab="retro"] {
 @media (prefers-reduced-motion: reduce) {
   .works-carousel.is-swapping .flex-carousel { animation: none; }
 }
+
+/* ==========================================
+   泳池参考 · 漂浮 / 指针视差 / 点阵标题
+   （后加的一层视觉，整段删掉即可回到没有它的版本）
+   1) 四颗玻璃球在水面上慢慢浮沉，下面有一圈倒影
+   2) 鼠标在售货机上移动时，整机微俯仰、球体反向轻移
+   3) 03 区大标题做成点阵字（窄屏自动关掉，保证可读）
+   ========================================== */
+
+/* 整机景深：让微俯仰有立体感 */
+#vmRoot { perspective: 1500px; }
+
+.vm {
+  transform:
+    rotateX(calc(var(--vm-rx, 0) * 1deg))
+    rotateY(calc(var(--vm-ry, 0) * 1deg));
+  transform-style: preserve-3d;
+  transition: transform 0.16s ease-out;
+  will-change: transform;
+}
+
+/* 球：外面一层负责浮沉 + 指针位移，里面的图保持原样 */
+.vm-ball { position: relative; }
+.vm-ball__float {
+  display: block;
+  width: 100%;
+  transform: translate3d(var(--bx, 0px), var(--by, 0px), 0);
+  animation: vmFloat 5.4s ease-in-out infinite;
+  animation-delay: calc(var(--ball-i, 0) * -1.35s);
+  will-change: transform;
+}
+@keyframes vmFloat {
+  0%, 100% { transform: translate3d(var(--bx, 0px), calc(var(--by, 0px) + 4px), 0) rotate(-1.1deg); }
+  50%      { transform: translate3d(var(--bx, 0px), calc(var(--by, 0px) - 5px), 0) rotate(1deg); }
+}
+
+/* 倒影：每颗球底部有一层自己的颜色，像水珠浮着在玻璃上投下的反光 */
+.vm-ball[data-i="0"] { --ball-tint: 205, 100, 90; }
+.vm-ball[data-i="1"] { --ball-tint: 134, 150, 98; }
+.vm-ball[data-i="2"] { --ball-tint: 190, 126, 76; }
+.vm-ball[data-i="3"] { --ball-tint: 106, 114, 180; }
+.vm-ball__shadow {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: -14%;
+  height: 18%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(var(--ball-tint, 255, 255, 255), 0.55),
+    rgba(var(--ball-tint, 255, 255, 255), 0) 70%
+  );
+  filter: blur(4px);
+  opacity: 0.85;
+  animation: vmShadow 5.4s ease-in-out infinite;
+  animation-delay: calc(var(--ball-i, 0) * -1.35s);
+}
+@keyframes vmShadow {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(0.82); opacity: 0.45; }
+}
+
+/* 点阵大标题：只在够宽的屏上开，手机上保留正常字 */
+@media (min-width: 641px) {
+  .sec-works > .display {
+    --dot: 0.058em;
+    -webkit-mask-image: radial-gradient(circle, #000 44%, transparent 48%);
+            mask-image: radial-gradient(circle, #000 44%, transparent 48%);
+    -webkit-mask-size: var(--dot) var(--dot);
+            mask-size: var(--dot) var(--dot);
+    -webkit-mask-repeat: repeat;
+            mask-repeat: repeat;
+    animation: dotDrift 26s linear infinite;
+  }
+  @keyframes dotDrift {
+    from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+    to   { -webkit-mask-position: var(--dot) 0; mask-position: var(--dot) 0; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vm { transform: none; transition: none; }
+  .vm-ball__float, .vm-ball__shadow { animation: none; }
+  .sec-works > .display { animation: none; }
+}
