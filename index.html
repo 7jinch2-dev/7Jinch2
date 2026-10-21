@@ -6,8 +6,9 @@
 <title>PORTFOLIO – 陈芷曦</title>
 
 <!-- 设计档案袋：开屏之后、首屏之前的一屏（样式与交互在 assets/paper.*） -->
-<link rel="stylesheet" href="assets/retro.css?v=1021">
+<link rel="stylesheet" href="assets/retro.css?v=20261021-store">
 <link rel="stylesheet" href="assets/carousel.css?v=10171805">
+<link rel="stylesheet" href="assets/store-preview.css?v=20261021b">
 
 <!--
   ============================================
@@ -1526,6 +1527,7 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
 
   <ul class="nav-links" id="navLinks">
     <!-- 替换点：导航菜单项 -->
+    <li><a href="#storeEntry" data-section="storeEntry">Space</a></li>
     <li><a href="#about" data-section="about">About</a></li>
     <li><a href="#experience" data-section="experience">Experience</a></li>
     <li><a href="#works" data-section="works">Works</a></li>
@@ -1553,10 +1555,35 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
      物理（甩动 / 拖拽 / 回弹）也在那个文件里 -->
 <div class="tag-host" id="tagHost" aria-hidden="true"></div>
 
+<!-- ==========================================
+     00 / SPACE —— 3D 灵感补给站
+     放在作品展示柜之前；独立页面仍可直接访问 _blockout/
+     ========================================== -->
+<section class="store-preview" id="storeEntry" aria-labelledby="storeEntryTitle">
+  <div class="store-preview__head">
+    <div>
+      <p class="store-preview__eyebrow">00 / SPACE · INTERACTIVE SET</p>
+      <h2 class="store-preview__title" id="storeEntryTitle">灵感<em>补给站</em></h2>
+      <p class="store-preview__copy">
+        一间装着作品、身份与工作痕迹的微缩便利店。点击场景里的物件切换视角，按住拖动可以环视。
+      </p>
+    </div>
+    <a class="store-preview__open" href="_blockout/?shot=inside" target="_blank" rel="noopener">全屏查看</a>
+  </div>
+  <div class="store-preview__frame">
+    <iframe
+      src="_blockout/?shot=inside&amp;embed=1"
+      title="灵感补给站 3D 互动场景"
+      loading="eager"
+      allow="fullscreen"
+      referrerpolicy="no-referrer"></iframe>
+    <span class="store-preview__hint">拖动环视 · 点击物件进入细节 · Esc 返回</span>
+  </div>
+</section>
 
 <!-- ==========================================
-     00 / ARCHIVE —— 设计档案袋
-     开屏之后、首屏之前的一屏
+     01 / ARCHIVE —— 作品展示柜
+     3D 店铺之后、首屏之前的一屏
      替换点：文案 —— 直接改下面的文字
      替换点：参数 —— assets/paper.js 顶部的 PAPER_CONFIG
      替换点：观感 —— assets/paper.css
@@ -2010,6 +2037,14 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
    ========================================== */
 const navLinks = document.getElementById('navLinks');
 const navHamburger = document.getElementById('navHamburger');
+const storeEntry = document.getElementById('storeEntry');
+const tagHost = document.getElementById('tagHost');
+if (storeEntry && tagHost && 'IntersectionObserver' in window) {
+  new IntersectionObserver(entries => {
+    const entry = entries[0];
+    tagHost.classList.toggle('is-store-hidden', entry.isIntersecting && entry.intersectionRatio > 0.18);
+  }, { threshold: [0, 0.18, 0.5] }).observe(storeEntry);
+}
 navHamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
 });

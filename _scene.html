@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>灵感补给站 · 镜头测试</title>
+<base href="/">
+<link rel="stylesheet" href="assets/retro.css?v=1021">
+<style>
+  /* ==========================================
+     2.5D 场景 · 镜头系统原型
+     整个空间是 2200×1240 的一张"布景"，镜头 = 布景的位移 + 缩放 + 微旋转
+     ========================================== */
+  :root {
+    --ink: #F5E9F2;
+    --dim: rgba(245, 233, 242, 0.55);
+    --pink: #FF69B4;
+    --warm: #FFD9A0;
+    --stage-w: 2200px;
+    --stage-h: 1240px;
+    --cx: 0px;
+    --cy: 0px;
+    --cs: 0.55;
+    --cr: 0deg;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #07070B;
+    color: var(--ink);
+    font-family: var(--r-font);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- 取景框 ---------- */
+  #viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    cursor: default;
+    background: radial-gradient(80% 60% at 50% 42%, #14131A 0%, #07070B 72%);
+  }
+  #world {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--stage-w);
+    height: var(--stage-h);
+    margin: calc(var(--stage-h) / -2) 0 0 calc(var(--stage-w) / -2);
+    transform: translate3d(var(--cx), var(--cy), 0) scale(var(--cs)) rotate(var(--cr));
+    transform-origin: 50% 50%;
+    transition: transform 1s cubic-bezier(0.22, 0.9, 0.18, 1);
+    will-change: transform;
+  }
+
+  /* ---------- 布景分层 ---------- */
+  .layer { position: absolute; inset: 0; }
+  .layer--back { transform: translate3d(calc(var(--px, 0) * -6px), calc(var(--py, 0) * -4px), 0); }
+  .layer--mid  { transform: translate3d(calc(var(--px, 0) * 4px), calc(var(--py, 0) * 3px), 0); }
+  .layer--front{ transform: translate3d(calc(var(--px, 0) * 12px), calc(var(--py, 0) * 9px), 0); }
+
+  /* 墙 */
+  .wall {
+    position: absolute; left: 0; top: 0; width: var(--stage-w); height: 760px;
+    background:
+      linear-gradient(180deg, #15141C 0%, #101017 62%, #0C0C12 100%);
+    box-shadow: inset 0 -40px 80px -40px #000;
+  }
+  .wall::after {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 92px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 92px);
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.15));
+  }
+  /* 地 */
+  .floor {
+    position: absolute; left: 0; top: 700px; width: var(--stage-w); height: 540px;
+    background:
+      radial-gradient(60% 80% at 52% 10%, rgba(255, 190, 120, 0.10), transparent 70%),
+      linear-gradient(180deg, #0B0B10 0%, #07070B 100%);
+    box-shadow: inset 0 30px 60px -40px #000;
+  }
+  .floor::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 160px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 120px);
+    transform: perspective(700px) rotateX(58deg);
+    transform-origin: 50% 0;
+    opacity: 0.5;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.85), transparent 78%);
+  }
+  /* 地面光斑 */
+  .pool-light {
+    position: absolute; left: 780px; top: 800px; width: 1080px; height: 380px;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 216, 168, 0.18), transparent 70%);
+    filter: blur(6px); pointer-events: none;
+  }
+
+  /* 霓虹招牌 */
+  .neon {
+    position: absolute; left: 760px; top: 74px;
+    display: flex; align-items: flex-end; gap: 22px;
+    pointer-events: none;
+  }
+  .neon__cn {
+    font-size: 92px; font-weight: 900; letter-spacing: 0.04em; line-height: 1;
+    color: #FFF1F7;
+    text-shadow:
+      0 0 6px rgba(255, 105, 180, 0.95),
+      0 0 22px rgba(255, 105, 180, 0.75),
+      0 0 60px rgba(255, 105, 180, 0.45);
+    animation: neonFlicker 7s infinite;
+  }
+  .neon__en {
+    font-family: var(--r-mono); font-size: 22px; letter-spacing: 0.34em;
+    color: rgba(255, 214, 233, 0.75); padding-bottom: 12px;
+    text-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
+  }
+  @keyframes neonFlicker {
+    0%, 92%, 100% { opacity: 1; }
+    93% { opacity: 0.55; }
+    94% { opacity: 1; }
+    96% { opacity: 0.7; }
+  }
+
+  /* 吊灯 */
+  .lamp { position: absolute; top: 0; width: 8px; height: 210px; background: linear-gradient(180deg, #2A2A32, #14141A); }
+  .lamp::after {
+    content: ""; position: absolute; left: 50%; bottom: -26px; width: 86px; height: 34px;
+    transform: translateX(-50%);
+    border-radius: 50% 50% 46% 46% / 70% 70% 30% 30%;
+    background: radial-gradient(60% 60% at 50% 30%, #FFE7BE, #C98A4B 60%, #4A3220 100%);
+    box-shadow: 0 10px 40px 8px rgba(255, 196, 128, 0.28);
+  }
+  .lamp--a { left: 470px; }
+  .lamp--b { left: 1650px; height: 170px; }
+  .light-cone {
+    position: absolute; top: 220px; width: 520px; height: 560px;
+    background: radial-gradient(50% 50% at 50% 0%, rgba(255, 205, 150, 0.16), transparent 72%);
+    filter: blur(8px); pointer-events: none;
+  }
+  .light-cone--a { left: 214px; }
+  .light-cone--b { left: 1394px; top: 180px; opacity: 0.7; }
+
+  /* 门 */
+  .door {
+    position: absolute; left: 90px; top: 232px; width: 268px; height: 540px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #23222B 0%, #17161E 60%, #111017 100%);
+    box-shadow: inset 0 0 0 3px #2E2C37, 0 30px 60px -20px #000;
+  }
+  .door__glass {
+    position: absolute; left: 30px; top: 44px; width: 208px; height: 210px;
+    border-radius: 4px;
+    background:
+      linear-gradient(160deg, rgba(160, 220, 255, 0.16), rgba(20, 26, 40, 0.5) 60%),
+      #0E1219;
+    box-shadow: inset 0 0 0 2px #33313C;
+  }
+  .door__glass::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.12) 47%, transparent 54%);
+  }
+  .door__handle {
+    position: absolute; left: 224px; top: 300px; width: 10px; height: 88px; border-radius: 6px;
+    background: linear-gradient(90deg, #6C6A76, #C9C6D2 45%, #55535E);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+  .door__sign {
+    position: absolute; left: 50%; top: 286px; transform: translateX(-50%);
+    font-family: var(--r-mono); font-size: 15px; letter-spacing: 0.32em;
+    color: #FFD9A0; text-shadow: 0 0 12px rgba(255, 190, 110, 0.7);
+  }
+  /* 门上的工牌 */
+  .door__badge {
+    position: absolute; left: 244px; top: 420px; width: 54px; height: 76px; border-radius: 5px;
+    background: linear-gradient(180deg, #FFF8F2, #E8DFD4);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.55);
+    transform-origin: 50% -22px;
+    animation: badgeSway 4.2s ease-in-out infinite;
+  }
+  .door__badge::before {
+    content: ""; position: absolute; left: 50%; top: -22px; width: 2px; height: 24px;
+    background: #8A8794; transform: translateX(-50%);
+  }
+  .door__badge::after {
+    content: "陈"; position: absolute; inset: 14px 8px 26px; border-radius: 2px;
+    background: #C4342A; color: #FFE9E4; font-size: 13px; font-weight: 800;
+    display: grid; place-items: center;
+  }
+  @keyframes badgeSway {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(4deg); }
+  }
+
+  /* 档案柜 */
+  .cabinet {
+    position: absolute; left: 400px; top: 320px; width: 360px; height: 452px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #3C4550 0%, #2B323B 58%, #232931 100%);
+    box-shadow: inset 0 0 0 3px #4C5661, 0 34px 60px -24px #000;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 14px;
+  }
+  .drawer {
+    border-radius: 4px;
+    background: linear-gradient(180deg, #4A545F, #333A44 70%, #2A3038);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -2px 0 rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .drawer::after {
+    content: attr(data-label); position: absolute; left: 8px; right: 8px; top: 8px;
+    font-family: var(--r-mono); font-size: 10px; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.55); text-align: center;
+  }
+  .drawer::before {
+    content: ""; position: absolute; left: 50%; top: 46%; width: 42%; height: 7px;
+    transform: translate(-50%, -50%); border-radius: 4px;
+    background: linear-gradient(180deg, #9AA2AC, #5E6670);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  /* 柜台 */
+  .counter {
+    position: absolute; left: 110px; top: 880px; width: 640px; height: 250px;
+    border-radius: 10px 10px 4px 4px;
+    background: linear-gradient(180deg, #7A5B3E 0%, #5E442E 34%, #4A3423 100%);
+    box-shadow: 0 44px 70px -30px #000, inset 0 2px 0 rgba(255, 220, 180, 0.25);
+  }
+  .counter::before {
+    content: ""; position: absolute; left: -14px; right: -14px; top: -16px; height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #A98A63, #6E5236);
+    box-shadow: 0 8px 20px -8px #000;
+  }
+  .counter__paper {
+    position: absolute; left: 54px; top: -8px; width: 150px; height: 96px;
+    background: #F6F1E6; transform: rotate(-4deg);
+    box-shadow: 0 10px 22px -10px #000;
+    font-family: var(--r-mono); font-size: 9px; color: #4A4A46; padding: 10px; line-height: 1.5;
+  }
+  .register {
+    position: absolute; left: 420px; top: -84px; width: 170px; height: 120px;
+    border-radius: 8px 8px 4px 4px;
+    background: linear-gradient(180deg, #D9D4CB, #A9A49B 60%, #8B877F);
+    box-shadow: 0 16px 26px -14px #000, inset 0 1px 0 rgba(255,255,255,0.7);
+  }
+  .register::before {
+    content: ""; position: absolute; left: 14px; right: 14px; top: 12px; height: 40px;
+    border-radius: 4px; background: linear-gradient(180deg, #1B2A22, #0F1A15);
+    box-shadow: inset 0 0 0 2px #6E6A62, 0 0 18px rgba(123, 228, 149, 0.18);
+  }
+  .register::after {
+    content: "¥ 0.00"; position: absolute; left: 0; right: 0; top: 22px;
+    font-family: var(--r-mono); font-size: 15px; letter-spacing: 0.12em;
+    color: #8CFFB0; text-align: center; text-shadow: 0 0 10px rgba(123,228,149,0.7);
+  }
+  .receipt-slot {
+    position: absolute; left: 96px; top: 62px; width: 40px; height: 6px; border-radius: 3px;
+    background: #3A3833; box-shadow: inset 0 1px 2px #000;
+  }
+
+  /* 售货机（复用现有组件） */
+  .vm-slot {
+    position: absolute; left: 860px; top: 300px; width: 960px;
+    filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.65)) brightness(0.93) saturate(0.97);
+  }
+  .vm-slot .vm { width: 100%; margin: 0; }
+  .vm-slot::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(200deg, rgba(255, 214, 168, 0.10), transparent 46%, rgba(0, 0, 0, 0.16));
+    mix-blend-mode: soft-light;
+  }
+
+  /* 墙上的菜单板 */
+  .menu {
+    position: absolute; left: 1820px; top: 250px; width: 300px; padding: 22px 20px;
+    background: linear-gradient(180deg, #1E1D25, #14131A);
+    box-shadow: inset 0 0 0 2px #35333F, 0 20px 34px -20px #000;
+    transform: rotate(1.4deg);
+    font-family: var(--r-mono); color: rgba(245, 233, 242, 0.75);
+    font-size: 13px; line-height: 2.1; letter-spacing: 0.08em;
+  }
+  .menu h4 {
+    margin: 0 0 10px; font-family: var(--r-font); font-size: 18px; letter-spacing: 0.12em;
+    color: #FFD9A0;
+  }
+  .menu p { display: flex; justify-content: space-between; margin: 0; }
+  .menu p b { font-weight: 500; color: rgba(255,255,255,0.4); }
+
+  /* ---------- 热点 ---------- */
+  .hotspot {
+    position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px;
+    border: 0; padding: 0; background: none; cursor: pointer;
+    color: var(--ink);
+  }
+  .hotspot__ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 1.5px solid rgba(255, 233, 242, 0.5);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 233, 242, 0.16), transparent 70%);
+    box-shadow: 0 0 0 0 rgba(255, 105, 180, 0.35);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s, box-shadow 0.3s;
+  }
+  .hotspot__ring::after {
+    content: ""; position: absolute; inset: 40%; border-radius: 50%; background: #FFE9F2;
+    box-shadow: 0 0 12px rgba(255, 233, 242, 0.9);
+  }
+  .hotspot__label {
+    position: absolute; left: 50%; bottom: calc(100% + 12px); transform: translate(-50%, 6px);
+    white-space: nowrap; padding: 7px 12px; border-radius: 999px;
+    background: rgba(12, 12, 18, 0.86); border: 1px solid rgba(255, 233, 242, 0.18);
+    font-size: 13px; letter-spacing: 0.04em; color: #FFE9F2;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    backdrop-filter: blur(6px);
+  }
+  .hotspot:hover .hotspot__ring,
+  .hotspot:focus-visible .hotspot__ring {
+    transform: scale(1.18);
+    border-color: rgba(255, 233, 242, 0.9);
+    box-shadow: 0 0 0 10px rgba(255, 105, 180, 0.12), 0 0 24px rgba(255, 105, 180, 0.35);
+  }
+  .hotspot:hover .hotspot__label,
+  .hotspot:focus-visible .hotspot__label {
+    opacity: 1; transform: translate(-50%, 0);
+  }
+  .hotspot:focus-visible { outline: none; }
+
+  .hs--door { left: 224px; top: 500px; }
+  .hs--cabinet { left: 580px; top: 560px; }
+  .hs--vending { left: 1700px; top: 760px; }
+  .hs--counter { left: 300px; top: 1010px; }
+  .hs--checkout { left: 520px; top: 800px; }
+
+  /* ---------- 颗粒 / 暗角 ---------- */
+  .grain {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.16; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .vignette {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(70% 60% at 50% 45%, transparent 45%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* ---------- HUD ---------- */
+  .hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  .hud::before,
+  .hud::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 132px; pointer-events: none;
+  }
+  .hud::before { top: 0; z-index: 0; background: linear-gradient(180deg, rgba(5, 5, 8, 0.88), rgba(5, 5, 8, 0)); }
+  .hud::after { bottom: 0; z-index: 0; background: linear-gradient(0deg, rgba(5, 5, 8, 0.9), rgba(5, 5, 8, 0)); }
+  .hud__top, .hud__hint, .hud__stations, .hud__back { z-index: 1; }
+  .hud__top {
+    position: absolute; left: 30px; top: 24px; display: flex; align-items: baseline; gap: 14px;
+    font-size: 13px; letter-spacing: 0.24em; color: var(--dim);
+  }
+  .hud__brand { font-weight: 800; letter-spacing: 0.06em; font-size: 15px; color: var(--ink); }
+  .hud__open {
+    padding: 4px 9px; border-radius: 999px; border: 1px solid rgba(255, 105, 180, 0.5);
+    color: #FFC2E2; font-size: 10px; letter-spacing: 0.22em;
+    box-shadow: 0 0 14px rgba(255, 105, 180, 0.25) inset;
+  }
+  .hud__hint {
+    position: absolute; left: 30px; bottom: 26px; font-size: 12px; letter-spacing: 0.08em;
+    color: rgba(245, 233, 242, 0.42);
+  }
+  .hud__hint kbd {
+    font-family: var(--r-mono); font-size: 11px; padding: 2px 6px; border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.7);
+  }
+  .hud__stations {
+    position: absolute; right: 30px; bottom: 24px; display: flex; gap: 8px; pointer-events: auto;
+  }
+  .station {
+    border: 1px solid rgba(255,255,255,0.14); background: rgba(12,12,18,0.55);
+    color: rgba(245,233,242,0.6); border-radius: 999px; padding: 7px 14px; font-size: 12px;
+    letter-spacing: 0.06em; cursor: pointer; backdrop-filter: blur(6px);
+    transition: color 0.25s, border-color 0.25s, background 0.25s;
+  }
+  .station:hover { color: var(--ink); border-color: rgba(255,255,255,0.35); }
+  .station.is-active {
+    color: #1A0F15; background: #FFC2E2; border-color: #FFC2E2; font-weight: 600;
+  }
+  .hud__back {
+    position: absolute; right: 30px; top: 24px; pointer-events: auto;
+    border: 1px solid rgba(255,255,255,0.16); background: rgba(12,12,18,0.55);
+    color: rgba(245,233,242,0.7); border-radius: 999px; padding: 8px 14px; font-size: 12px;
+    letter-spacing: 0.1em; cursor: pointer; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, color 0.25s, border-color 0.25s;
+  }
+  body[data-station]:not([data-station="overview"]) .hud__back { opacity: 1; pointer-events: auto; }
+  .hud__back:hover { color: var(--ink); border-color: rgba(255,255,255,0.4); }
+
+  @media (max-width: 720px) {
+    .hud__hint { display: none; }
+    .hud__stations { left: 16px; right: 16px; bottom: 16px; justify-content: center; flex-wrap: wrap; }
+    .station { padding: 6px 10px; font-size: 11px; }
+    .hotspot { width: 72px; height: 72px; margin: -36px 0 0 -36px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #world { transition-duration: 0.01s; }
+    .neon__cn, .door__badge { animation: none; }
+  }
+</style>
+</head>
+<body data-station="overview">
+
+<div id="viewport">
+  <div id="world">
+    <!-- 后景：墙、灯、门、柜 -->
+    <div class="layer layer--back">
+      <div class="wall"></div>
+      <div class="neon"><span class="neon__cn">灵感补给站</span><span class="neon__en">24H · OPEN</span></div>
+      <div class="lamp lamp--a"></div>
+      <div class="lamp lamp--b"></div>
+      <div class="light-cone light-cone--a"></div>
+      <div class="light-cone light-cone--b"></div>
+      <div class="door">
+        <div class="door__glass"></div>
+        <span class="door__sign">OPEN</span>
+        <span class="door__handle"></span>
+        <span class="door__badge"></span>
+      </div>
+      <div class="cabinet">
+        <span class="drawer" data-label="2026"></span><span class="drawer" data-label="2025"></span><span class="drawer" data-label="2024"></span>
+        <span class="drawer" data-label="APP"></span><span class="drawer" data-label="WEB"></span><span class="drawer" data-label="IP"></span>
+        <span class="drawer" data-label="GAME"></span><span class="drawer" data-label="UI"></span><span class="drawer" data-label="MISC"></span>
+      </div>
+      <div class="menu">
+        <h4>今夜供应</h4>
+        <p>UI 设计 <b>04</b></p>
+        <p>详情设计 <b>01</b></p>
+        <p>IP 设计 <b>02</b></p>
+        <p>游戏设计 <b>01</b></p>
+        <p>过程档案 <b>09</b></p>
+      </div>
+    </div>
+
+    <!-- 中景：地面、售货机 -->
+    <div class="layer layer--mid">
+      <div class="floor"></div>
+      <div class="pool-light"></div>
+      <div class="vm-slot" id="vmRoot"></div>
+    </div>
+
+    <!-- 前景：柜台 -->
+    <div class="layer layer--front">
+      <div class="counter">
+        <div class="counter__paper">灵感补给单<br>No. 0001<br>今夜的第一个想法<br>已打包 ✓</div>
+        <div class="register"><span class="receipt-slot"></span></div>
+      </div>
+    </div>
+
+    <!-- 热点放在不受视差影响的层，位置对得上物件 -->
+    <button class="hotspot hs--door" data-goto="entry"><span class="hotspot__ring"></span><span class="hotspot__label">门口 · 今夜的灯还亮着</span></button>
+    <button class="hotspot hs--cabinet" data-goto="archive"><span class="hotspot__ring"></span><span class="hotspot__label">档案柜 · 看看过程</span></button>
+    <button class="hotspot hs--vending" data-goto="vending"><span class="hotspot__ring"></span><span class="hotspot__label">售货机 · 挑一个想法</span></button>
+    <button class="hotspot hs--counter" data-goto="counter"><span class="hotspot__ring"></span><span class="hotspot__label">柜台 · 认识一下店主</span></button>
+    <button class="hotspot hs--checkout" data-goto="checkout"><span class="hotspot__ring"></span><span class="hotspot__label">收银台 · 带走一张小票</span></button>
+
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+</div>
+
+<div class="hud">
+  <div class="hud__top">
+    <span class="hud__brand">✦ 灵感补给站</span>
+    <span class="hud__open">24H OPEN</span>
+  </div>
+  <button class="hud__back" id="backBtn">← 回到全景</button>
+  <div class="hud__hint">点店里的物件移动镜头 · <kbd>Esc</kbd> 退回全景</div>
+  <div class="hud__stations" id="stations">
+    <button class="station is-active" data-goto="overview">全景</button>
+    <button class="station" data-goto="entry">门口</button>
+    <button class="station" data-goto="archive">档案柜</button>
+    <button class="station" data-goto="vending">售货机</button>
+    <button class="station" data-goto="counter">柜台</button>
+    <button class="station" data-goto="checkout">收银台</button>
+  </div>
+</div>
+
+<script src="assets/sfx.js?v=1021"></script>
+<script src="assets/vending.js?v=1021"></script>
+<script>
+(() => {
+  const world = document.getElementById('world');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 机位：point 是要放到画面中心的世界坐标，zoom 是相对"适配缩放"的倍数 */
+  const STATIONS = {
+    overview: { point: null,        zoom: 1,    cr: 0 },
+    entry:    { point: [224, 500],  zoom: 2.1,  cr: 1.2 },
+    archive:  { point: [580, 560],  zoom: 2.0,  cr: -0.8 },
+    vending:  { point: [1340, 620], zoom: 2.0,  cr: -1.1 },
+    counter:  { point: [430, 960],  zoom: 2.2,  cr: 1.4 },
+    checkout: { point: [520, 820],  zoom: 2.8,  cr: 0.8 }
+  };
+
+  let current = 'overview';
+
+  /* 横屏：整间店装进画面（contain）；竖屏：铺满画面（cover），靠机位去看别处 */
+  function fitScale() {
+    const w = innerWidth, h = innerHeight;
+    const contain = Math.min(w / 2200, h / 1240);
+    const cover = Math.max(w / 2200, h / 1240);
+    return w / h >= 1 ? contain * 0.96 : cover * 0.92;
+  }
+
+  function goto(name, silent) {
+    const s = STATIONS[name];
+    if (!s) return;
+    current = name;
+    const fit = fitScale();
+    const cs = fit * s.zoom;
+    let cx = 0, cy = 0;
+    if (s.point) {
+      cx = (1100 - s.point[0]) * cs;
+      cy = (620 - s.point[1]) * cs;
+    }
+    world.style.setProperty('--cx', cx.toFixed(1) + 'px');
+    world.style.setProperty('--cy', cy.toFixed(1) + 'px');
+    world.style.setProperty('--cs', cs.toFixed(4));
+    world.style.setProperty('--cr', s.cr + 'deg');
+    document.body.dataset.station = name;
+    document.querySelectorAll('.station').forEach(b => {
+      b.classList.toggle('is-active', b.dataset.goto === name);
+    });
+    if (!silent && window.Sfx) { try { Sfx.unlock(); Sfx.click(name === 'overview' ? 180 : 260); } catch (e) {} }
+  }
+
+  function back() {
+    if (current !== 'overview') goto('overview');
+  }
+
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      goto(el.dataset.goto);
+    });
+  });
+  document.getElementById('backBtn').addEventListener('click', back);
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') back();
+  });
+  addEventListener('resize', () => goto(current, true));
+
+  /* 指针视差：只在桌面细指针上跑 */
+  if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const vp = document.getElementById('viewport');
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+    const frame = () => {
+      raf = 0;
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      world.style.setProperty('--px', cx.toFixed(3));
+      world.style.setProperty('--py', cy.toFixed(3));
+      if (Math.abs(tx - cx) > 0.002 || Math.abs(ty - cy) > 0.002) raf = requestAnimationFrame(frame);
+    };
+    vp.addEventListener('pointermove', e => {
+      tx = (e.clientX / innerWidth) * 2 - 1;
+      ty = (e.clientY / innerHeight) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(frame);
+    });
+  }
+
+  /* 入场：先黑场，再慢慢推近 */
+  world.style.setProperty('--cs', String(fitScale() * 1.08));
+  setTimeout(() => goto('overview', true), 120);
+})();
+</script>
+</body>
+</html>

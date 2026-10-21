@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>灵感补给站 · 3D 灰模</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #050506; color: #EDEAE4;
+    font-family: 'Inter', -apple-system, "PingFang SC", sans-serif; overflow: hidden; }
+  /* 固定 1920×1080 的画布，其它屏幕等比缩放、留黑边 */
+  #frame {
+    position: absolute; left: 50%; top: 50%;
+    width: 1920px; height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--s, 1));
+    transform-origin: center center;
+    background: #0B0B0E; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.06);
+  }
+  #stage { position: absolute; inset: 0; }
+  #stage canvas { display: block; }
+
+  /* 标签层 */
+  #labels { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+  .tag {
+    position: absolute; transform: translate(-50%, -50%);
+    font-size: 11px; letter-spacing: .08em; color: #EDEAE4;
+    padding: 4px 8px; border-radius: 999px;
+    background: rgba(10, 10, 14, .72); border: 1px solid rgba(255,255,255,.16);
+    white-space: nowrap; opacity: 0; transition: opacity .2s;
+  }
+  .tag.is-on { opacity: .92; }
+  .tag::before {
+    content: ""; position: absolute; left: -3px; top: 50%; width: 5px; height: 5px;
+    margin-top: -2.5px; border-radius: 50%; background: #E8A24A;
+    box-shadow: 0 0 8px rgba(232,162,74,.9);
+  }
+
+  /* HUD */
+  .hud { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+  .hud::before, .hud::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 120px; z-index: 0;
+  }
+  .hud::before { top: 0; background: linear-gradient(180deg, rgba(6,6,9,.88), rgba(6,6,9,0)); }
+  .hud::after { bottom: 0; background: linear-gradient(0deg, rgba(6,6,9,.9), rgba(6,6,9,0)); }
+
+  .brand { position: absolute; left: 26px; top: 20px; z-index: 2; display: flex; align-items: baseline; gap: 12px; }
+  .brand b { font-size: 15px; letter-spacing: .05em; }
+  .brand span { font-size: 11px; letter-spacing: .22em; color: rgba(237,234,228,.45); }
+  .brand i { font-style: normal; font-size: 10px; letter-spacing: .2em; color: #E8A24A;
+    border: 1px solid rgba(232,162,74,.4); border-radius: 999px; padding: 4px 8px; }
+
+  .hint { position: absolute; left: 26px; bottom: 22px; z-index: 2; font-size: 12px;
+    color: rgba(237,234,228,.5); letter-spacing: .04em; }
+  .hint kbd { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px;
+    border: 1px solid rgba(255,255,255,.2); border-radius: 4px; padding: 1px 5px; }
+
+  .stations { position: absolute; right: 24px; bottom: 20px; z-index: 2; display: flex; gap: 7px; flex-wrap: wrap;
+    justify-content: flex-end; pointer-events: auto; max-width: 70vw; }
+  .st {
+    border: 1px solid rgba(255,255,255,.16); background: rgba(12,12,16,.6);
+    color: rgba(237,234,228,.66); border-radius: 999px; padding: 7px 13px; font-size: 12px;
+    letter-spacing: .04em; cursor: pointer; backdrop-filter: blur(6px);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .st:hover { color: #EDEAE4; border-color: rgba(255,255,255,.36); }
+  .st.is-active { background: #E8A24A; border-color: #E8A24A; color: #241A12; font-weight: 700; }
+
+  .back {
+    position: absolute; right: 24px; top: 20px; z-index: 2; pointer-events: auto;
+    border: 1px solid rgba(255,255,255,.16); background: rgba(12,12,16,.6);
+    color: rgba(237,234,228,.72); border-radius: 999px; padding: 8px 14px; font-size: 12px;
+    letter-spacing: .08em; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .back.is-on { opacity: 1; pointer-events: auto; }
+  .back:hover { color: #EDEAE4; border-color: rgba(255,255,255,.4); }
+
+  /* 对话气泡 */
+  .bubble {
+    position: absolute; z-index: 5; transform: translate(-50%, -100%);
+    max-width: 260px; padding: 12px 15px; border-radius: 14px 14px 14px 4px;
+    background: #F3EADB; color: #2A1E18; font-size: 13px; line-height: 1.55;
+    box-shadow: 0 18px 40px rgba(0,0,0,.5); opacity: 0; transition: opacity .25s, transform .25s;
+    pointer-events: none;
+  }
+  .bubble::after {
+    content: ""; position: absolute; left: 14px; bottom: -8px;
+    border: 8px solid transparent; border-top-color: #F3EADB; border-bottom: 0;
+  }
+  .bubble.is-on { opacity: 1; transform: translate(-50%, -100%) translateY(-6px); }
+  .bubble b { color: #A9611C; }
+
+  /* 进门时短暂黑场，穿过门洞 */
+  .fade {
+    position: absolute; inset: 0; z-index: 8; pointer-events: none;
+    background: #0B0B0E; opacity: 0; transition: opacity .25s ease;
+  }
+  .fade.is-on { opacity: 1; }
+
+  .loader { position: fixed; inset: 0; z-index: 9; display: grid; place-items: center;
+    background: #0B0B0E; color: rgba(237,234,228,.55); font-size: 13px; letter-spacing: .2em;
+    transition: opacity .5s; }
+  .loader.is-off { opacity: 0; pointer-events: none; }
+
+  /* 首页嵌入：只保留场景，不重复展示机位按钮和底部提示。 */
+  body[data-embed="1"] .hint,
+  body[data-embed="1"] .stations { display: none; }
+  body[data-embed="1"] .brand { left: 18px; top: 14px; }
+  body[data-embed="1"] .back { right: 18px; top: 14px; }
+</style>
+</head>
+<body>
+<div id="frame">
+  <div id="stage"></div>
+  <div id="labels"></div>
+
+  <div class="hud">
+    <div class="brand"><b>✦ 灵感补给站</b><span>GREY BLOCKOUT</span><i>3D 灰模 v0.5 · 1920×1080</i></div>
+    <button class="back" id="back">← 回到店内</button>
+    <div class="hint">点击店里的物件 · <kbd>Esc</kbd> 退回 · 拖拽环视</div>
+    <div class="stations" id="stations">
+      <button class="st" data-go="street">外景</button>
+      <button class="st" data-go="window">窗</button>
+      <button class="st" data-go="door">门</button>
+      <button class="st is-active" data-go="inside">店内</button>
+      <button class="st" data-go="vending">售货机</button>
+      <button class="st" data-go="counter">柜台</button>
+      <button class="st" data-go="clerk">店员</button>
+      <button class="st" data-go="badge">工牌</button>
+      <button class="st" data-go="wall">证书</button>
+    </div>
+  </div>
+
+  <div class="bubble" id="bubble"></div>
+  <div class="fade" id="fade"></div>
+</div>
+<div class="loader" id="loader">LOADING BLOCKOUT…</div>
+
+<script type="module" src="./blockout.js?v=20261021-compact"></script>
+</body>
+</html>
