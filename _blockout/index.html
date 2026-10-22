@@ -8,14 +8,10 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: #050506; color: #EDEAE4;
     font-family: 'Inter', -apple-system, "PingFang SC", sans-serif; overflow: hidden; }
-  /* 固定 1920×1080 的画布，其它屏幕等比缩放、留黑边 */
   #frame {
-    position: absolute; left: 50%; top: 50%;
-    width: 1920px; height: 1080px;
-    transform: translate(-50%, -50%) scale(var(--s, 1));
-    transform-origin: center center;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     background: #0B0B0E; overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(255,255,255,.06);
   }
   #stage { position: absolute; inset: 0; }
   #stage canvas { display: block; }
@@ -106,6 +102,7 @@
   body[data-embed="1"] .brand,
   body[data-embed="1"] .hint,
   body[data-embed="1"] .stations { display: none; }
+  body[data-embed="1"][data-mode="ext"] .tag { display: none; }
   body[data-embed="1"] .back { right: 24px; top: 86px; }
 </style>
 </head>
@@ -115,17 +112,15 @@
   <div id="labels"></div>
 
   <div class="hud">
-    <div class="brand"><b>✦ 灵感补给站</b><span>GREY BLOCKOUT</span><i>3D 灰模 v0.5 · 1920×1080</i></div>
+    <div class="brand"><b>✦ 販賣 · 靈感</b><span>STORE BLOCKOUT</span><i>3D 灰模 v0.8</i></div>
     <button class="back" id="back">← 回到店内</button>
-    <div class="hint">点击店里的物件 · <kbd>Esc</kbd> 退回 · 拖拽环视</div>
+    <div class="hint">点击物件 · 拖拽环视 · 滚轮 / 双指缩放 · <kbd>Esc</kbd> 退回</div>
     <div class="stations" id="stations">
       <button class="st" data-go="street">外景</button>
-      <button class="st" data-go="window">窗</button>
       <button class="st" data-go="door">门</button>
       <button class="st is-active" data-go="inside">店内</button>
       <button class="st" data-go="vending">售货机</button>
       <button class="st" data-go="counter">柜台</button>
-      <button class="st" data-go="clerk">店员</button>
       <button class="st" data-go="badge">工牌</button>
       <button class="st" data-go="wall">证书</button>
     </div>
@@ -136,6 +131,6 @@
 </div>
 <div class="loader" id="loader">LOADING BLOCKOUT…</div>
 
-<script type="module" src="./blockout.js?v=20261021-current-clerk"></script>
+<script type="module" src="./blockout.js?v=20261022-zoom-2"></script>
 </body>
 </html>

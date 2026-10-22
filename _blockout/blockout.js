@@ -1,10 +1,10 @@
 /* ==========================================
-   灵感补给站 · 3D 灰模 v0.4
+   灵感补给站 · 3D 灰模 v0.8
    空间仍以灰模验证体块与机位；店员已接入带 PBR 贴图的网页模型。
    ========================================== */
 import * as THREE from './three.module.min.js';
 import { createTableBadge } from './badge.js';
-import { loadGlbModel } from './glb-loader.js';
+import { loadGlbModel } from './glb-loader.js?v=20261022-interior-fit-1';
 
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labels');
@@ -13,8 +13,8 @@ const bubbleEl = document.getElementById('bubble');
 const backBtn = document.getElementById('back');
 const fadeEl = document.getElementById('fade');
 
-const W = 1920;
-const H = 1080;
+let W = window.innerWidth;
+let H = window.innerHeight;
 const CAMERA_FOV = 48;
 const frame = document.getElementById('frame');
 
@@ -50,13 +50,28 @@ scene.add(cool);
 
 /* ---------- 材质 ---------- */
 const M = {
-  wall: new THREE.MeshStandardMaterial({ color: 0x393431, roughness: 0.95, metalness: 0.02 }),
-  floor: new THREE.MeshStandardMaterial({ color: 0x6f4b31, roughness: 0.9 }),
-  prop: new THREE.MeshStandardMaterial({ color: 0x9a7546, roughness: 0.82 }),
-  propLo: new THREE.MeshStandardMaterial({ color: 0x76583a, roughness: 0.88 }),
-  metal: new THREE.MeshStandardMaterial({ color: 0xc3a269, roughness: 0.5, metalness: 0.28 }),
+  wall: new THREE.MeshStandardMaterial({ color: 0xe8e0d0, roughness: 0.92, metalness: 0.01 }),
+  facadeWall: new THREE.MeshStandardMaterial({ color: 0x8e887e, roughness: 0.96, metalness: 0.01 }),
+  facadeSide: new THREE.MeshBasicMaterial({ color: 0x716d66, side: THREE.DoubleSide }),
+  floor: new THREE.MeshStandardMaterial({ color: 0xc9beab, roughness: 0.88 }),
+  streetFloor: new THREE.MeshStandardMaterial({ color: 0x6f4b31, roughness: 0.9 }),
+  tile: new THREE.MeshStandardMaterial({ color: 0xd8cfbd, roughness: 0.82 }),
+  prop: new THREE.MeshStandardMaterial({ color: 0xe6dece, roughness: 0.8 }),
+  propLo: new THREE.MeshStandardMaterial({ color: 0xc9baa0, roughness: 0.84 }),
+  metal: new THREE.MeshStandardMaterial({ color: 0x203b36, roughness: 0.52, metalness: 0.2 }),
+  stone: new THREE.MeshStandardMaterial({ color: 0x77736c, roughness: 0.94 }),
+  frame: new THREE.MeshStandardMaterial({ color: 0x2f2b27, roughness: 0.72, metalness: 0.06 }),
+  awning: new THREE.MeshStandardMaterial({ color: 0x8d4136, roughness: 0.84 }),
+  navy: new THREE.MeshStandardMaterial({ color: 0x263a3b, roughness: 0.66, metalness: 0.08 }),
+  cream: new THREE.MeshStandardMaterial({ color: 0xe8e0d2, roughness: 0.78 }),
+  teal: new THREE.MeshStandardMaterial({ color: 0x328e96, roughness: 0.72 }),
+  orange: new THREE.MeshStandardMaterial({ color: 0xe59a45, roughness: 0.72 }),
   glass: new THREE.MeshStandardMaterial({ color: 0xffdda7, roughness: 0.12, metalness: 0.08,
     transparent: true, opacity: 0.18, depthWrite: false }),
+  windowGlass: new THREE.MeshStandardMaterial({ color: 0xd8ba91, roughness: 0.2, metalness: 0.03,
+    transparent: true, opacity: 0.13, depthWrite: false }),
+  doorGlass: new THREE.MeshStandardMaterial({ color: 0xcda274, roughness: 0.2, metalness: 0.04,
+    transparent: true, opacity: 0.2, depthWrite: false }),
   glow: new THREE.MeshStandardMaterial({ color: 0x8e5f31, emissive: 0xffc56a, emissiveIntensity: 1.15 }),
   glowSoft: new THREE.MeshStandardMaterial({ color: 0x6a4b2d, emissive: 0xffd287, emissiveIntensity: 0.75 }),
   accent: new THREE.MeshStandardMaterial({ color: 0xb96435, emissive: 0x3b1a0a, emissiveIntensity: 0.5 }),
@@ -67,14 +82,23 @@ const edgeMat = new THREE.LineBasicMaterial({ color: 0x211710, transparent: true
 /* ---------- 工具 ---------- */
 const world = new THREE.Group();
 scene.add(world);
-/* 人物保持 2m 建模尺度；店铺采用约 6m × 4m 的紧凑尺度。 */
+/* 人物保持 2m 建模尺度；室内净空间约 5m × 3.8m。 */
 const MODEL_SCALE = 0.86;
 world.scale.setScalar(MODEL_SCALE);
 const shell = new THREE.Group();
 const props = new THREE.Group();
 const facade = new THREE.Group();
 const street = new THREE.Group();
-world.add(shell, props, facade, street);
+const modeledExterior = new THREE.Group();
+modeledExterior.name = 'modeled-store-exterior';
+world.add(shell, props, facade, street, modeledExterior);
+let exteriorMode = true;
+let modeledExteriorReady = false;
+const modeledDoorPivots = [];
+/* 最终外观：收窄约 22%，增高约 30%，内部空间尺寸保持不变。 */
+const FACADE_X_SCALE = 0.78;
+const FACADE_Y_SCALE = 1.30;
+facade.scale.set(FACADE_X_SCALE, FACADE_Y_SCALE, 1);
 
 const pickables = [];
 const labels = [];
@@ -96,12 +120,12 @@ function box(w, h, d, mat, x, y, z, parent = props, opts = {}) {
 }
 
 const stockMats = [
-  new THREE.MeshStandardMaterial({ color: 0xd8913f, roughness: 0.68 }),
-  new THREE.MeshStandardMaterial({ color: 0xb85b35, roughness: 0.72 }),
-  new THREE.MeshStandardMaterial({ color: 0x6b8f62, roughness: 0.78 }),
-  new THREE.MeshStandardMaterial({ color: 0xe0be72, roughness: 0.66 }),
-  new THREE.MeshStandardMaterial({ color: 0x8f6a94, roughness: 0.74 }),
-  new THREE.MeshStandardMaterial({ color: 0xd47b55, roughness: 0.7 })
+  new THREE.MeshStandardMaterial({ color: 0xe58a35, roughness: 0.68 }),
+  new THREE.MeshStandardMaterial({ color: 0xc94e43, roughness: 0.72 }),
+  new THREE.MeshStandardMaterial({ color: 0x78a15e, roughness: 0.78 }),
+  new THREE.MeshStandardMaterial({ color: 0xdfbf56, roughness: 0.66 }),
+  new THREE.MeshStandardMaterial({ color: 0x8b75ad, roughness: 0.74 }),
+  new THREE.MeshStandardMaterial({ color: 0xd66e79, roughness: 0.7 })
 ];
 
 /* 用低面数商品堆出连续的货架密度，避免场景只剩大块空墙。 */
@@ -135,7 +159,6 @@ function shelfUnit(x, z, width, height, rotY = 0, levels = 4) {
       if (level % 2 === 0) item.rotation.y = (slot % 2 ? -1 : 1) * 0.08;
     }
   }
-  groupPick(unit, 'vending');
   return unit;
 }
 
@@ -146,12 +169,75 @@ function makeSign(text, w, h, bg = '#1d1d24', fg = '#f2ead9', size = 54) {
   const ctx = cv.getContext('2d');
   ctx.fillStyle = bg; ctx.fillRect(0, 0, 512, 128);
   ctx.fillStyle = fg;
-  ctx.font = `700 ${size}px -apple-system, "PingFang SC", sans-serif`;
+  let fontSize = size;
+  do {
+    ctx.font = `700 ${fontSize}px -apple-system, "PingFang SC", sans-serif`;
+    fontSize -= 2;
+  } while (ctx.measureText(text).width > 468 && fontSize > 28);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(text, 256, 68);
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;
   return new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+}
+
+/* 竖招使用单独的竖向画布，避免把横排文字压扁。 */
+function makeVerticalSign(text, w, h, bg = '#e2d4bc', fg = '#31251e', size = 74) {
+  const cv = document.createElement('canvas');
+  cv.width = 160; cv.height = 512;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, 160, 512);
+  ctx.fillStyle = fg;
+  ctx.font = `700 ${size}px "Songti SC", "STSong", serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  [...text].forEach((char, i) => {
+    ctx.fillText(char, 80, 116 + i * 140);
+  });
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+}
+
+function makeStoreSign() {
+  const cv = document.createElement('canvas');
+  cv.width = 1024; cv.height = 256;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#f0e6cb'; ctx.fillRect(0, 0, 1024, 256);
+  ctx.fillStyle = '#a5322d';
+  ctx.font = '700 112px "Songti SC", "STSong", serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('販賣 · 靈感', 512, 118);
+  ctx.fillStyle = '#263a3b';
+  ctx.font = '700 31px "PingFang SC", sans-serif';
+  ctx.fillText('24H  靈感便利店', 512, 188);
+  ctx.strokeStyle = '#263a3b'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(116, 190); ctx.lineTo(390, 190);
+  ctx.moveTo(634, 190); ctx.lineTo(908, 190); ctx.stroke();
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(new THREE.PlaneGeometry(4.08, 0.82),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+}
+
+function makeOpenSign() {
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 320;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#f0e6cb'; ctx.fillRect(0, 0, 256, 320);
+  ctx.fillStyle = '#a5322d';
+  ctx.font = '700 54px "PingFang SC", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('營業中', 128, 108);
+  ctx.strokeStyle = '#263a3b'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(42, 150); ctx.lineTo(214, 150); ctx.stroke();
+  ctx.font = '700 46px "PingFang SC", sans-serif';
+  ctx.fillText('24H', 128, 220);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(new THREE.PlaneGeometry(0.46, 0.56),
     new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
 }
 
@@ -170,13 +256,13 @@ function groupPick(group, station) {
 }
 
 /* ---------- 房间 ---------- */
-// 6.4m × 4.0m 的紧凑切面店铺，三侧货架包住中央动线。
-box(6.4, 0.12, 4.0, M.floor, 0, -0.06, 0, shell, { edges: false });
-box(6.28, 0.02, 3.88, M.dark, 0, 0.005, 0, shell, { edges: false });
+// 约 5.0m × 3.8m 的净空间，完整收进新外景壳体，避免墙体和货架穿模。
+box(5.0, 0.12, 3.8, M.floor, 0, -0.06, 0, shell, { edges: false });
+box(4.88, 0.02, 3.68, M.tile, 0, 0.005, 0, shell, { edges: false });
 // 后墙 + 左右墙（前墙切开）
-box(6.4, 2.65, 0.12, M.wall, 0, 1.325, -2.06, shell);
-box(0.12, 2.65, 4.0, M.wall, -3.26, 1.325, 0, shell);
-box(0.12, 2.65, 4.0, M.wall, 3.26, 1.325, 0, shell);
+box(5.0, 2.65, 0.12, M.wall, 0, 1.325, -1.90, shell);
+box(0.12, 2.65, 3.8, M.wall, -2.50, 1.325, 0, shell);
+const interiorRightWall = box(0.12, 2.65, 3.8, M.wall, 2.50, 1.325, 0, shell);
 // 天花板灯管
 box(1.6, 0.06, 0.16, M.glow, -1.05, 2.59, 0.2, shell, { edges: false });
 box(1.6, 0.06, 0.16, M.glowSoft, 1.25, 2.59, -0.35, shell, { edges: false });
@@ -194,7 +280,7 @@ shell.add(pool);
 
 /* ---------- 售货机（作品货架） ---------- */
 const vm = new THREE.Group();
-vm.position.set(1.5, 0, -1.48);
+vm.position.set(1.5, 0, -1.38);
 props.add(vm);
 /* 机身做成一圈壳，前面留空，才能看见里面的五层货 */
 box(1.75, 2.15, 0.08, M.prop, 0, 1.075, -0.41, vm);         // 背板
@@ -214,57 +300,60 @@ for (let r = 0; r < 5; r++) {
   box(1.45, 0.03, 0.34, M.metal, 0, y - 0.11, 0.12, vm, { edges: false });
   for (let i = 0; i < 5; i++) {
     const h = 0.14 + (r % 2) * 0.03;
-    box(0.17, h, 0.16, r % 2 ? M.propLo : M.metal, -0.55 + i * 0.27, y + h / 2 - 0.09, 0.1, vm, { edges: false });
+    box(0.17, h, 0.16, stockMats[(r * 5 + i) % stockMats.length],
+      -0.55 + i * 0.27, y + h / 2 - 0.09, 0.1, vm, { edges: false });
   }
 }
 groupPick(vm, 'vending');
-labels.push({ el: null, text: '售货机 · 5 层', anchor: new THREE.Vector3(1.5, 2.38, -1.4), layer: 'int', station: 'vending' });
+labels.push({ el: null, text: '售货机 · 5 层', anchor: new THREE.Vector3(1.5, 2.38, -1.30), layer: 'int', station: 'vending' });
 
 /* ---------- L 形柜台 + 店员 ---------- */
 const counter = new THREE.Group();
 counter.position.set(0, 0, 0);
 props.add(counter);
-// 长边：面对门口
-box(2.1, 0.78, 0.68, M.prop, -1.65, 0.39, 0.95, counter);
-box(2.25, 0.06, 0.8, M.metal, -1.65, 0.81, 0.95, counter);
-// 短边：向店内折回，和长边拼成 L
-box(0.68, 0.78, 1.05, M.prop, -2.345, 0.39, 0.35, counter);
-box(0.8, 0.06, 1.2, M.metal, -2.345, 0.81, 0.35, counter);
-// 转角立柱，让 L 更结实
-box(0.68, 0.82, 0.68, M.propLo, -2.345, 0.41, 0.95, counter);
+// 长边沿左侧动线摆放，正面朝向右侧入口；短边向后墙折回。
+box(0.68, 0.78, 1.95, M.prop, -1.02, 0.39, 0.15, counter);
+box(0.80, 0.06, 2.08, M.cream, -1.02, 0.81, 0.15, counter);
+box(1.55, 0.78, 0.68, M.prop, -1.64, 0.39, -0.78, counter);
+box(1.68, 0.06, 0.80, M.cream, -1.64, 0.81, -0.78, counter);
+box(0.68, 0.82, 0.68, M.propLo, -1.02, 0.41, -0.78, counter);
 groupPick(counter, 'counter');
-labels.push({ el: null, text: 'L 形柜台', anchor: new THREE.Vector3(-1.65, 1.02, 0.95), layer: 'int', station: 'counter' });
+labels.push({ el: null, text: 'L 形柜台', anchor: new THREE.Vector3(-1.02, 1.02, 0.15), layer: 'int', station: 'counter' });
 
 // 小本子
-const note = box(0.3, 0.04, 0.23, M.accent, -2.42, 0.86, 0.98, props, { edges: true });
+const note = box(0.3, 0.04, 0.23, M.accent, -1.08, 0.86, 0.74, props, { edges: true });
 pick(note, 'notebook', null, new THREE.Vector3(), 'int');
-labels.push({ el: null, text: '小本子', anchor: new THREE.Vector3(-2.42, 1.0, 0.98), layer: 'int', station: 'notebook' });
+labels.push({ el: null, text: '小本子', anchor: new THREE.Vector3(-1.08, 1.0, 0.74), layer: 'int', station: 'notebook' });
 
 // 收银机
 const reg = new THREE.Group();
-reg.position.set(-0.98, 0.84, 1.02);
+reg.position.set(-1.02, 0.84, -0.42);
 reg.scale.setScalar(0.82);
+reg.rotation.y = -Math.PI / 2;
 props.add(reg);
-box(0.52, 0.24, 0.42, M.metal, 0, 0.12, 0, reg);
+box(0.52, 0.24, 0.42, M.cream, 0, 0.12, 0, reg);
 box(0.44, 0.2, 0.06, M.dark, 0, 0.34, -0.12, reg, { edges: false });
 box(0.4, 0.02, 0.3, M.glowSoft, 0, 0.37, -0.08, reg, { edges: false });
 groupPick(reg, 'register');
-labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-0.98, 1.17, 1.02), layer: 'int', station: 'register' });
+labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-1.02, 1.17, -0.42), layer: 'int', station: 'register' });
 
-// 店员：只使用当前高精度 PBR 模型，不再保留旧程序化版本。
+// 店员：只使用当前高精度 PBR 模型，正面朝向柜台和入口。
 const clerk = new THREE.Group();
 clerk.name = 'clerk-chen-zhixi';
-clerk.position.set(-1.65, 0, -0.02);
+clerk.position.set(-1.62, 0, 0.18);
+const COUNTER_FACING_YAW = Math.PI / 2;
+clerk.rotation.y = COUNTER_FACING_YAW;
+window.__blk.clerk = clerk;
 props.add(clerk);
-groupPick(clerk, 'clerk');
 
 // 工牌离身，平放在收银台靠近小本子的位置。
 const tableBadge = createTableBadge();
-tableBadge.position.set(-2.12, 0.855, 0.92);
+tableBadge.position.set(-1.02, 0.855, 0.52);
 tableBadge.scale.setScalar(0.65);
+tableBadge.rotation.z += Math.PI / 2;
 props.add(tableBadge);
 groupPick(tableBadge, 'badge');
-labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-2.12, 1.0, 0.92), layer: 'int', station: 'badge' });
+labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
 
 loadGlbModel('../assets/models/clerk-optimized.glb').then(model => {
   model.name = 'clerk-chen-zhixi-textured';
@@ -283,39 +372,30 @@ loadGlbModel('../assets/models/clerk-optimized.glb').then(model => {
 
 /* ---------- 墙面证书 ---------- */
 [-1.2, -0.55, 0.1].forEach((x, i) => {
-  const f = box(0.52, 0.38, 0.05, i === 0 ? M.accent : M.prop, x, 1.72, -1.96, props);
+  const f = box(0.52, 0.38, 0.05, i === 0 ? M.accent : M.prop, x, 1.72, -1.82, props);
   f.userData.station = 'wall';
   f.userData.root = f;
   pickables.push(f);
 });
-labels.push({ el: null, text: '学历 / 荣誉 / 技能', anchor: new THREE.Vector3(-0.55, 2.05, -1.88), layer: 'int', station: 'wall' });
+labels.push({ el: null, text: '学历 / 荣誉 / 技能', anchor: new THREE.Vector3(-0.55, 2.05, -1.72), layer: 'int', station: 'wall' });
 
 /* 证书墙下方的档案矮架，填补后墙空区并保持人物背后的工作区层次。 */
 const archive = new THREE.Group();
 props.add(archive);
-box(1.7, 0.62, 0.34, M.propLo, -0.55, 0.31, -1.78, archive);
+box(1.7, 0.62, 0.34, M.propLo, -0.55, 0.31, -1.66, archive);
 for (let i = 0; i < 4; i++) {
   box(0.28, 0.23, 0.24, i === 0 ? M.accent : M.prop,
-    -1.15 + i * 0.4, 0.525, -1.7, archive, { edges: false });
+    -1.15 + i * 0.4, 0.525, -1.58, archive, { edges: false });
 }
 groupPick(archive, 'wall');
 
-/* ---------- 杂物（密度） ---------- */
-box(0.52, 0.4, 0.42, M.propLo, 2.7, 0.2, 1.15, props);
-box(0.42, 0.3, 0.34, M.propLo, 2.55, 0.15, 1.55, props);
-const plant = new THREE.Group();
-plant.position.set(-2.83, 0, 1.45);
-props.add(plant);
-box(0.34, 0.34, 0.34, M.propLo, 0, 0.17, 0, plant);
-const leaf = new THREE.Mesh(new THREE.IcosahedronGeometry(0.38, 0), M.prop);
-leaf.position.y = 0.66; plant.add(leaf);
-
 /* ---------- 满铺货架 + 前场陈列 ---------- */
-shelfUnit(-2.52, -1.82, 1.4, 2.0, 0, 4);
-shelfUnit(3.0, -0.48, 1.45, 2.0, Math.PI / 2, 4);
+shelfUnit(-2.16, -0.63, 1.45, 2.0, Math.PI / 2, 4);
 
 const displayCase = new THREE.Group();
-displayCase.position.set(1.22, 0, 1.18);
+// 陈列柜靠右侧墙布置，避开双开门后的进门动线。
+displayCase.position.set(1.90, 0, 0.95);
+displayCase.scale.setScalar(0.88);
 props.add(displayCase);
 box(1.15, 0.58, 0.58, M.prop, 0, 0.29, 0, displayCase);
 box(1.22, 0.06, 0.64, M.metal, 0, 0.61, 0, displayCase);
@@ -330,102 +410,333 @@ for (let i = 0; i < 4; i++) {
   pastry.scale.z = 0.72;
   displayCase.add(pastry);
 }
-groupPick(displayCase, 'vending');
 
 const runner = new THREE.Mesh(
   new THREE.PlaneGeometry(2.2, 1.35),
   new THREE.MeshBasicMaterial({ color: 0xc18a55, transparent: true, opacity: 0.2 })
 );
 runner.rotation.x = -Math.PI / 2;
-runner.position.set(-0.15, 0.015, 0.35);
+runner.position.set(0.55, 0.015, 0.35);
 shell.add(runner);
 
 /* ---------- 店面（外景时显示） ---------- */
-// 墙体分段（留出窗与门洞）
-box(0.45, 2.65, 0.12, M.wall, -2.98, 1.325, 2.06, facade);   // 左
-box(1.5, 0.9, 0.12, M.wall, -2.0, 0.45, 2.06, facade);       // 窗下
-box(1.5, 0.65, 0.12, M.wall, -2.0, 2.325, 2.06, facade);     // 窗上
-box(0.36, 2.65, 0.12, M.wall, -1.07, 1.325, 2.06, facade);   // 窗与门之间
-box(0.96, 0.49, 0.12, M.wall, -0.42, 2.405, 2.06, facade);   // 门上
-box(3.14, 2.65, 0.12, M.wall, 1.63, 1.325, 2.06, facade);    // 门右
-// 窗玻璃（暖光）
-const winGlass = box(1.46, 1.06, 0.04, M.glowSoft, -2.0, 1.45, 2.0, facade, { edges: false });
-winGlass.userData.station = 'window'; winGlass.userData.root = winGlass;
-pickables.push(winGlass);
-labels.push({ el: null, text: '开放窗', anchor: new THREE.Vector3(-2.0, 2.08, 2.0), layer: 'ext', station: 'window' });
-// 门（可开合）
+// 程序化后备立面：左侧为大橱窗，右侧为入口；正常状态使用外景 GLB 双门。
+const WINDOW_X = -1.55;
+const WINDOW_W = 3.10;
+const WINDOW_BOTTOM = 0.56;
+const WINDOW_TOP = 2.13;
+const DOOR_X = 1.62;
+const DOOR_W = 0.97;
+
+// 石质墙脚、顶部压顶与两侧墙垛。
+box(6.42, 0.24, 0.18, M.stone, 0, 0.12, 2.12, facade);
+box(6.62, 0.26, 0.38, M.navy, 0, 2.74, 2.10, facade);
+box(0.28, 2.65, 0.16, M.facadeWall, -3.06, 1.325, 2.06, facade);
+box(0.64, 2.65, 0.12, M.facadeWall, 0.32, 1.325, 2.06, facade);
+box(1.60, 2.65, 0.12, M.facadeWall, 2.40, 1.325, 2.06, facade);
+
+// 橱窗上下墙体。
+box(WINDOW_W + 0.12, WINDOW_BOTTOM, 0.12, M.facadeWall, WINDOW_X, WINDOW_BOTTOM / 2, 2.06, facade);
+box(WINDOW_W + 0.12, 2.65 - WINDOW_TOP, 0.12, M.facadeWall, WINDOW_X,
+  WINDOW_TOP + (2.65 - WINDOW_TOP) / 2, 2.06, facade);
+
+// 深色橱窗框与可见店内的大玻璃。
+box(WINDOW_W + 0.16, 0.08, 0.18, M.navy, WINDOW_X, WINDOW_TOP, 2.01, facade);
+box(WINDOW_W + 0.16, 0.11, 0.20, M.navy, WINDOW_X, WINDOW_BOTTOM, 2.01, facade);
+box(0.08, WINDOW_TOP - WINDOW_BOTTOM, 0.18, M.navy, -3.06, 1.345, 2.01, facade);
+box(0.08, WINDOW_TOP - WINDOW_BOTTOM, 0.18, M.navy, -0.04, 1.345, 2.01, facade);
+box(WINDOW_W + 0.12, 0.11, 0.26, M.propLo, WINDOW_X, WINDOW_BOTTOM, 2.19, facade);
+const winGlass = box(WINDOW_W - 0.08, WINDOW_TOP - WINDOW_BOTTOM - 0.08, 0.025,
+  M.windowGlass, WINDOW_X, (WINDOW_TOP + WINDOW_BOTTOM) / 2, 1.985, facade, { edges: false });
+winGlass.userData.decorative = true;
+
+// 门洞上方的墙体。
+box(DOOR_W + 0.10, 2.65 - 2.16, 0.12, M.facadeWall, DOOR_X, 2.16 + (2.65 - 2.16) / 2, 2.06, facade);
+
+// 后备单门；正常状态由外景 GLB 的左右两扇门共同承担开门动画。
 const doorPivot = new THREE.Group();
-doorPivot.position.set(-0.9, 0, 2.0);
+doorPivot.position.set(DOOR_X - DOOR_W / 2, 0, 2.0);
 facade.add(doorPivot);
-const doorMesh = box(0.96, 2.16, 0.06, M.propLo, 0.48, 1.08, 0, doorPivot);
-box(0.88, 1.85, 0.02, M.glowSoft, 0.48, 1.12, 0.04, doorPivot, { edges: false });
-/* 整扇门（门框 + 玻璃）都能点，点到中间发光的部分也算 */
-doorPivot.traverse(o => {
-  if (o.isMesh) { o.userData.station = 'door'; o.userData.root = doorPivot; }
+box(0.075, 2.16, 0.10, M.navy, 0.038, 1.08, 0, doorPivot);
+box(0.075, 2.16, 0.10, M.navy, DOOR_W - 0.038, 1.08, 0, doorPivot);
+box(DOOR_W, 0.10, 0.10, M.navy, DOOR_W / 2, 2.11, 0, doorPivot);
+box(DOOR_W, 0.12, 0.10, M.navy, DOOR_W / 2, 0.06, 0, doorPivot);
+box(DOOR_W - 0.16, 1.82, 0.025, M.doorGlass, DOOR_W / 2, 1.10, 0.005, doorPivot, { edges: false });
+box(0.035, 0.42, 0.07, M.metal, DOOR_W - 0.18, 1.02, 0.08, doorPivot, { edges: false });
+const doorSignGroup = new THREE.Group();
+doorSignGroup.position.set(DOOR_W / 2, 1.54, 0.09);
+doorSignGroup.scale.set(1 / FACADE_X_SCALE, 1 / FACADE_Y_SCALE, 1);
+doorPivot.add(doorSignGroup);
+box(0.50, 0.60, 0.03, M.cream, 0, 0, 0, doorSignGroup, { edges: false });
+const openSign = makeOpenSign();
+openSign.position.set(0, 0, 0.022);
+doorSignGroup.add(openSign);
+box(0.012, 0.21, 0.012, M.navy, -0.10, 0.40, 0.005, doorSignGroup, { edges: false });
+box(0.012, 0.21, 0.012, M.navy, 0.10, 0.40, 0.005, doorSignGroup, { edges: false });
+/* 整扇门（门框 + 玻璃）都能点，点到玻璃也算。 */
+doorPivot.traverse(object => {
+  if (!object.isMesh) return;
+  object.userData.station = 'door';
+  object.userData.root = doorPivot;
 });
 pickables.push(doorPivot);
-labels.push({ el: null, text: '玻璃门', anchor: new THREE.Vector3(-0.42, 2.28, 2.0), layer: 'ext', station: 'door' });
-// 雨棚 + 招牌
-box(2.6, 0.12, 0.72, M.propLo, -1.7, 2.15, 2.4, facade, { edges: true });
-const facadeSign = makeSign('灵感补给站 · 24H', 2.4, 0.56);
-facadeSign.position.set(1.63, 2.28, 2.135);
+labels.push({ el: null, text: '玻璃双门', anchor: new THREE.Vector3(
+  DOOR_X * FACADE_X_SCALE, 2.20 * FACADE_Y_SCALE, 2.0), layer: 'ext', station: 'door' });
+
+// 横向大招牌与左侧椭圆竖招。
+box(4.30, 0.96, 0.13, M.navy, 0.66, 2.24, 2.11, facade);
+const facadeSign = makeStoreSign();
+facadeSign.position.set(0.66, 2.24, 2.185);
 facade.add(facadeSign);
 
+const bladeSignFrame = box(0.50, 1.46, 0.11, M.navy, -3.50, 2.12, 2.88, facade);
+const bladeSign = makeVerticalSign('設計', 0.38, 1.30, '#f0e6cb', '#a5322d');
+bladeSign.position.set(-3.50, 2.12, 2.945);
+bladeSignFrame.userData.station = 'door';
+facade.add(bladeSign);
+box(0.055, 0.055, 0.76, M.frame, -3.23, 2.47, 2.50, facade, { edges: false });
+box(0.055, 0.055, 0.76, M.frame, -3.23, 1.77, 2.50, facade, { edges: false });
+
+// 右侧外墙随正立面一起收窄，挡住外部视角中按原店内尺寸延伸的侧墙。
+box(0.14, 2.65, 4.0, M.facadeSide, 3.2, 1.325, 0, facade);
+box(0.18, 0.16, 4.0, M.navy, 3.2, 2.71, 0, facade, { edges: false });
+
+// 一体式深红布棚，让横向线条更完整。
+const awningGroup = new THREE.Group();
+awningGroup.position.set(0, 1.80, 2.39);
+facade.add(awningGroup);
+box(5.98, 0.12, 0.88, M.awning, 0, 0, 0, awningGroup, { rotX: 0.20 });
+box(5.98, 0.18, 0.08, M.awning, 0, -0.11, 0.43, awningGroup);
+box(0.12, 0.22, 0.92, M.awning, -3.01, -0.09, 0, awningGroup);
+box(0.12, 0.22, 0.92, M.awning, 3.01, -0.09, 0, awningGroup);
+
+// 右侧墙面的落水管与电箱。
+box(0.075, 2.30, 0.08, M.navy, 3.20, 1.18, 2.03, facade);
+box(0.14, 0.10, 0.32, M.navy, 3.20, 2.31, 1.88, facade);
+box(0.26, 0.34, 0.10, M.navy, 3.15, 1.52, 1.95, facade);
+
+// 玻璃窗后的便利店货架，让首屏一眼能看出零售属性。
+const windowShelf = new THREE.Group();
+windowShelf.position.set(-2.04, 0, 0.78);
+props.add(windowShelf);
+box(0.74, 1.72, 0.24, M.propLo, 0, 0.86, 0, windowShelf);
+for (let level = 0; level < 4; level++) {
+  const shelfY = 0.32 + level * 0.38;
+  box(0.68, 0.035, 0.28, M.navy, 0, shelfY, 0.02, windowShelf, { edges: false });
+  for (let slot = 0; slot < 3; slot++) {
+    box(0.14, 0.18, 0.12, stockMats[(level + slot) % stockMats.length],
+      -0.22 + slot * 0.22, shelfY + 0.105, 0.07, windowShelf, { edges: false });
+  }
+}
+
+// 门前外摆：冰柜、绿植和可嵌套的购物篮。
+const curbFreezer = new THREE.Group();
+curbFreezer.position.set(-2.48, 0, 3.15);
+facade.add(curbFreezer);
+box(0.92, 0.50, 0.58, M.cream, 0, 0.26, 0, curbFreezer);
+box(0.82, 0.06, 0.48, M.awning, 0, 0.54, 0, curbFreezer);
+box(0.72, 0.025, 0.38, M.glass, 0, 0.575, 0, curbFreezer, { edges: false });
+box(0.66, 0.025, 0.32, M.navy, 0, 0.588, 0, curbFreezer, { edges: false });
+
+const outsidePlant = new THREE.Group();
+outsidePlant.position.set(-3.16, 0, 3.42);
+facade.add(outsidePlant);
+box(0.24, 0.28, 0.24, M.facadeWall, 0, 0.14, 0, outsidePlant);
+box(0.08, 0.38, 0.08, M.propLo, 0, 0.43, 0, outsidePlant);
+const outsideLeaf = new THREE.Mesh(new THREE.IcosahedronGeometry(0.24, 0), M.prop);
+outsideLeaf.position.set(0, 0.69, 0);
+outsidePlant.add(outsideLeaf);
+
+const basketStack = new THREE.Group();
+basketStack.position.set(2.56, 0, 3.20);
+facade.add(basketStack);
+for (let i = 0; i < 5; i++) {
+  const basket = box(0.52 - i * 0.018, 0.13, 0.36 - i * 0.012,
+    M.accent, 0, 0.10 + i * 0.12, 0, basketStack);
+  basket.rotation.y = i * 0.06;
+}
+box(0.55, 0.04, 0.39, M.frame, 0, 0.03, 0, basketStack);
+
+/*
+ * 完整店外模型替换程序化立面；模型中的空室内体块会隐藏，
+ * 玻璃后的内容继续由本文件原有的带人物室内场景提供。
+ */
+function makeModeledDoorPivot(door, hinge) {
+  if (!door) return null;
+  door.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(door);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const hingeX = hinge === 'left' ? bounds.min.x : bounds.max.x;
+  const pivot = new THREE.Group();
+  pivot.name = `${door.name} pivot`;
+  modeledExterior.add(pivot);
+  pivot.position.set(hingeX, door.position.y, center.z);
+  pivot.attach(door);
+  modeledDoorPivots.push({
+    pivot,
+    angle: hinge === 'left' ? 1.15 : -1.15
+  });
+  return pivot;
+}
+
+loadGlbModel('../assets/models/store-exterior.glb?v=20261022-interior-fit-1').then(model => {
+  model.name = 'store-exterior-model';
+  model.traverse(object => {
+    const name = object.name || '';
+    const placeholder = /^(Back wall|Back tile joint|Back mid rail|Interior |Inner glass darkness)/.test(name);
+    if (placeholder) object.visible = false;
+  });
+
+  modeledExterior.add(model);
+  const bounds = new THREE.Box3().setFromObject(model);
+  const center = bounds.getCenter(new THREE.Vector3());
+  model.position.x -= center.x;
+  model.position.y -= bounds.min.y;
+  model.position.z += 0.07;
+  model.updateMatrixWorld(true);
+
+  const leftDoorPivot = makeModeledDoorPivot(model.getObjectByName('Left door'), 'left');
+  const rightDoorPivot = makeModeledDoorPivot(model.getObjectByName('Right door'), 'right');
+  window.__blk.modeledExterior = model;
+  window.__blk.modeledDoorPivots = modeledDoorPivots;
+
+  if (leftDoorPivot) groupPick(leftDoorPivot, 'door');
+  if (rightDoorPivot) groupPick(rightDoorPivot, 'door');
+  for (const name of ['vending_source', 'freezer_source']) {
+    const prop = model.getObjectByName(name);
+    if (prop) groupPick(prop, 'vending');
+  }
+
+  modeledExteriorReady = true;
+  const entryBounds = new THREE.Box3();
+  for (const name of ['Left door', 'Right door']) {
+    const door = model.getObjectByName(name);
+    if (door) entryBounds.expandByObject(door);
+  }
+  if (!entryBounds.isEmpty()) {
+    const entryX = entryBounds.getCenter(new THREE.Vector3()).x;
+    stations.door.pos[0] = entryX;
+    stations.door.target[0] = entryX;
+    labels.forEach(label => {
+      if (label.station === 'door') label.anchor.set(entryX / MODEL_SCALE, 2.34, 1.92);
+    });
+  }
+  labels.forEach(label => {
+    if (label.station === 'door') label.anchor.y = 2.34;
+  });
+  applyMode(exteriorMode);
+  if (current === 'street' && !tween) {
+    const streetView = stationFor('street');
+    camera.position.set(...streetView.pos);
+    camTarget.set(...streetView.target);
+  }
+  document.body.dataset.exteriorModel = 'textured';
+}).catch(error => {
+  console.warn('Modeled exterior could not load; using the procedural storefront.', error);
+  document.body.dataset.exteriorModel = 'fallback';
+});
+
 /* ---------- 街道 ---------- */
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 16), M.floor);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 16), M.streetFloor);
 ground.rotation.x = -Math.PI / 2;
 ground.position.set(0, -0.03, 8.0);
 street.add(ground);
-box(6.4, 0.16, 0.35, M.propLo, 0, 0.08, 2.36, street); // 路缘
-// 路灯
-const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 4.2, 10), M.metal);
-post.position.set(-3.35, 2.1, 3.85); street.add(post);
-const arm = box(1.4, 0.08, 0.08, M.metal, -2.7, 4.12, 3.85, street, { edges: false });
-const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 14, 10), M.glow);
-bulb.position.set(-2.05, 3.98, 3.85); street.add(bulb);
-const lampLight = new THREE.PointLight(0xffc98a, 2.2, 12, 2);
-lampLight.position.set(-2.05, 3.9, 3.85); street.add(lampLight);
-// 路牌
-const signPost = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 3.0, 8), M.metal);
-signPost.position.set(-4.25, 1.5, 4.55); street.add(signPost);
-const roadSign = makeSign('设计路 07 →', 1.05, 0.4, '#22302a', '#cfe8d6', 46);
-roadSign.position.set(-4.25, 2.9, 4.58);
-street.add(roadSign);
+
+// 抬高的石铺人行道与路缘，让店面有参考图中的完整模型底座。
+box(7.20, 0.14, 1.72, M.stone, 0, 0.08, 3.05, street, { edges: true });
+box(7.24, 0.18, 0.24, M.stone, 0, 0.08, 3.91, street);
+for (let x = -3.2; x <= 3.2; x += 0.8) {
+  box(0.015, 0.012, 1.58, M.dark, x, 0.155, 3.04, street, { edges: false });
+}
+for (let z = 2.45; z <= 3.70; z += 0.42) {
+  box(7.05, 0.012, 0.015, M.dark, 0, 0.155, z, street, { edges: false });
+}
+
+// 左侧 T 形路灯：一根立杆、一根横梁与两盏方块灯。
+const streetLight = new THREE.Group();
+streetLight.position.set(-3.70, 0, 3.08);
+street.add(streetLight);
+box(0.48, 0.16, 0.48, M.navy, 0, 0.08, 0, streetLight);
+box(0.20, 0.30, 0.20, M.navy, 0, 0.30, 0, streetLight);
+const lightPost = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.07, 2.36, 10), M.navy);
+lightPost.position.y = 1.48;
+streetLight.add(lightPost);
+box(0.82, 0.09, 0.10, M.navy, 0.37, 2.69, 0, streetLight, { edges: false });
+[-0.04, 0.78].forEach(x => {
+  box(0.16, 0.18, 0.16, M.navy, x, 2.57, 0, streetLight);
+  box(0.13, 0.11, 0.13, M.glow, x, 2.47, 0, streetLight, { edges: false });
+});
+const lampLight = new THREE.PointLight(0xffc98a, 2.1, 8, 2);
+lampLight.position.set(-3.70, 2.46, 3.08);
+street.add(lampLight);
+
+// 橱窗内侧补一盏低强度暖光，避免深色玻璃把人物和柜台吃掉。
+const displayLight = new THREE.PointLight(0xffc47b, 1.35, 5.5, 2);
+displayLight.position.set(WINDOW_X, 1.72, 1.34);
+facade.add(displayLight);
 
 /* ---------- 机位 ---------- */
 const stations = {
-  /* 外景：站在路边平视，像路过一家便利店 */
-  street:   { pos: [0.25, 1.5, 6.05],  target: [-0.35, 1.14, 1.76], ext: true },
-  window:   { pos: [-1.75, 1.48, 3.55], target: [-1.75, 1.18, 1.76], ext: true },
-  door:     { pos: [-0.4, 1.48, 3.55], target: [-0.4, 1.08, 1.76], ext: true },
-  /* 进门后默认站在门内右侧，斜向看完整店铺。 */
-  inside:   { pos: [3.2, 3.1, 3.85], target: [0, 0.82, -0.45], ext: false },
-  /* 正视售货机，完整展示五层货架，方便逐层挑选作品。 */
-  vending:  { pos: [1.5 * MODEL_SCALE, 1.36, 0.9], target: [1.5 * MODEL_SCALE, 0.9, -1.48 * MODEL_SCALE], ext: false },
-  counter:  { pos: [-0.15, 1.38, 1.62], target: [-1.5, 0.7, 0.75], ext: false },
-  clerk:    { pos: [-1.65, 1.42, 2.6],  target: [-1.65, 1.08, -0.02], ext: false },
-  badge:    { pos: [-1.62, 1.16, 1.82], target: [-1.82, 0.74, 0.79], ext: false },
-  wall:     { pos: [-0.2, 1.5, 0.5], target: [-0.55, 1.4, -1.62], ext: false },
-  register: { pos: [-0.18, 1.25, 1.62], target: [-0.84, 0.98, 0.88], ext: false },
-  notebook: { pos: [-1.08, 1.2, 1.52], target: [-2.08, 0.76, 0.84], ext: false }
+  /* 外景：正对店门，只保留很轻的侧向透视；实际机位会按视口宽高比重新计算。 */
+  street:   { pos: [1.10, 1.60, 7.00], target: [-0.05, 1.18, 1.78], ext: true },
+  door:     { pos: [DOOR_X * FACADE_X_SCALE, 1.48 * FACADE_Y_SCALE, 4.05],
+              target: [DOOR_X * FACADE_X_SCALE, 1.13 * FACADE_Y_SCALE, 1.90], ext: true },
+  /* 进门后采用图一的正面平视构图，不做侧后方俯视。 */
+  inside:   { pos: [0.78, 1.70, 3.55], target: [-0.30, 1.08, -0.58], ext: false },
+  /* 所有物件特写都让镜头落在物体正面的法线方向上。 */
+  vending:  { pos: [1.29, 1.05, 1.55], target: [1.29, 0.95, -0.76], ext: false },
+  counter:  { pos: [0.78, 1.12, 0.13], target: [-0.88, 0.70, 0.13], ext: false },
+  clerk:    { pos: [0.30, 1.32, 0.16], target: [-1.39, 1.02, 0.16], ext: false },
+  badge:    { pos: [-0.93, 1.30, 0.82], target: [-0.93, 0.76, 0.45], roll: -Math.PI / 2, ext: false },
+  wall:     { pos: [-0.47, 1.46, 0.20], target: [-0.47, 1.24, -1.57], ext: false },
+  register: { pos: [0.42, 1.10, -0.36], target: [-0.88, 0.84, -0.36], ext: false },
+  notebook: { pos: [-0.93, 1.30, 0.90], target: [-0.93, 0.76, 0.64], ext: false }
 };
 
 let mode = 'inside';
 let tween = null;
 let current = 'inside';
+let stationRoll = 0;
 const orbit = { yaw: 0, pitch: 0 };
 
 function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
+function getStreetView() {
+  const aspect = Math.max(0.35, W / H);
+  const portrait = aspect < 0.82;
+  const fov = portrait ? 60 : CAMERA_FOV;
+  const target = new THREE.Vector3(portrait ? 0.18 : -0.05, portrait ? 1.27 : 1.32, 1.78);
+  // 桌面保留左侧路灯；手机隐藏路灯，优先完整保留招牌、橱窗与贴右双门。
+  const desiredHalfWidth = portrait ? 3.45 : 4.15;
+  const halfVertical = Math.tan(THREE.MathUtils.degToRad(fov) / 2);
+  const halfHorizontal = halfVertical * aspect;
+  const distance = desiredHalfWidth / Math.max(0.18, halfHorizontal);
+  return {
+    pos: [portrait ? 0.30 : 1.22, portrait ? 1.64 : 1.70, target.z + distance],
+    target: target.toArray(),
+    fov
+  };
+}
+
+function stationFor(name) {
+  if (name !== 'street') return stations[name];
+  return { ...stations.street, ...getStreetView() };
+}
+
 function applyMode(isExt) {
-  facade.visible = isExt;
+  exteriorMode = isExt;
+  facade.visible = isExt && !modeledExteriorReady;
+  street.visible = isExt && !modeledExteriorReady;
+  modeledExterior.visible = isExt && modeledExteriorReady;
+  interiorRightWall.visible = !isExt;
   labels.forEach(l => { if (l.el) l.el.style.opacity = l.layer === (isExt ? 'ext' : 'int') ? '' : '0'; });
 }
 
 function go(name, opts = {}) {
-  const st = stations[name];
+  const st = stationFor(name);
   if (!st) return;
   current = name;
+  stationRoll = st.roll || 0;
   outline.visible = false;
   orbit.yaw = 0; orbit.pitch = 0;
   document.body.dataset.station = name;
@@ -462,7 +773,7 @@ const tmpV = new THREE.Vector3();
 function updateLabels() {
   labels.forEach(l => {
     if (!l.el) return;
-    const visibleLayer = l.layer === (facade.visible ? 'ext' : 'int');
+    const visibleLayer = l.layer === (exteriorMode ? 'ext' : 'int');
     tmpV.copy(l.anchor).multiplyScalar(MODEL_SCALE).project(camera);
     const behind = tmpV.z > 1;
     const x = (tmpV.x * 0.5 + 0.5) * W;
@@ -475,16 +786,21 @@ function updateLabels() {
 
 /* ---------- 对话气泡 ---------- */
 let bubbleTimer = 0;
-function showBubble(text, anchor) {
+function greetFromInside() {
+  showBubble('<b>店员：</b>欢迎来到我的灵感便利店 ✦',
+    new THREE.Vector3(-1.62, 2.32, 0.18), 5200);
+}
+
+function showBubble(text, anchor, duration = 3600) {
   bubbleEl.innerHTML = text;
   const v = anchor.clone().multiplyScalar(MODEL_SCALE).project(camera);
   const x = (v.x * 0.5 + 0.5) * W;
   const y = (-v.y * 0.5 + 0.5) * H;
-  bubbleEl.style.left = x + 'px';
-  bubbleEl.style.top = (y - 10) + 'px';
+  bubbleEl.style.left = THREE.MathUtils.clamp(x, 142, W - 142) + 'px';
+  bubbleEl.style.top = THREE.MathUtils.clamp(y - 10, 86, H - 86) + 'px';
   bubbleEl.classList.add('is-on');
   clearTimeout(bubbleTimer);
-  bubbleTimer = setTimeout(hideBubble, 3600);
+  bubbleTimer = setTimeout(hideBubble, duration);
 }
 function hideBubble() { bubbleEl.classList.remove('is-on'); }
 
@@ -493,14 +809,16 @@ let doorBusy = false;
 function enterThroughDoor() {
   if (doorBusy) return;
   doorBusy = true;
+  hideBubble();
 
-  // 先站到门口，门板绕合页转开（只转门板，不转门框）
+  // 先站到双开门前，两扇门同步向内打开。
   go('door', { dur: 0.45 });
   const t0 = performance.now();
   const open = now => {
     const k = Math.min(1, (now - t0) / 600);
     const e = 1 - Math.pow(1 - k, 3);
     doorPivot.rotation.y = -e * 1.75;
+    for (const { pivot, angle } of modeledDoorPivots) pivot.rotation.y = e * angle;
     if (k < 1) requestAnimationFrame(open);
   };
   requestAnimationFrame(open);
@@ -509,9 +827,11 @@ function enterThroughDoor() {
   setTimeout(() => fadeEl.classList.add('is-on'), 380);
   setTimeout(() => {
     doorPivot.rotation.y = 0;
+    for (const { pivot } of modeledDoorPivots) pivot.rotation.y = 0;
     facade.visible = false;
     applyMode(false);
     go('inside', { dur: 0.01 });
+    setTimeout(greetFromInside, 180);
   }, 720);
   setTimeout(() => fadeEl.classList.remove('is-on'), 860);
   setTimeout(() => { doorBusy = false; }, 1300);
@@ -538,13 +858,21 @@ function hitAt(clientX, clientY) {
   const hits = raycaster.intersectObjects(pickables, true);
   for (const h of hits) {
     /* 在店内时，外墙上的窗/门不参与点击，避免挡住柜台 */
-    if (!facade.visible) {
+    if (!exteriorMode) {
       let n = h.object;
-      let inFacade = false;
-      while (n) { if (n === facade) { inFacade = true; break; } n = n.parent; }
-      if (inFacade) continue;
+      let inExterior = false;
+      while (n) {
+        if (n === facade || n === modeledExterior) {
+          inExterior = true;
+          break;
+        }
+        n = n.parent;
+      }
+      if (inExterior) continue;
     }
     const root = rootOf(h.object);
+    /* 店外只允许双门进入；透过玻璃看到的货架和柜台不抢点击。 */
+    if (exteriorMode && root?.userData.station !== 'door') continue;
     if (root) return root;
   }
   return null;
@@ -553,13 +881,57 @@ function hitAt(clientX, clientY) {
 const canvas = renderer.domElement;
 let drag = null;
 let downAt = null;
+const touchPoints = new Map();
+let pinch = null;
+let suppressTap = false;
+const MIN_ZOOM_DISTANCE = 0.28;
+const MAX_ZOOM_DISTANCE = 9;
+
+function dollyCamera(scale) {
+  const offset = camera.position.clone().sub(camTarget);
+  const distance = THREE.MathUtils.clamp(
+    offset.length() * scale,
+    MIN_ZOOM_DISTANCE,
+    MAX_ZOOM_DISTANCE
+  );
+  offset.setLength(distance);
+  camera.position.copy(camTarget).add(offset);
+  tween = null;
+}
+
+function touchDistance() {
+  const points = [...touchPoints.values()];
+  if (points.length < 2) return 0;
+  return Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+}
+
+canvas.style.touchAction = 'none';
 
 canvas.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch') {
+    touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touchPoints.size >= 2) {
+      pinch = { distance: touchDistance() };
+      suppressTap = true;
+      drag = null;
+      downAt = null;
+    }
+  }
   drag = { x: e.clientX, y: e.clientY, moved: false };
   downAt = { x: e.clientX, y: e.clientY };
   canvas.setPointerCapture?.(e.pointerId);
 });
 canvas.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch' && touchPoints.has(e.pointerId)) {
+    touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touchPoints.size >= 2) {
+      const distance = touchDistance();
+      if (pinch?.distance > 0 && distance > 0) dollyCamera(pinch.distance / distance);
+      pinch = { distance };
+      suppressTap = true;
+      return;
+    }
+  }
   if (drag) {
     const dx = e.clientX - drag.x;
     const dy = e.clientY - drag.y;
@@ -583,26 +955,49 @@ canvas.addEventListener('pointermove', e => {
   }
 });
 canvas.addEventListener('pointerup', e => {
+  const wasPinching = pinch || suppressTap;
+  if (e.pointerType === 'touch') {
+    touchPoints.delete(e.pointerId);
+    if (touchPoints.size < 2) pinch = null;
+  }
   const wasDrag = drag && drag.moved;
   const travel = downAt ? Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) : 0;
   drag = null;
   downAt = null;
+  if (wasPinching) {
+    if (touchPoints.size === 0) {
+      setTimeout(() => { suppressTap = false; }, 80);
+    }
+    return;
+  }
   /* 位移超过 6px 一律当拖拽，不触发点击，免得转完视角误跳到某个物件 */
   if (wasDrag || travel > 6) return;
   const hit = hitAt(e.clientX, e.clientY);
   if (!hit) return;
   const station = hit.userData.station;
-  if (station === 'window') {
-    go('window');
-    setTimeout(() => showBubble('<b>店员：</b>欢迎来到我的灵感便利店 ✦', new THREE.Vector3(-2.75, 2.3, 3.1)), 900);
-  } else if (station === 'door') {
+  if (station === 'door') {
     enterThroughDoor();
   } else {
     go(station);
-    if (station === 'badge') setTimeout(() => showBubble('<b>工牌：</b>姓名 / 职位 / 联系方式（待接入）', new THREE.Vector3(-2.12, 1.12, 0.92)), 900);
+    if (station === 'badge') setTimeout(() => showBubble('<b>工牌：</b>姓名 / 职位 / 联系方式（待接入）', new THREE.Vector3(-1.02, 1.12, 0.52)), 900);
   }
 });
-canvas.addEventListener('pointerleave', () => { outline.visible = false; drag = null; });
+canvas.addEventListener('pointercancel', e => {
+  touchPoints.delete(e.pointerId);
+  if (touchPoints.size < 2) pinch = null;
+  suppressTap = false;
+  drag = null;
+  downAt = null;
+});
+canvas.addEventListener('pointerleave', () => {
+  if (touchPoints.size === 0) drag = null;
+  outline.visible = false;
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = Math.exp(THREE.MathUtils.clamp(e.deltaY, -180, 180) * 0.0015);
+  dollyCamera(factor);
+}, { passive: false });
 
 /* ---------- HUD ---------- */
 document.querySelectorAll('.st').forEach(b => {
@@ -612,13 +1007,13 @@ document.querySelectorAll('.st').forEach(b => {
   });
 });
 backBtn.addEventListener('click', () => {
-  if (facade.visible) enterThroughDoor();
+  if (exteriorMode) enterThroughDoor();
   else if (current === 'inside') go('street');
   else go('inside');
 });
 window.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (facade.visible) enterThroughDoor();
+  if (exteriorMode) enterThroughDoor();
   else if (current === 'inside') go('street');
   else go('inside');
 });
@@ -648,18 +1043,28 @@ function render() {
   }
 
   camera.lookAt(camTarget);
+  if (stationRoll) camera.rotateZ(stationRoll);
   updateLabels();
   renderer.render(scene, camera);
 }
 
 /* ---------- 初始化 ---------- */
 function resize() {
-  const s = Math.min(window.innerWidth / W, window.innerHeight / H);
-  frame.style.setProperty('--s', s.toFixed(5));
+  W = Math.max(1, frame.clientWidth);
+  H = Math.max(1, frame.clientHeight);
   camera.aspect = W / H;
-  camera.fov = CAMERA_FOV;
+  camera.fov = current === 'street' ? getStreetView().fov : CAMERA_FOV;
   camera.updateProjectionMatrix();
-  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(W, H, false);
+  renderer.domElement.style.width = '100%';
+  renderer.domElement.style.height = '100%';
+  streetLight.visible = !modeledExteriorReady && W / H >= 0.82;
+  if (current === 'street' && !tween) {
+    const streetView = getStreetView();
+    camera.position.set(...streetView.pos);
+    camTarget.set(...streetView.target);
+  }
 }
 window.addEventListener('resize', resize);
 
@@ -667,7 +1072,8 @@ const query = new URLSearchParams(location.search);
 if (query.has('embed')) document.body.dataset.embed = '1';
 const asked = query.get('shot');
 const startName = asked && stations[asked] ? asked : 'street';
-const startStation = stations[startName];
+const startStation = stationFor(startName);
+current = startName;
 camera.position.set(...startStation.pos);
 camTarget.set(...startStation.target);
 applyMode(!!startStation.ext);

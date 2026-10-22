@@ -130,14 +130,20 @@ async function loadTexture(gltf, binary, textureIndex, colorSpace) {
 async function loadMaterial(gltf, binary, materialIndex) {
   const def = gltf.materials[materialIndex] || {};
   const pbr = def.pbrMetallicRoughness || {};
+  const transparent = def.alphaMode === 'BLEND';
   const material = new THREE.MeshStandardMaterial({
     color: pbr.baseColorFactor
       ? new THREE.Color().fromArray(pbr.baseColorFactor.slice(0, 3))
       : 0xffffff,
     roughness: pbr.roughnessFactor ?? 1,
     metalness: pbr.metallicFactor ?? 1,
-    side: def.doubleSided ? THREE.DoubleSide : THREE.FrontSide
+    side: def.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
+    opacity: pbr.baseColorFactor?.[3] ?? 1,
+    transparent,
+    depthWrite: !transparent,
+    alphaTest: def.alphaMode === 'MASK' ? (def.alphaCutoff ?? 0.5) : 0
   });
+  material.name = def.name || '';
 
   if (pbr.baseColorTexture) {
     material.map = await loadTexture(
@@ -167,12 +173,14 @@ async function loadMaterial(gltf, binary, materialIndex) {
   }
   if (def.emissiveFactor) {
     material.emissive = new THREE.Color().fromArray(def.emissiveFactor.slice(0, 3));
+    material.emissiveIntensity =
+      def.extensions?.KHR_materials_emissive_strength?.emissiveStrength ?? 1;
   }
   material.needsUpdate = true;
   return material;
 }
 
-async function loadPrimitive(gltf, binary, primitive, materials) {
+async function loadPrimitive(gltf, binary, primitive, materials, materialCache) {
   const geometry = new THREE.BufferGeometry();
   const attributes = primitive.attributes || {};
 
@@ -197,14 +205,22 @@ async function loadPrimitive(gltf, binary, primitive, materials) {
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
 
-  const material = primitive.material != null
-    ? await loadMaterial(gltf, binary, primitive.material)
-    : new THREE.MeshStandardMaterial();
-  materials.push(material);
+  let material;
+  if (primitive.material != null) {
+    material = materialCache.get(primitive.material);
+    if (!material) {
+      material = await loadMaterial(gltf, binary, primitive.material);
+      materialCache.set(primitive.material, material);
+      materials.push(material);
+    }
+  } else {
+    material = new THREE.MeshStandardMaterial();
+    materials.push(material);
+  }
   return new THREE.Mesh(geometry, material);
 }
 
-async function buildNode(gltf, binary, nodeIndex, materials) {
+async function buildNode(gltf, binary, nodeIndex, materials, materialCache) {
   const def = gltf.nodes[nodeIndex];
   const node = new THREE.Group();
   node.name = def.name || `node-${nodeIndex}`;
@@ -219,11 +235,11 @@ async function buildNode(gltf, binary, nodeIndex, materials) {
 
   if (def.mesh != null) {
     for (const primitive of gltf.meshes[def.mesh].primitives) {
-      node.add(await loadPrimitive(gltf, binary, primitive, materials));
+      node.add(await loadPrimitive(gltf, binary, primitive, materials, materialCache));
     }
   }
   for (const childIndex of def.children || []) {
-    node.add(await buildNode(gltf, binary, childIndex, materials));
+    node.add(await buildNode(gltf, binary, childIndex, materials, materialCache));
   }
   return node;
 }
@@ -242,8 +258,9 @@ export async function loadGlbModel(url) {
   const root = new THREE.Group();
   root.name = 'glb-scene';
   const materials = [];
+  const materialCache = new Map();
   for (const nodeIndex of sceneDef.nodes || []) {
-    root.add(await buildNode(gltf, binary, nodeIndex, materials));
+    root.add(await buildNode(gltf, binary, nodeIndex, materials, materialCache));
   }
   root.userData.glbMaterials = materials;
   return root;
