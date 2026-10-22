@@ -4,7 +4,7 @@
    ========================================== */
 import * as THREE from './three.module.min.js';
 import { createTableBadge } from './badge.js';
-import { loadGlbModel } from './glb-loader.js?v=20261022-interior-fit-1';
+import { loadGlbModel } from './glb-loader.js?v=20261022-counter-extension-1';
 
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labels');
@@ -127,40 +127,6 @@ const stockMats = [
   new THREE.MeshStandardMaterial({ color: 0x8b75ad, roughness: 0.74 }),
   new THREE.MeshStandardMaterial({ color: 0xd66e79, roughness: 0.7 })
 ];
-
-/* 用低面数商品堆出连续的货架密度，避免场景只剩大块空墙。 */
-function shelfUnit(x, z, width, height, rotY = 0, levels = 4) {
-  const unit = new THREE.Group();
-  unit.position.set(x, 0, z);
-  unit.rotation.y = rotY;
-  props.add(unit);
-
-  box(width, height, 0.36, M.propLo, 0, height / 2, 0, unit);
-  box(width + 0.06, 0.08, 0.42, M.prop, 0, 0.12, 0.01, unit);
-  box(width + 0.06, 0.08, 0.42, M.prop, 0, height - 0.06, 0.01, unit);
-  for (let level = 0; level < levels; level++) {
-    const shelfY = 0.38 + level * ((height - 0.55) / (levels - 1));
-    box(width, 0.035, 0.4, M.metal, 0, shelfY - 0.1, 0.04, unit, { edges: false });
-    const slots = Math.max(4, Math.floor(width / 0.18));
-    for (let slot = 0; slot < slots; slot++) {
-      const itemHeight = 0.12 + ((slot + level) % 3) * 0.035;
-      const itemWidth = 0.095 + ((slot * 2 + level) % 4) * 0.012;
-      const item = box(
-        itemWidth,
-        itemHeight,
-        0.14,
-        stockMats[(slot + level * 2) % stockMats.length],
-        -width / 2 + 0.12 + slot * ((width - 0.24) / Math.max(1, slots - 1)),
-        shelfY + itemHeight / 2 - 0.06,
-        0.08,
-        unit,
-        { edges: false }
-      );
-      if (level % 2 === 0) item.rotation.y = (slot % 2 ? -1 : 1) * 0.08;
-    }
-  }
-  return unit;
-}
 
 /* 文字牌：灰模里用来认出招牌 */
 function makeSign(text, w, h, bg = '#1d1d24', fg = '#f2ead9', size = 54) {
@@ -320,6 +286,41 @@ box(0.68, 0.82, 0.68, M.propLo, -1.02, 0.41, -0.78, counter);
 groupPick(counter, 'counter');
 labels.push({ el: null, text: 'L 形柜台', anchor: new THREE.Vector3(-1.02, 1.02, 0.15), layer: 'int', station: 'counter' });
 
+/* 柜台朝门口的折叠延长板：展开补足工作台，向下翻收后让出店员进出通道。 */
+const counterExtension = new THREE.Group();
+counterExtension.name = 'counter-folding-extension';
+counterExtension.position.set(-1.02, 0.81, 1.13);
+props.add(counterExtension);
+box(0.66, 0.075, 0.075, M.metal, 0, 0.015, 0, counterExtension);
+for (const x of [-0.26, 0.26]) {
+  box(0.10, 0.09, 0.11, M.metal, x, 0.015, 0.075, counterExtension);
+}
+const extensionLeaf = new THREE.Group();
+extensionLeaf.position.set(0, 0, 0.08);
+counterExtension.add(extensionLeaf);
+box(0.80, 0.06, 0.72, M.cream, 0, -0.03, 0.36, extensionLeaf);
+box(0.70, 0.055, 0.62, M.propLo, 0, -0.075, 0.36, extensionLeaf);
+box(0.68, 0.08, 0.055, M.navy, 0, -0.075, 0.69, extensionLeaf);
+groupPick(counterExtension, 'counter-extension');
+labels.push({
+  el: null,
+  text: '活动延长板 · 点击收起',
+  anchor: new THREE.Vector3(-1.02, 1.0, 1.64),
+  layer: 'int',
+  station: 'counter-extension'
+});
+let extensionOpen = true;
+let extensionAngle = 0;
+function toggleCounterExtension() {
+  extensionOpen = !extensionOpen;
+  const extensionLabel = labels.find(label => label.station === 'counter-extension');
+  if (extensionLabel?.el) {
+    extensionLabel.el.textContent = extensionOpen
+      ? '活动延长板 · 点击收起'
+      : '活动延长板 · 点击展开';
+  }
+}
+
 // 小本子
 const note = box(0.3, 0.04, 0.23, M.accent, -1.08, 0.86, 0.74, props, { edges: true });
 pick(note, 'notebook', null, new THREE.Vector3(), 'int');
@@ -389,9 +390,7 @@ for (let i = 0; i < 4; i++) {
 }
 groupPick(archive, 'wall');
 
-/* ---------- 满铺货架 + 前场陈列 ---------- */
-shelfUnit(-2.16, -0.63, 1.45, 2.0, Math.PI / 2, 4);
-
+/* ---------- 前场陈列 ---------- */
 const displayCase = new THREE.Group();
 // 陈列柜靠右侧墙布置，避开双开门后的进门动线。
 displayCase.position.set(1.90, 0, 0.95);
@@ -515,20 +514,6 @@ box(0.075, 2.30, 0.08, M.navy, 3.20, 1.18, 2.03, facade);
 box(0.14, 0.10, 0.32, M.navy, 3.20, 2.31, 1.88, facade);
 box(0.26, 0.34, 0.10, M.navy, 3.15, 1.52, 1.95, facade);
 
-// 玻璃窗后的便利店货架，让首屏一眼能看出零售属性。
-const windowShelf = new THREE.Group();
-windowShelf.position.set(-2.04, 0, 0.78);
-props.add(windowShelf);
-box(0.74, 1.72, 0.24, M.propLo, 0, 0.86, 0, windowShelf);
-for (let level = 0; level < 4; level++) {
-  const shelfY = 0.32 + level * 0.38;
-  box(0.68, 0.035, 0.28, M.navy, 0, shelfY, 0.02, windowShelf, { edges: false });
-  for (let slot = 0; slot < 3; slot++) {
-    box(0.14, 0.18, 0.12, stockMats[(level + slot) % stockMats.length],
-      -0.22 + slot * 0.22, shelfY + 0.105, 0.07, windowShelf, { edges: false });
-  }
-}
-
 // 门前外摆：冰柜、绿植和可嵌套的购物篮。
 const curbFreezer = new THREE.Group();
 curbFreezer.position.set(-2.48, 0, 3.15);
@@ -579,7 +564,7 @@ function makeModeledDoorPivot(door, hinge) {
   return pivot;
 }
 
-loadGlbModel('../assets/models/store-exterior.glb?v=20261022-interior-fit-1').then(model => {
+loadGlbModel('../assets/models/store-exterior.glb?v=20261022-store-lamp-clear-1').then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
     const name = object.name || '';
@@ -642,10 +627,10 @@ ground.rotation.x = -Math.PI / 2;
 ground.position.set(0, -0.03, 8.0);
 street.add(ground);
 
-// 抬高的石铺人行道与路缘，让店面有参考图中的完整模型底座。
-box(7.20, 0.14, 1.72, M.stone, 0, 0.08, 3.05, street, { edges: true });
-box(7.24, 0.18, 0.24, M.stone, 0, 0.08, 3.91, street);
-for (let x = -3.2; x <= 3.2; x += 0.8) {
+// 左侧多留一列铺砖，完整承托外移后的路灯底座。
+box(8.05, 0.14, 1.72, M.stone, -0.44, 0.08, 3.05, street, { edges: true });
+box(8.09, 0.18, 0.24, M.stone, -0.44, 0.08, 3.91, street);
+for (let x = -4.0; x <= 3.2; x += 0.8) {
   box(0.015, 0.012, 1.58, M.dark, x, 0.155, 3.04, street, { edges: false });
 }
 for (let z = 2.45; z <= 3.70; z += 0.42) {
@@ -653,8 +638,9 @@ for (let z = 2.45; z <= 3.70; z += 0.42) {
 }
 
 // 左侧 T 形路灯：一根立杆、一根横梁与两盏方块灯。
+const STREETLIGHT_X = -4.00;
 const streetLight = new THREE.Group();
-streetLight.position.set(-3.70, 0, 3.08);
+streetLight.position.set(STREETLIGHT_X, 0, 3.08);
 street.add(streetLight);
 box(0.48, 0.16, 0.48, M.navy, 0, 0.08, 0, streetLight);
 box(0.20, 0.30, 0.20, M.navy, 0, 0.30, 0, streetLight);
@@ -667,7 +653,7 @@ box(0.82, 0.09, 0.10, M.navy, 0.37, 2.69, 0, streetLight, { edges: false });
   box(0.13, 0.11, 0.13, M.glow, x, 2.47, 0, streetLight, { edges: false });
 });
 const lampLight = new THREE.PointLight(0xffc98a, 2.1, 8, 2);
-lampLight.position.set(-3.70, 2.46, 3.08);
+lampLight.position.set(STREETLIGHT_X, 2.46, 3.08);
 street.add(lampLight);
 
 // 橱窗内侧补一盏低强度暖光，避免深色玻璃把人物和柜台吃掉。
@@ -977,6 +963,8 @@ canvas.addEventListener('pointerup', e => {
   const station = hit.userData.station;
   if (station === 'door') {
     enterThroughDoor();
+  } else if (station === 'counter-extension') {
+    toggleCounterExtension();
   } else {
     go(station);
     if (station === 'badge') setTimeout(() => showBubble('<b>工牌：</b>姓名 / 职位 / 联系方式（待接入）', new THREE.Vector3(-1.02, 1.12, 0.52)), 900);
@@ -1041,6 +1029,10 @@ function render() {
     orbit.yaw = 0;
     orbit.pitch = 0;
   }
+
+  const extensionTarget = extensionOpen ? 0 : Math.PI / 2;
+  extensionAngle += (extensionTarget - extensionAngle) * (1 - Math.exp(-dt * 11));
+  extensionLeaf.rotation.x = extensionAngle;
 
   camera.lookAt(camTarget);
   if (stationRoll) camera.rotateZ(stationRoll);
