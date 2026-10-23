@@ -100,7 +100,9 @@ function imageFromBlob(blob) {
 
 async function loadTexture(gltf, binary, textureIndex, colorSpace) {
   const textureDef = gltf.textures[textureIndex];
-  const imageDef = gltf.images[textureDef.source];
+  const sourceIndex = textureDef.source ??
+    textureDef.extensions?.EXT_texture_webp?.source;
+  const imageDef = gltf.images[sourceIndex];
   const bufferView = gltf.bufferViews[imageDef.bufferView];
   const start = bufferView.byteOffset || 0;
   const bytes = binary.slice(start, start + bufferView.byteLength);

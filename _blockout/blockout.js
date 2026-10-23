@@ -4,7 +4,7 @@
    ========================================== */
 import * as THREE from './three.module.min.js';
 import { createTableBadge } from './badge.js';
-import { loadGlbModel } from './glb-loader.js?v=20261022-counter-extension-1';
+import { loadGlbModel } from './glb-loader.js?v=20261023-model-compress-3';
 
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labels');
@@ -356,7 +356,7 @@ props.add(tableBadge);
 groupPick(tableBadge, 'badge');
 labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
 
-loadGlbModel('../assets/models/clerk-optimized.glb').then(model => {
+loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-quality-3').then(model => {
   model.name = 'clerk-chen-zhixi-textured';
   model.traverse(object => {
     if (!object.isMesh) return;
@@ -564,7 +564,7 @@ function makeModeledDoorPivot(door, hinge) {
   return pivot;
 }
 
-loadGlbModel('../assets/models/store-exterior.glb?v=20261022-store-lamp-clear-1').then(model => {
+loadGlbModel('../assets/models/store-exterior.glb?v=20261023-model-compress-3').then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
     const name = object.name || '';
