@@ -17,6 +17,22 @@ python3 -m http.server 8080
 
 然后打开 <http://localhost:8080>。
 
+## 源码归档
+
+GitHub 仓库使用两个独立分支：
+
+- `main`：GitHub Pages 线上网站文件。
+- [`source`](https://github.com/7jinch2-dev/7Jinch2/tree/source)：完整网站、Blender 模型工程、概念图、设计数据、组件源码和项目原始素材。
+
+个人头像原图、简历提取图等非必要参考素材不进入公开仓库。需要完整源码时按目录拉取：
+
+```bash
+git clone --filter=blob:none --sparse --branch source \
+  https://github.com/7jinch2-dev/7Jinch2.git
+cd 7Jinch2
+git sparse-checkout set site docs blender concepts design-data components source-assets tools
+```
+
 ## 目录
 
 ```text
