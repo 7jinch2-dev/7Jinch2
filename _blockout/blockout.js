@@ -341,7 +341,7 @@ labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-1.02, 1.17
 // 店员：只使用当前高精度 PBR 模型，正面朝向柜台和入口。
 const clerk = new THREE.Group();
 clerk.name = 'clerk-chen-zhixi';
-clerk.position.set(-1.62, 0, 0.18);
+clerk.position.set(-1.82, 0, 0.18);
 const COUNTER_FACING_YAW = Math.PI / 2;
 clerk.rotation.y = COUNTER_FACING_YAW;
 window.__blk.clerk = clerk;
@@ -356,7 +356,7 @@ props.add(tableBadge);
 groupPick(tableBadge, 'badge');
 labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
 
-loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-quality-3').then(model => {
+loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2').then(model => {
   model.name = 'clerk-chen-zhixi-textured';
   model.traverse(object => {
     if (!object.isMesh) return;
@@ -672,7 +672,7 @@ const stations = {
   /* 所有物件特写都让镜头落在物体正面的法线方向上。 */
   vending:  { pos: [1.29, 1.05, 1.55], target: [1.29, 0.95, -0.76], ext: false },
   counter:  { pos: [0.78, 1.12, 0.13], target: [-0.88, 0.70, 0.13], ext: false },
-  clerk:    { pos: [0.30, 1.32, 0.16], target: [-1.39, 1.02, 0.16], ext: false },
+  clerk:    { pos: [0.30, 1.32, 0.16], target: [-1.59, 1.02, 0.16], ext: false },
   badge:    { pos: [-0.93, 1.30, 0.82], target: [-0.93, 0.76, 0.45], roll: -Math.PI / 2, ext: false },
   wall:     { pos: [-0.47, 1.46, 0.20], target: [-0.47, 1.24, -1.57], ext: false },
   register: { pos: [0.42, 1.10, -0.36], target: [-0.88, 0.84, -0.36], ext: false },
@@ -774,7 +774,7 @@ function updateLabels() {
 let bubbleTimer = 0;
 function greetFromInside() {
   showBubble('<b>店员：</b>欢迎来到我的灵感便利店 ✦',
-    new THREE.Vector3(-1.62, 2.32, 0.18), 5200);
+    new THREE.Vector3(-1.82, 2.32, 0.18), 5200);
 }
 
 function showBubble(text, anchor, duration = 3600) {
