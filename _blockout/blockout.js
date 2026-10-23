@@ -12,6 +12,9 @@ const loader = document.getElementById('loader');
 const bubbleEl = document.getElementById('bubble');
 const backBtn = document.getElementById('back');
 const fadeEl = document.getElementById('fade');
+const walkHint = document.getElementById('walkHint');
+const reticle = document.getElementById('reticle');
+const aimHint = document.getElementById('aimHint');
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -51,6 +54,8 @@ scene.add(cool);
 /* ---------- 材质 ---------- */
 const M = {
   wall: new THREE.MeshStandardMaterial({ color: 0xe8e0d0, roughness: 0.92, metalness: 0.01 }),
+  ceiling: new THREE.MeshStandardMaterial({ color: 0xd8ccb8, roughness: 0.94,
+    emissive: 0x6b5947, emissiveIntensity: 0.35 }),
   facadeWall: new THREE.MeshStandardMaterial({ color: 0x8e887e, roughness: 0.96, metalness: 0.01 }),
   facadeSide: new THREE.MeshBasicMaterial({ color: 0x716d66, side: THREE.DoubleSide }),
   floor: new THREE.MeshStandardMaterial({ color: 0xc9beab, roughness: 0.88 }),
@@ -225,10 +230,28 @@ function groupPick(group, station) {
 // 约 5.0m × 3.8m 的净空间，完整收进新外景壳体，避免墙体和货架穿模。
 box(5.0, 0.12, 3.8, M.floor, 0, -0.06, 0, shell, { edges: false });
 box(4.88, 0.02, 3.68, M.tile, 0, 0.005, 0, shell, { edges: false });
-// 后墙 + 左右墙（前墙切开）
+// 后墙 + 左右墙 + 天花板；前墙另做店内专用封口，避免第一人称越界看到墙背面。
 box(5.0, 2.65, 0.12, M.wall, 0, 1.325, -1.90, shell);
 box(0.12, 2.65, 3.8, M.wall, -2.50, 1.325, 0, shell);
 const interiorRightWall = box(0.12, 2.65, 3.8, M.wall, 2.50, 1.325, 0, shell);
+box(5.0, 0.08, 3.8, M.ceiling, 0, 2.68, 0, shell, { edges: false });
+
+const interiorFacade = new THREE.Group();
+interiorFacade.name = 'interior-front-enclosure';
+shell.add(interiorFacade);
+box(5.0, 0.52, 0.10, M.wall, 0, 2.39, 1.86, interiorFacade);
+box(0.12, 2.18, 0.10, M.metal, -0.04, 1.09, 1.84, interiorFacade);
+box(0.12, 2.18, 0.10, M.metal, 2.42, 1.09, 1.84, interiorFacade);
+box(2.40, 0.08, 0.10, M.metal, -1.24, 0.56, 1.84, interiorFacade);
+box(2.40, 0.08, 0.10, M.metal, -1.24, 2.13, 1.84, interiorFacade);
+box(2.35, 1.53, 0.035, M.doorGlass, -1.24, 1.34, 1.85, interiorFacade, { edges: false });
+box(2.30, 1.92, 0.025, M.dark, -1.24, 1.09, 1.91, interiorFacade, { edges: false });
+for (const x of [-0.86, 1.06]) {
+  box(0.10, 2.18, 0.10, M.metal, x, 1.09, 1.84, interiorFacade);
+  box(0.035, 0.42, 0.07, M.metal, x + 0.16, 1.04, 1.77, interiorFacade, { edges: false });
+}
+box(2.12, 1.86, 0.025, M.doorGlass, 0.10, 1.09, 1.86, interiorFacade, { edges: false });
+box(2.04, 1.82, 0.02, M.dark, 0.10, 1.09, 1.92, interiorFacade, { edges: false });
 // 天花板灯管
 box(1.6, 0.06, 0.16, M.glow, -1.05, 2.59, 0.2, shell, { edges: false });
 box(1.6, 0.06, 0.16, M.glowSoft, 1.25, 2.59, -0.35, shell, { edges: false });
@@ -356,20 +379,34 @@ props.add(tableBadge);
 groupPick(tableBadge, 'badge');
 labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
 
-loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2').then(model => {
-  model.name = 'clerk-chen-zhixi-textured';
-  model.traverse(object => {
-    if (!object.isMesh) return;
-    object.userData.station = 'clerk';
-    object.userData.root = clerk;
-  });
-  clerk.add(model);
-  clerk.userData.texturedModel = model;
-  document.body.dataset.clerkModel = 'textured';
-}).catch(error => {
-  console.warn('Textured clerk could not load.', error);
-  document.body.dataset.clerkModel = 'unavailable';
-});
+let clerkLoadPromise = null;
+function loadClerk() {
+  if (clerkLoadPromise) return clerkLoadPromise;
+  document.body.dataset.clerkModel = 'loading';
+  clerkLoadPromise = loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2')
+    .then(model => {
+      model.name = 'clerk-chen-zhixi-textured';
+      model.traverse(object => {
+        if (!object.isMesh) return;
+        object.userData.station = 'clerk';
+        object.userData.root = clerk;
+      });
+      clerk.add(model);
+      clerk.userData.texturedModel = model;
+      document.body.dataset.clerkModel = 'textured';
+    })
+    .catch(error => {
+      console.warn('Textured clerk could not load.', error);
+      document.body.dataset.clerkModel = 'unavailable';
+    });
+  return clerkLoadPromise;
+}
+
+function scheduleClerkLoad() {
+  const start = () => loadClerk();
+  if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 });
+  else setTimeout(start, 250);
+}
 
 /* ---------- 墙面证书 ---------- */
 [-1.2, -0.55, 0.1].forEach((x, i) => {
@@ -564,7 +601,7 @@ function makeModeledDoorPivot(door, hinge) {
   return pivot;
 }
 
-loadGlbModel('../assets/models/store-exterior.glb?v=20261023-supplied-freezer').then(model => {
+loadGlbModel('../assets/models/store-exterior.glb?v=20261023-lighter-props').then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
     const name = object.name || '';
@@ -619,7 +656,7 @@ loadGlbModel('../assets/models/store-exterior.glb?v=20261023-supplied-freezer').
 }).catch(error => {
   console.warn('Modeled exterior could not load; using the procedural storefront.', error);
   document.body.dataset.exteriorModel = 'fallback';
-});
+}).finally(scheduleClerkLoad);
 
 /* ---------- 街道 ---------- */
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 16), M.streetFloor);
@@ -667,8 +704,8 @@ const stations = {
   street:   { pos: [1.10, 1.60, 7.00], target: [-0.05, 1.18, 1.78], ext: true },
   door:     { pos: [DOOR_X * FACADE_X_SCALE, 1.48 * FACADE_Y_SCALE, 4.05],
               target: [DOOR_X * FACADE_X_SCALE, 1.13 * FACADE_Y_SCALE, 1.90], ext: true },
-  /* 进门后采用图一的正面平视构图，不做侧后方俯视。 */
-  inside:   { pos: [0.78, 1.70, 3.55], target: [-0.30, 1.08, -0.58], ext: false },
+  /* 进门后的第一人称起点，始终落在店铺内部。 */
+  inside:   { pos: [0.62, 1.40, 1.30], target: [-0.45, 1.02, -0.64], ext: false },
   /* 所有物件特写都让镜头落在物体正面的法线方向上。 */
   vending:  { pos: [1.29, 1.05, 1.55], target: [1.29, 0.95, -0.76], ext: false },
   counter:  { pos: [0.78, 1.12, 0.13], target: [-0.88, 0.70, 0.13], ext: false },
@@ -684,8 +721,90 @@ let tween = null;
 let current = 'inside';
 let stationRoll = 0;
 const orbit = { yaw: 0, pitch: 0 };
+const walk = {
+  active: false,
+  x: 0.62,
+  z: 1.30,
+  eyeY: 1.40,
+  yaw: Math.atan2(1.07, 1.94),
+  pitch: -0.04,
+  speed: 1.08,
+  radius: 0.19,
+  keys: new Set()
+};
+const WALK_BOUNDS = { minX: -1.88, maxX: 1.88, minZ: -1.42, maxZ: 1.38 };
+const WALK_COLLIDERS = [
+  { minX: -1.29, maxX: -0.52, minZ: -0.80, maxZ: 1.18 },
+  { minX: -2.16, maxX: -0.69, minZ: -1.12, maxZ: -0.31 },
+  { minX: 0.51, maxX: 2.12, minZ: -1.43, maxZ: -0.73 },
+  { minX: 1.45, maxX: 2.14, minZ: 0.51, maxZ: 1.18 },
+  { minX: -1.23, maxX: 0.28, minZ: -1.50, maxZ: -1.23 }
+];
+let interactTarget = null;
+let aimCheckedAt = 0;
+let walkHintTimer = 0;
 
 function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+function resetWalkPose() {
+  const st = stations.inside;
+  walk.x = st.pos[0];
+  walk.z = st.pos[2];
+  walk.eyeY = st.pos[1];
+  const dx = st.target[0] - walk.x;
+  const dz = st.target[2] - walk.z;
+  walk.yaw = Math.atan2(-dx, -dz);
+  walk.pitch = -0.04;
+  walk.keys.clear();
+}
+
+function walkBlocked(x, z) {
+  if (x < WALK_BOUNDS.minX || x > WALK_BOUNDS.maxX ||
+      z < WALK_BOUNDS.minZ || z > WALK_BOUNDS.maxZ) return true;
+  return WALK_COLLIDERS.some(box => (
+    x > box.minX - walk.radius && x < box.maxX + walk.radius &&
+    z > box.minZ - walk.radius && z < box.maxZ + walk.radius
+  ));
+}
+
+function moveWalk(dt) {
+  if (!walk.active || !walk.keys.size) return;
+  let forward = 0;
+  let strafe = 0;
+  if (walk.keys.has('KeyW')) forward += 1;
+  if (walk.keys.has('KeyS')) forward -= 1;
+  if (walk.keys.has('KeyD')) strafe += 1;
+  if (walk.keys.has('KeyA')) strafe -= 1;
+  const length = Math.hypot(forward, strafe);
+  if (!length) return;
+  forward /= length;
+  strafe /= length;
+  const sin = Math.sin(walk.yaw);
+  const cos = Math.cos(walk.yaw);
+  const step = walk.speed * dt;
+  const dx = (-sin * forward + cos * strafe) * step;
+  const dz = (-cos * forward - sin * strafe) * step;
+  if (!walkBlocked(walk.x + dx, walk.z)) walk.x += dx;
+  if (!walkBlocked(walk.x, walk.z + dz)) walk.z += dz;
+}
+
+function syncWalkCamera() {
+  if (!walk.active) return;
+  stationRoll = 0;
+  camera.position.set(walk.x, walk.eyeY, walk.z);
+  const cp = Math.cos(walk.pitch);
+  camTarget.set(
+    walk.x - Math.sin(walk.yaw) * cp,
+    walk.eyeY + Math.sin(walk.pitch),
+    walk.z - Math.cos(walk.yaw) * cp
+  );
+}
+
+function showWalkHint() {
+  clearTimeout(walkHintTimer);
+  walkHint.classList.add('is-on');
+  walkHintTimer = setTimeout(() => walkHint.classList.remove('is-on'), 2600);
+}
 
 function getStreetView() {
   const aspect = Math.max(0.35, W / H);
@@ -715,6 +834,7 @@ function applyMode(isExt) {
   street.visible = isExt && !modeledExteriorReady;
   modeledExterior.visible = isExt && modeledExteriorReady;
   interiorRightWall.visible = !isExt;
+  interiorFacade.visible = !isExt;
   labels.forEach(l => { if (l.el) l.el.style.opacity = l.layer === (isExt ? 'ext' : 'int') ? '' : '0'; });
 }
 
@@ -735,6 +855,23 @@ function go(name, opts = {}) {
     ? '← 回到店外'
     : st.ext ? '进店 →' : '← 回到店内';
   backBtn.classList.add('is-on');
+  walk.active = name === 'inside';
+  document.body.dataset.walk = walk.active ? '1' : '0';
+  reticle.classList.toggle('is-on', walk.active);
+  if (walk.active) {
+    if (!opts.preserveWalk) resetWalkPose();
+    tween = null;
+    syncWalkCamera();
+    hideBubble();
+    if (!opts.preserveWalk) showWalkHint();
+    return;
+  }
+  walk.keys.clear();
+  clearTimeout(walkHintTimer);
+  walkHint.classList.remove('is-on');
+  interactTarget = null;
+  reticle.classList.remove('is-target');
+  aimHint.textContent = '';
   tween = {
     t: 0,
     dur: opts.dur || 1.0,
@@ -795,6 +932,7 @@ let doorBusy = false;
 function enterThroughDoor() {
   if (doorBusy) return;
   doorBusy = true;
+  loadClerk();
   hideBubble();
 
   // 先站到双开门前，两扇门同步向内打开。
@@ -841,8 +979,13 @@ function hitAt(clientX, clientY) {
   pointer.x = ((clientX - r.left) / r.width) * 2 - 1;
   pointer.y = -((clientY - r.top) / r.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
+  return hitFromRay();
+}
+
+function hitFromRay(maxDistance = Infinity) {
   const hits = raycaster.intersectObjects(pickables, true);
   for (const h of hits) {
+    if (h.distance > maxDistance) continue;
     /* 在店内时，外墙上的窗/门不参与点击，避免挡住柜台 */
     if (!exteriorMode) {
       let n = h.object;
@@ -862,6 +1005,58 @@ function hitAt(clientX, clientY) {
     if (root) return root;
   }
   return null;
+}
+
+const STATION_NAMES = {
+  vending: '查看售货机',
+  counter: '查看柜台',
+  'counter-extension': '收起 / 展开延长板',
+  badge: '查看工牌',
+  notebook: '查看小本子',
+  register: '查看收银机',
+  wall: '查看证书墙'
+};
+
+function updateAimTarget(now = performance.now()) {
+  if (!walk.active || current !== 'inside' || tween) {
+    interactTarget = null;
+    reticle.classList.remove('is-target');
+    aimHint.textContent = '';
+    return;
+  }
+  if (now - aimCheckedAt < 110) return;
+  aimCheckedAt = now;
+  pointer.set(0, 0);
+  raycaster.setFromCamera(pointer, camera);
+  interactTarget = hitFromRay(3.0);
+  const station = interactTarget?.userData.station;
+  const text = STATION_NAMES[station] || '';
+  reticle.classList.toggle('is-target', Boolean(interactTarget));
+  aimHint.innerHTML = text ? '<kbd>F</kbd>' + text : '';
+  if (interactTarget) {
+    outline.setFromObject(interactTarget);
+    outline.visible = true;
+  } else {
+    outline.visible = false;
+  }
+}
+
+function interactAim() {
+  if (!walk.active || current !== 'inside') return;
+  updateAimTarget(performance.now() + 200);
+  const station = interactTarget?.userData.station;
+  if (!station) return;
+  if (station === 'counter-extension') {
+    toggleCounterExtension();
+    return;
+  }
+  go(station, { fromWalk: true });
+  if (station === 'badge') {
+    setTimeout(() => showBubble(
+      '<b>工牌：</b>姓名 / 职位 / 联系方式（待接入）',
+      new THREE.Vector3(-1.02, 1.12, 0.52)
+    ), 900);
+  }
 }
 
 const canvas = renderer.domElement;
@@ -911,6 +1106,10 @@ canvas.addEventListener('pointermove', e => {
   if (e.pointerType === 'touch' && touchPoints.has(e.pointerId)) {
     touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (touchPoints.size >= 2) {
+      if (walk.active) {
+        suppressTap = true;
+        return;
+      }
       const distance = touchDistance();
       if (pinch?.distance > 0 && distance > 0) dollyCamera(pinch.distance / distance);
       pinch = { distance };
@@ -924,11 +1123,21 @@ canvas.addEventListener('pointermove', e => {
     if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
     if (drag.moved) {
       outline.visible = false;
-      orbit.yaw -= dx * 0.003;
-      orbit.pitch = Math.max(-0.2, Math.min(0.24, orbit.pitch - dy * 0.0025));
+      if (walk.active) {
+        walk.yaw -= dx * 0.0028;
+        walk.pitch = Math.max(-0.72, Math.min(0.62, walk.pitch - dy * 0.0024));
+        syncWalkCamera();
+      } else {
+        orbit.yaw -= dx * 0.003;
+        orbit.pitch = Math.max(-0.2, Math.min(0.24, orbit.pitch - dy * 0.0025));
+      }
       drag.x = e.clientX; drag.y = e.clientY;
       tween = null;
     }
+    return;
+  }
+  if (walk.active) {
+    canvas.style.cursor = drag ? 'grabbing' : 'grab';
     return;
   }
   const hit = hitAt(e.clientX, e.clientY);
@@ -983,6 +1192,7 @@ canvas.addEventListener('pointerleave', () => {
 });
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
+  if (walk.active) return;
   const factor = Math.exp(THREE.MathUtils.clamp(e.deltaY, -180, 180) * 0.0015);
   dollyCamera(factor);
 }, { passive: false });
@@ -996,15 +1206,28 @@ document.querySelectorAll('.st').forEach(b => {
 });
 backBtn.addEventListener('click', () => {
   if (exteriorMode) enterThroughDoor();
-  else if (current === 'inside') go('street');
-  else go('inside');
+  else if (walk.active) go('street');
+  else go('inside', { preserveWalk: true });
 });
 window.addEventListener('keydown', e => {
-  if (e.key !== 'Escape') return;
-  if (exteriorMode) enterThroughDoor();
-  else if (current === 'inside') go('street');
-  else go('inside');
+  if (walk.active && ['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) {
+    walk.keys.add(e.code);
+    e.preventDefault();
+    return;
+  }
+  if (walk.active && e.code === 'KeyF' && !e.repeat) {
+    interactAim();
+    e.preventDefault();
+    return;
+  }
+  if (e.key === 'Escape') {
+    if (exteriorMode) enterThroughDoor();
+    else if (walk.active) go('street');
+    else go('inside', { preserveWalk: true });
+  }
 });
+window.addEventListener('keyup', e => walk.keys.delete(e.code));
+window.addEventListener('blur', () => walk.keys.clear());
 
 /* ---------- 渲染循环 ---------- */
 const clock = new THREE.Clock();
@@ -1012,7 +1235,10 @@ function render() {
   requestAnimationFrame(render);
   const dt = Math.min(clock.getDelta(), 0.05);
 
-  if (tween) {
+  if (walk.active) {
+    moveWalk(dt);
+    syncWalkCamera();
+  } else if (tween) {
     tween.t += dt / tween.dur;
     const k = ease(Math.min(1, tween.t));
     camera.position.lerpVectors(tween.fromPos, tween.toPos, k);
@@ -1036,6 +1262,7 @@ function render() {
 
   camera.lookAt(camTarget);
   if (stationRoll) camera.rotateZ(stationRoll);
+  updateAimTarget();
   updateLabels();
   renderer.render(scene, camera);
 }
@@ -1066,8 +1293,16 @@ const asked = query.get('shot');
 const startName = asked && stations[asked] ? asked : 'street';
 const startStation = stationFor(startName);
 current = startName;
-camera.position.set(...startStation.pos);
-camTarget.set(...startStation.target);
+walk.active = startName === 'inside';
+document.body.dataset.walk = walk.active ? '1' : '0';
+reticle.classList.toggle('is-on', walk.active);
+if (walk.active) {
+  resetWalkPose();
+  syncWalkCamera();
+} else {
+  camera.position.set(...startStation.pos);
+  camTarget.set(...startStation.target);
+}
 applyMode(!!startStation.ext);
 document.body.dataset.mode = startStation.ext ? 'ext' : 'int';
 document.body.dataset.station = startName;
@@ -1076,5 +1311,8 @@ render();
 setTimeout(() => loader.classList.add('is-off'), 350);
 setTimeout(() => loader.remove(), 1200);
 if (asked && stations[asked]) {
-  setTimeout(() => go(asked, { dur: 0.01 }), 120);
+  setTimeout(() => {
+    loadClerk();
+    go(asked, { dur: 0.01 });
+  }, 120);
 }

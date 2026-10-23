@@ -86,6 +86,49 @@
   .bubble.is-on { opacity: 1; transform: translate(-50%, -100%) translateY(-6px); }
   .bubble b { color: #A9611C; }
 
+  /* 第一人称操作提示与准星 */
+  .walk-hint {
+    position: absolute; left: 50%; top: 82px; z-index: 7;
+    display: flex; align-items: center; gap: 16px;
+    padding: 9px 14px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.17);
+    background: rgba(12,12,16,.78); color: rgba(237,234,228,.82);
+    backdrop-filter: blur(10px); box-shadow: 0 12px 30px rgba(0,0,0,.28);
+    font-size: 12px; letter-spacing: .05em;
+    opacity: 0; transform: translate(-50%, -8px);
+    pointer-events: none; transition: opacity .25s, transform .25s;
+  }
+  .walk-hint.is-on { opacity: 1; transform: translate(-50%, 0); }
+  .walk-hint span { white-space: nowrap; }
+  .walk-hint kbd, .aim-hint kbd {
+    font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px;
+    border: 1px solid rgba(255,255,255,.24); border-radius: 5px;
+    padding: 2px 6px; margin-right: 4px; color: #F2D19C;
+  }
+
+  .reticle {
+    position: absolute; left: 50%; top: 50%; z-index: 7;
+    width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
+    border-radius: 50%; background: rgba(247,239,225,.88);
+    box-shadow: 0 0 0 4px rgba(10,10,14,.16), 0 0 10px rgba(255,185,92,.7);
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  .reticle::after {
+    content: ""; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(237,234,228,.14);
+  }
+  .reticle.is-on { opacity: 1; }
+  .reticle.is-target { transform: scale(1.45); background: #E8A24A; }
+  .aim-hint {
+    position: absolute; left: 50%; top: 22px; transform: translateX(-50%);
+    display: flex; align-items: center; white-space: nowrap;
+    padding: 6px 10px; border-radius: 999px;
+    background: rgba(10,10,14,.78); border: 1px solid rgba(255,255,255,.16);
+    color: rgba(237,234,228,.88); font-size: 11px; letter-spacing: .04em;
+    opacity: 0; transition: opacity .16s;
+  }
+  .reticle.is-target .aim-hint { opacity: 1; }
+
   /* 进门时短暂黑场，穿过门洞 */
   .fade {
     position: absolute; inset: 0; z-index: 8; pointer-events: none;
@@ -114,7 +157,13 @@
   <div class="hud">
     <div class="brand"><b>✦ 販賣 · 靈感</b><span>STORE BLOCKOUT</span><i>3D 灰模 v0.8</i></div>
     <button class="back" id="back">← 回到店内</button>
-    <div class="hint">点击物件 · 拖拽环视 · 滚轮 / 双指缩放 · <kbd>Esc</kbd> 退回</div>
+    <div class="walk-hint" id="walkHint">
+      <span><kbd>WASD</kbd>行走</span>
+      <span><kbd>F</kbd>交互</span>
+      <span>拖拽转头</span>
+    </div>
+    <div class="reticle" id="reticle"><div class="aim-hint" id="aimHint"></div></div>
+    <div class="hint">点击 / <kbd>F</kbd> 交互 · 拖拽环视 · <kbd>WASD</kbd> 店内行走 · <kbd>Esc</kbd> 退回</div>
     <div class="stations" id="stations">
       <button class="st" data-go="street">外景</button>
       <button class="st" data-go="door">门</button>
@@ -131,6 +180,6 @@
 </div>
 <div class="loader" id="loader">LOADING BLOCKOUT…</div>
 
-<script type="module" src="./blockout.js?v=20261023-supplied-freezer"></script>
+<script type="module" src="./blockout.js?v=20261023-first-person"></script>
 </body>
 </html>
