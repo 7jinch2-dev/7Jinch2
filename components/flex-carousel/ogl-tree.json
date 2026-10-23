@@ -1,0 +1,2335 @@
+{
+  "sha": "385ce65c352c70734a36dc98c787fdd1d30ddb3b",
+  "url": "https://api.github.com/repos/oframe/ogl/git/trees/385ce65c352c70734a36dc98c787fdd1d30ddb3b",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e76cf0da5bb82f2d66ab36b02d5547b6644d10cb",
+      "size": 28,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e76cf0da5bb82f2d66ab36b02d5547b6644d10cb"
+    },
+    {
+      "path": ".npmignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7265688ad91971944ef7114c08bfd42ee3f0dbd",
+      "size": 8,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b7265688ad91971944ef7114c08bfd42ee3f0dbd"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5534c443723a9c3c001c24eb7c711ca3fe2c08d",
+      "size": 8335,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e5534c443723a9c3c001c24eb7c711ca3fe2c08d"
+    },
+    {
+      "path": "examples",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8c9bebb2be22ff27a9b0d39dc746c501db847acb",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/8c9bebb2be22ff27a9b0d39dc746c501db847acb"
+    },
+    {
+      "path": "examples/anisotropic.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18350350d5c1cd167087606a1633ad68a9aae15a",
+      "size": 4160,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/18350350d5c1cd167087606a1633ad68a9aae15a"
+    },
+    {
+      "path": "examples/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f320779269f9ff32d6c5c406986d3b4b864b7c7a",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/f320779269f9ff32d6c5c406986d3b4b864b7c7a"
+    },
+    {
+      "path": "examples/assets/acorn.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8ebb6f4207560683057979f053ebff80ee8aa88",
+      "size": 9573,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e8ebb6f4207560683057979f053ebff80ee8aa88"
+    },
+    {
+      "path": "examples/assets/acorn.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c4cc00964dcee547336eb8551449ff5e20ea659",
+      "size": 30178,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6c4cc00964dcee547336eb8551449ff5e20ea659"
+    },
+    {
+      "path": "examples/assets/airplane.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b00e9bda4cf0bb7e21200fa5d8e5af294ceabeaf",
+      "size": 44324,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b00e9bda4cf0bb7e21200fa5d8e5af294ceabeaf"
+    },
+    {
+      "path": "examples/assets/airplane.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "640d4d7b87ade604475d60781b43663a45070312",
+      "size": 298612,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/640d4d7b87ade604475d60781b43663a45070312"
+    },
+    {
+      "path": "examples/assets/anim-format.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0aa746e05f20de80178120a2b30d489aeb5ffa9",
+      "size": 260,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e0aa746e05f20de80178120a2b30d489aeb5ffa9"
+    },
+    {
+      "path": "examples/assets/compressed",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5871a5f00a5223c1bbdb853c422ba4c06b1b96c5",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/5871a5f00a5223c1bbdb853c422ba4c06b1b96c5"
+    },
+    {
+      "path": "examples/assets/compressed/astc-m-y.ktx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d52d84764b8145a45a7027e9ad0c428a37dc1342",
+      "size": 1398268,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d52d84764b8145a45a7027e9ad0c428a37dc1342"
+    },
+    {
+      "path": "examples/assets/compressed/etc-m-y.ktx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09b21ef9c2ac8b4dbbe8d03b314adc7976467e6a",
+      "size": 699204,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/09b21ef9c2ac8b4dbbe8d03b314adc7976467e6a"
+    },
+    {
+      "path": "examples/assets/compressed/etc1-m-y.ktx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8c66ee8bd62e4e20552ee69ec00c927665e68d9",
+      "size": 699204,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b8c66ee8bd62e4e20552ee69ec00c927665e68d9"
+    },
+    {
+      "path": "examples/assets/compressed/pvrtc-m-y.ktx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da988e86b33fb90b2525108b2f48db14bbc4d8c7",
+      "size": 349772,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/da988e86b33fb90b2525108b2f48db14bbc4d8c7"
+    },
+    {
+      "path": "examples/assets/compressed/s3tc-m-y.ktx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d7e8f919a3447913b26bb3c4398e82a5cc3db4c",
+      "size": 699224,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1d7e8f919a3447913b26bb3c4398e82a5cc3db4c"
+    },
+    {
+      "path": "examples/assets/compressed/uv.jpg",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d414f2886a91360e69f4025e4d711f1cc7b70b5a",
+      "size": 139660,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d414f2886a91360e69f4025e4d711f1cc7b70b5a"
+    },
+    {
+      "path": "examples/assets/croissant.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d49763f71ffe2ee18fb377a0c2594d3f4f7e48b8",
+      "size": 9032,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d49763f71ffe2ee18fb377a0c2594d3f4f7e48b8"
+    },
+    {
+      "path": "examples/assets/croissant.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "94a5cfdac7f0d7f26917929db74c6f6bf7a2909c",
+      "size": 41430,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/94a5cfdac7f0d7f26917929db74c6f6bf7a2909c"
+    },
+    {
+      "path": "examples/assets/cube",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7faf7898ea8946b8c284571480a9742ce74168ef",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/7faf7898ea8946b8c284571480a9742ce74168ef"
+    },
+    {
+      "path": "examples/assets/cube/negx.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "506f1666c5b2cd01c4d11647e7684413360a96f3",
+      "size": 168083,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/506f1666c5b2cd01c4d11647e7684413360a96f3"
+    },
+    {
+      "path": "examples/assets/cube/negy.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f7820cb8e28dbde85baf1d6b46dcf1f94771c9c5",
+      "size": 167862,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f7820cb8e28dbde85baf1d6b46dcf1f94771c9c5"
+    },
+    {
+      "path": "examples/assets/cube/negz.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75a70582d4993467994b962863ee6b6d0c8c54ce",
+      "size": 142980,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/75a70582d4993467994b962863ee6b6d0c8c54ce"
+    },
+    {
+      "path": "examples/assets/cube/posx.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3abb0b61b92a523c45ce7a97e5402c250c5a88b2",
+      "size": 113481,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3abb0b61b92a523c45ce7a97e5402c250c5a88b2"
+    },
+    {
+      "path": "examples/assets/cube/posy.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13c015aff0359d86708647f507a6c1a6711a87bc",
+      "size": 113070,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/13c015aff0359d86708647f507a6c1a6711a87bc"
+    },
+    {
+      "path": "examples/assets/cube/posz.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "180f786ca9f5a67e3ebffdab32f5b7a4cf3611ad",
+      "size": 157687,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/180f786ca9f5a67e3ebffdab32f5b7a4cf3611ad"
+    },
+    {
+      "path": "examples/assets/earth.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8cc36dcaf3542138be74835016fecd39b7e491a",
+      "size": 167802,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e8cc36dcaf3542138be74835016fecd39b7e491a"
+    },
+    {
+      "path": "examples/assets/earth_cloud.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e47e68da05484a9e7497da7e6f5a67dc213ef5d5",
+      "size": 388508,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e47e68da05484a9e7497da7e6f5a67dc213ef5d5"
+    },
+    {
+      "path": "examples/assets/earth_specular.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1dcc99e1b024f163da2d8bf439b77f55974f0751",
+      "size": 118670,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1dcc99e1b024f163da2d8bf439b77f55974f0751"
+    },
+    {
+      "path": "examples/assets/favicon.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a8ce685ef8834f8573ec18f35b5d5851441e95b",
+      "size": 2893,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0a8ce685ef8834f8573ec18f35b5d5851441e95b"
+    },
+    {
+      "path": "examples/assets/fonts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "971c6fc561871d26ac1050a816c5b77f2e10f08f",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/971c6fc561871d26ac1050a816c5b77f2e10f08f"
+    },
+    {
+      "path": "examples/assets/fonts/FiraSans-Bold.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7450f23fee1ed98b638a5eb7df09f72a2a85a46e",
+      "size": 32401,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7450f23fee1ed98b638a5eb7df09f72a2a85a46e"
+    },
+    {
+      "path": "examples/assets/fonts/FiraSans-Bold.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25a117cdec25b80078eed0df26ada81b12f76caa",
+      "size": 87953,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/25a117cdec25b80078eed0df26ada81b12f76caa"
+    },
+    {
+      "path": "examples/assets/fonts/FiraSans-Bold.ttf",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "b74386b2d441e1438f761d097a6d7e123288ae95",
+      "size": 489720,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b74386b2d441e1438f761d097a6d7e123288ae95"
+    },
+    {
+      "path": "examples/assets/fonts/raleway-bold-webfont.woff",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "77d9095e597a350720ffbbf78fc62c4be0cdf3c7",
+      "size": 31832,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/77d9095e597a350720ffbbf78fc62c4be0cdf3c7"
+    },
+    {
+      "path": "examples/assets/fonts/raleway-bold-webfont.woff2",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "75b5f50d4e7368001b00ac8e16882495d63d11fe",
+      "size": 25444,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/75b5f50d4e7368001b00ac8e16882495d63d11fe"
+    },
+    {
+      "path": "examples/assets/fonts/raleway-regular-webfont.woff",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "95ec7d93251008ae18fa3b02dafe8dc50ec9ce90",
+      "size": 31684,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/95ec7d93251008ae18fa3b02dafe8dc50ec9ce90"
+    },
+    {
+      "path": "examples/assets/fonts/raleway-regular-webfont.woff2",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "81305045397fee053fc0712cef7d74f24161609c",
+      "size": 25436,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/81305045397fee053fc0712cef7d74f24161609c"
+    },
+    {
+      "path": "examples/assets/forest.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af65245b5bc4633c6504ca1a02dceb75c8b4fe1d",
+      "size": 50879,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/af65245b5bc4633c6504ca1a02dceb75c8b4fe1d"
+    },
+    {
+      "path": "examples/assets/forest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "406b66f995f3f20c80e78c2f271c0930514e8091",
+      "size": 89303,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/406b66f995f3f20c80e78c2f271c0930514e8091"
+    },
+    {
+      "path": "examples/assets/fox.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b49943daaff423b4b233311f2337332b0cfa7718",
+      "size": 23308,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b49943daaff423b4b233311f2337332b0cfa7718"
+    },
+    {
+      "path": "examples/assets/fox.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bee9e6aaafce0c715b4d62d5c43219fecc2a500",
+      "size": 167285,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4bee9e6aaafce0c715b4d62d5c43219fecc2a500"
+    },
+    {
+      "path": "examples/assets/gltf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1c4d60d65aca3f7fc28c486e407817ce3c4df788",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/1c4d60d65aca3f7fc28c486e407817ce3c4df788"
+    },
+    {
+      "path": "examples/assets/gltf/cottage-basis-draco.glb",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88c519bdb864b683fb32c62fa9e9cf905a26c33f",
+      "size": 823688,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/88c519bdb864b683fb32c62fa9e9cf905a26c33f"
+    },
+    {
+      "path": "examples/assets/gltf/cottage-basis.glb",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1886cb37161dd25b0518125a467a5a7442cbdb81",
+      "size": 1075340,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1886cb37161dd25b0518125a467a5a7442cbdb81"
+    },
+    {
+      "path": "examples/assets/gltf/hershel-optimized.glb",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d003ac9638441b69c18c772b127dcf9d81d2b142",
+      "size": 711388,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d003ac9638441b69c18c772b127dcf9d81d2b142"
+    },
+    {
+      "path": "examples/assets/gltf/hershel.glb",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df15604f801e24a418621df0d4bd90c706a882af",
+      "size": 2703844,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/df15604f801e24a418621df0d4bd90c706a882af"
+    },
+    {
+      "path": "examples/assets/goat.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "94c767035b499781cb10ef019591e7a59f9d1d72",
+      "size": 55138,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/94c767035b499781cb10ef019591e7a59f9d1d72"
+    },
+    {
+      "path": "examples/assets/goat.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8100199dc6e00ba5cdc74e90280b8063daafa80",
+      "size": 141316,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c8100199dc6e00ba5cdc74e90280b8063daafa80"
+    },
+    {
+      "path": "examples/assets/granite-diffuse.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d0fa8e6aae6e3b4c26680e60805b4737ddaa0ce",
+      "size": 214305,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7d0fa8e6aae6e3b4c26680e60805b4737ddaa0ce"
+    },
+    {
+      "path": "examples/assets/granite-normal.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c1e68b964765ed457f5c6853e3d98cd242e09a2",
+      "size": 221561,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2c1e68b964765ed457f5c6853e3d98cd242e09a2"
+    },
+    {
+      "path": "examples/assets/grid.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1c19da9cd1ae70b759a91351f0fac9ec4be97bf",
+      "size": 157027,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f1c19da9cd1ae70b759a91351f0fac9ec4be97bf"
+    },
+    {
+      "path": "examples/assets/laputa.mp4",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2d649d30b4ae927dee2b98468cc7df642469998",
+      "size": 917682,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a2d649d30b4ae927dee2b98468cc7df642469998"
+    },
+    {
+      "path": "examples/assets/leaf.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50ee2dea940b2bebf3f1db2f922dd8d0ed34a1f5",
+      "size": 39386,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/50ee2dea940b2bebf3f1db2f922dd8d0ed34a1f5"
+    },
+    {
+      "path": "examples/assets/libs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c9bac8b38640d50e6a8d75d090bd6fc240efb11b",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/c9bac8b38640d50e6a8d75d090bd6fc240efb11b"
+    },
+    {
+      "path": "examples/assets/libs/basis",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "db9641b51a0bdac199e2c6c866349729eb221142",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/db9641b51a0bdac199e2c6c866349729eb221142"
+    },
+    {
+      "path": "examples/assets/libs/basis/BasisWorker.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed6f841f232aa42807a7ab38ec86f7b8e8572fbf",
+      "size": 6034,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ed6f841f232aa42807a7ab38ec86f7b8e8572fbf"
+    },
+    {
+      "path": "examples/assets/libs/basis/basis_transcoder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f02a4ac8504ea07512bd1106e7fe98012aecd6a",
+      "size": 57529,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6f02a4ac8504ea07512bd1106e7fe98012aecd6a"
+    },
+    {
+      "path": "examples/assets/libs/basis/basis_transcoder.wasm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc64682561438128604ac550da774f8cc6617460",
+      "size": 527333,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bc64682561438128604ac550da774f8cc6617460"
+    },
+    {
+      "path": "examples/assets/libs/draco",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "84170571f296d150403f8f74d89a65f5c27a0924",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/84170571f296d150403f8f74d89a65f5c27a0924"
+    },
+    {
+      "path": "examples/assets/libs/draco/DracoWorker.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a1d54864a9a32cbbab7a2d596350a1628182388",
+      "size": 3931,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2a1d54864a9a32cbbab7a2d596350a1628182388"
+    },
+    {
+      "path": "examples/assets/libs/draco/draco_decoder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6629469b21328fc180e8385e324acaf85ce0d93d",
+      "size": 719410,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6629469b21328fc180e8385e324acaf85ce0d93d"
+    },
+    {
+      "path": "examples/assets/libs/draco/draco_decoder.wasm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5a5e06eb51fb061a94a9682cc7e338038fae25c",
+      "size": 285747,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e5a5e06eb51fb061a94a9682cc7e338038fae25c"
+    },
+    {
+      "path": "examples/assets/libs/draco/draco_encoder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ace437282e9beeb7712143820fffa1937b2a41a",
+      "size": 928718,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2ace437282e9beeb7712143820fffa1937b2a41a"
+    },
+    {
+      "path": "examples/assets/libs/draco/draco_wasm_wrapper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb5b1224121134740fe6832a1aa8605bb128d2fd",
+      "size": 58763,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bb5b1224121134740fe6832a1aa8605bb128d2fd"
+    },
+    {
+      "path": "examples/assets/libs/draco/gltf",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e7743beddf43258ace5c5d57553fc8484a5dec7b",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/e7743beddf43258ace5c5d57553fc8484a5dec7b"
+    },
+    {
+      "path": "examples/assets/libs/draco/gltf/draco_decoder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c84b0be2aa46407df9f3f3371d574dc165b55f8",
+      "size": 512465,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7c84b0be2aa46407df9f3f3371d574dc165b55f8"
+    },
+    {
+      "path": "examples/assets/libs/draco/gltf/draco_decoder.wasm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "469904ebcb7b83523db73913a19c349528105ff8",
+      "size": 192420,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/469904ebcb7b83523db73913a19c349528105ff8"
+    },
+    {
+      "path": "examples/assets/libs/draco/gltf/draco_encoder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a67cdf20607147c05c53de9d009653efa43ff7c0",
+      "size": 954360,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a67cdf20607147c05c53de9d009653efa43ff7c0"
+    },
+    {
+      "path": "examples/assets/libs/draco/gltf/draco_wasm_wrapper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43f15568384c84f9506cd86fc4a8736e1ba2ec1f",
+      "size": 58456,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/43f15568384c84f9506cd86fc4a8736e1ba2ec1f"
+    },
+    {
+      "path": "examples/assets/macaw.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f7505626d9973ea44c8de96cc64cfd1e9038a33",
+      "size": 28702,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4f7505626d9973ea44c8de96cc64cfd1e9038a33"
+    },
+    {
+      "path": "examples/assets/macaw.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "adaea83ae1f13b60dbb205b3ca024adbf23f0928",
+      "size": 271343,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/adaea83ae1f13b60dbb205b3ca024adbf23f0928"
+    },
+    {
+      "path": "examples/assets/main.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf05d3e050ae6955240d33ef51d15aa46cadb90a",
+      "size": 3049,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bf05d3e050ae6955240d33ef51d15aa46cadb90a"
+    },
+    {
+      "path": "examples/assets/matcap.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb6a350f83c6803d2199db91ef7c46696b1c6bda",
+      "size": 7310,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/cb6a350f83c6803d2199db91ef7c46696b1c6bda"
+    },
+    {
+      "path": "examples/assets/octopus.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e35e8f1468bd391f7e9451d93e52bc77a1d1ba3a",
+      "size": 30266,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e35e8f1468bd391f7e9451d93e52bc77a1d1ba3a"
+    },
+    {
+      "path": "examples/assets/octopus.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d91318678ba959d3ae4b4599954881a09a654be4",
+      "size": 129901,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d91318678ba959d3ae4b4599954881a09a654be4"
+    },
+    {
+      "path": "examples/assets/ogl.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a2ad54609d81a6e825c36cf8458f8fb7a4bd729",
+      "size": 13821,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4a2ad54609d81a6e825c36cf8458f8fb7a4bd729"
+    },
+    {
+      "path": "examples/assets/pbr",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a9c6a6c0590ee13f51a5252a111a18647f30d726",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/a9c6a6c0590ee13f51a5252a111a18647f30d726"
+    },
+    {
+      "path": "examples/assets/pbr/black.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c3bf7712ff5b873b4a957eb41ff71372e27c944",
+      "size": 1130,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3c3bf7712ff5b873b4a957eb41ff71372e27c944"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-color.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33d63fde6e9d08ef2a4a092e300b7be4e7cc38a4",
+      "size": 320049,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/33d63fde6e9d08ef2a4a092e300b7be4e7cc38a4"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-emissive.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1ecaf6b8f3fb071eea1fabf047bde2d7dacccd5",
+      "size": 26847,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a1ecaf6b8f3fb071eea1fabf047bde2d7dacccd5"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-inner.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab39465a12c7a8eefa0f9d68a4d2514caef41672",
+      "size": 133896,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ab39465a12c7a8eefa0f9d68a4d2514caef41672"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-normal.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff73e03db47d6c01c40269d7e8d84711e68f43e4",
+      "size": 447446,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ff73e03db47d6c01c40269d7e8d84711e68f43e4"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-opacity.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d460356e05e222e57f829242f90a6b1cb3774f0",
+      "size": 54757,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5d460356e05e222e57f829242f90a6b1cb3774f0"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext-rmo.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "354feb662310770c372739136fd3ae9029f57aaf",
+      "size": 539517,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/354feb662310770c372739136fd3ae9029f57aaf"
+    },
+    {
+      "path": "examples/assets/pbr/car-ext.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0c27e6e67886e0808dc505843e3963b81b3ac056",
+      "size": 940557,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0c27e6e67886e0808dc505843e3963b81b3ac056"
+    },
+    {
+      "path": "examples/assets/pbr/car-int-color.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "714a820c652e7d0f5a6d694f95c3ede48b921175",
+      "size": 311420,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/714a820c652e7d0f5a6d694f95c3ede48b921175"
+    },
+    {
+      "path": "examples/assets/pbr/car-int-normal.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2bf280b5f6694773400a40d39ef4d5d48a5d886",
+      "size": 330341,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c2bf280b5f6694773400a40d39ef4d5d48a5d886"
+    },
+    {
+      "path": "examples/assets/pbr/car-int-rmo.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53148327c9a38550fd37c379a75d55bbe7152b19",
+      "size": 461170,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/53148327c9a38550fd37c379a75d55bbe7152b19"
+    },
+    {
+      "path": "examples/assets/pbr/car-int.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea0469134509d8808b3bc6f800d055578c1404d4",
+      "size": 383691,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ea0469134509d8808b3bc6f800d055578c1404d4"
+    },
+    {
+      "path": "examples/assets/pbr/car-shadow.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a40c561558c6caea5209c10076e2b98253af206d",
+      "size": 103290,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a40c561558c6caea5209c10076e2b98253af206d"
+    },
+    {
+      "path": "examples/assets/pbr/car-shadow.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3f76c480a2e020483a9366f13baaf75e06ace90",
+      "size": 275055,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c3f76c480a2e020483a9366f13baaf75e06ace90"
+    },
+    {
+      "path": "examples/assets/pbr/lut.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f6541b326edd0cb1f971cbf45a4ca2aaa926dfa",
+      "size": 16623,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5f6541b326edd0cb1f971cbf45a4ca2aaa926dfa"
+    },
+    {
+      "path": "examples/assets/pbr/waterfall-diffuse-RGBM.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76138514eac7a8ae44641accdf72e23ebc7fadb8",
+      "size": 11982,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/76138514eac7a8ae44641accdf72e23ebc7fadb8"
+    },
+    {
+      "path": "examples/assets/pbr/waterfall-specular-RGBM.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f34e9a4a1bad3e87da6a91c39a38b3c1ccba64cb",
+      "size": 485444,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f34e9a4a1bad3e87da6a91c39a38b3c1ccba64cb"
+    },
+    {
+      "path": "examples/assets/pbr/white.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13f94d6afea6df62b0a1fdd48ea15a06d080aa81",
+      "size": 1129,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/13f94d6afea6df62b0a1fdd48ea15a06d080aa81"
+    },
+    {
+      "path": "examples/assets/plane.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a07be6ccbeb0aed7a00ee48d4effb6374e67c28b",
+      "size": 683,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a07be6ccbeb0aed7a00ee48d4effb6374e67c28b"
+    },
+    {
+      "path": "examples/assets/rounded-cube.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "910ed40f70f9ec1371771f17e9c61e002ce0542c",
+      "size": 50895,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/910ed40f70f9ec1371771f17e9c61e002ce0542c"
+    },
+    {
+      "path": "examples/assets/saddle.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73af497b65b843b33f3eced4dd51f2e8d1dfcd22",
+      "size": 19030,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/73af497b65b843b33f3eced4dd51f2e8d1dfcd22"
+    },
+    {
+      "path": "examples/assets/saddle.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e30540c8d85bdcf2a5534e92ccba67a60bcb1d26",
+      "size": 237271,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e30540c8d85bdcf2a5534e92ccba67a60bcb1d26"
+    },
+    {
+      "path": "examples/assets/sky.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "abf935b0d538f9f7e8117edbac617290037c259e",
+      "size": 1209504,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/abf935b0d538f9f7e8117edbac617290037c259e"
+    },
+    {
+      "path": "examples/assets/snout-anim.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b1b087506fa7cd27938d98dd31771e5a4e9f9af",
+      "size": 58930,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1b1b087506fa7cd27938d98dd31771e5a4e9f9af"
+    },
+    {
+      "path": "examples/assets/snout-rig.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad398cbc7020a5cb4c1322df01061df289a2068d",
+      "size": 4393186,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ad398cbc7020a5cb4c1322df01061df289a2068d"
+    },
+    {
+      "path": "examples/assets/snout-shadow.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ed03444bc125c724abaf1d7497f8443b804cec0",
+      "size": 15626,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5ed03444bc125c724abaf1d7497f8443b804cec0"
+    },
+    {
+      "path": "examples/assets/snout.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e4d2ee3a494229160fd3b4dc890cfbace5bfea9",
+      "size": 79856,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8e4d2ee3a494229160fd3b4dc890cfbace5bfea9"
+    },
+    {
+      "path": "examples/assets/sunset-diffuse-RGBM.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1015627ef5cf8d768464599c4b2af33192a7c95a",
+      "size": 14332,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1015627ef5cf8d768464599c4b2af33192a7c95a"
+    },
+    {
+      "path": "examples/assets/sunset-specular-RGBM.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d18225d1445bcb11d413ce34fd5e82732360b274",
+      "size": 353094,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d18225d1445bcb11d413ce34fd5e82732360b274"
+    },
+    {
+      "path": "examples/assets/sunset.exr",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a3e5a7c7649c78a0008497721b4b161a4966c37",
+      "size": 170385,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5a3e5a7c7649c78a0008497721b4b161a4966c37"
+    },
+    {
+      "path": "examples/assets/uv.jpg",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "2a424b8e21de21cdb1a40392128dc26d3c577b33",
+      "size": 59305,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2a424b8e21de21cdb1a40392128dc26d3c577b33"
+    },
+    {
+      "path": "examples/assets/water.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b45a518634b7e83ec1406433a4fe6cc6324b01ee",
+      "size": 27300,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b45a518634b7e83ec1406433a4fe6cc6324b01ee"
+    },
+    {
+      "path": "examples/assets/windmill.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05e435788d67e121bc3556f58c3953d30a5aa095",
+      "size": 40238,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/05e435788d67e121bc3556f58c3953d30a5aa095"
+    },
+    {
+      "path": "examples/assets/windmill.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97bc8bc7f990ad94985dcd0687a5946f9809d5ea",
+      "size": 97459,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/97bc8bc7f990ad94985dcd0687a5946f9809d5ea"
+    },
+    {
+      "path": "examples/base-primitives.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bdb20b47d92d00b7dde8003b882799f618baaa49",
+      "size": 4178,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bdb20b47d92d00b7dde8003b882799f618baaa49"
+    },
+    {
+      "path": "examples/compressed-textures.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "215d025a8bcd430c6207fa3ca83bd9eb61563fc4",
+      "size": 5008,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/215d025a8bcd430c6207fa3ca83bd9eb61563fc4"
+    },
+    {
+      "path": "examples/cube-map.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38fe5780dbab89c7cdd3a6d1a3dd6629006b8d37",
+      "size": 5458,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/38fe5780dbab89c7cdd3a6d1a3dd6629006b8d37"
+    },
+    {
+      "path": "examples/curves.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88fc80d07f39d5d62540959789c50743c3089534",
+      "size": 4793,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/88fc80d07f39d5d62540959789c50743c3089534"
+    },
+    {
+      "path": "examples/draw-modes.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a23b7b9c1b0a59bff8c15f05ab1dd54e47448fb",
+      "size": 5433,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0a23b7b9c1b0a59bff8c15f05ab1dd54e47448fb"
+    },
+    {
+      "path": "examples/flat-shading-matcap.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed09deefc537d8a10430deb79b67140be35cb9ac",
+      "size": 5765,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ed09deefc537d8a10430deb79b67140be35cb9ac"
+    },
+    {
+      "path": "examples/fog.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1910367c68f95ddf7db7460ca24a3ca0d104cd3b",
+      "size": 6444,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1910367c68f95ddf7db7460ca24a3ca0d104cd3b"
+    },
+    {
+      "path": "examples/fresnel.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "143e1456159afa58b2b688ddcc1bf19c614245c5",
+      "size": 4495,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/143e1456159afa58b2b688ddcc1bf19c614245c5"
+    },
+    {
+      "path": "examples/frustum-culling.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f970bb3e292ed29c2f9f464255c5f3005799abf",
+      "size": 6851,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0f970bb3e292ed29c2f9f464255c5f3005799abf"
+    },
+    {
+      "path": "examples/gltf-draco-webp.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4ff78b2cf5cb1602c4f820a355557a7fb5e61599",
+      "size": 26861,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4ff78b2cf5cb1602c4f820a355557a7fb5e61599"
+    },
+    {
+      "path": "examples/gltf-ktx2-basis-draco.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5131dcb95481aab07ad2ad04ba72337ff9c2c50c",
+      "size": 26872,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5131dcb95481aab07ad2ad04ba72337ff9c2c50c"
+    },
+    {
+      "path": "examples/gltf-ktx2-basis.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0fa4f0145d8a61d5484d189483027addc6904fee",
+      "size": 27196,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0fa4f0145d8a61d5484d189483027addc6904fee"
+    },
+    {
+      "path": "examples/gpgpu-particles.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "396bab3b960fc83e8289ffb30ee47709178fc707",
+      "size": 10059,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/396bab3b960fc83e8289ffb30ee47709178fc707"
+    },
+    {
+      "path": "examples/helpers.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b6c27d629f1a0574ebd3b4988f1c24515ee2ef5f",
+      "size": 4230,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b6c27d629f1a0574ebd3b4988f1c24515ee2ef5f"
+    },
+    {
+      "path": "examples/high-mesh-count.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bba7e46e22597efaef0642da58885c829ad0666b",
+      "size": 5002,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bba7e46e22597efaef0642da58885c829ad0666b"
+    },
+    {
+      "path": "examples/index.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a1008a4fe23f1d87e6c4fb2c050b81f593b9f38",
+      "size": 7884,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2a1008a4fe23f1d87e6c4fb2c050b81f593b9f38"
+    },
+    {
+      "path": "examples/indexed-vs-non-indexed.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf6cd65e20dd161fef7ffb6f6a85bcd58875147a",
+      "size": 6278,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/cf6cd65e20dd161fef7ffb6f6a85bcd58875147a"
+    },
+    {
+      "path": "examples/instancing-gpu-picking.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "17e0e91479022b14cd33557321478a152d53d7e4",
+      "size": 8826,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/17e0e91479022b14cd33557321478a152d53d7e4"
+    },
+    {
+      "path": "examples/instancing.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "693a2bc8292a3568e4c224691df1e519505d0872",
+      "size": 5555,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/693a2bc8292a3568e4c224691df1e519505d0872"
+    },
+    {
+      "path": "examples/load-gltf.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4d746c4b9ee671c87a230e83fefb365323b9f6a",
+      "size": 26562,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b4d746c4b9ee671c87a230e83fefb365323b9f6a"
+    },
+    {
+      "path": "examples/load-json.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9206cfdeb4b471e3ebb4e4130fd34a43968a736",
+      "size": 4058,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d9206cfdeb4b471e3ebb4e4130fd34a43968a736"
+    },
+    {
+      "path": "examples/mouse-flowmap.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19f0f22fd22afc4c16c84f4e4102fc97b79a2634",
+      "size": 6750,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/19f0f22fd22afc4c16c84f4e4102fc97b79a2634"
+    },
+    {
+      "path": "examples/mrt.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40fa0f32b74fe442b32930004f73abf5a4d3de55",
+      "size": 11666,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/40fa0f32b74fe442b32930004f73abf5a4d3de55"
+    },
+    {
+      "path": "examples/msdf-text.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f09dfedf2db4f916dfd5a5c90ae08fa47d6699b",
+      "size": 6216,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8f09dfedf2db4f916dfd5a5c90ae08fa47d6699b"
+    },
+    {
+      "path": "examples/normal-maps.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4df010a0105b69e145eb510863192f70c1b36746",
+      "size": 8457,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4df010a0105b69e145eb510863192f70c1b36746"
+    },
+    {
+      "path": "examples/orbit-controls.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8508c622d6081b1fb589546edfe8d20741e7c312",
+      "size": 4777,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8508c622d6081b1fb589546edfe8d20741e7c312"
+    },
+    {
+      "path": "examples/particles.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48275839cb2b14957a8c10da7e63fcf1a8cfc897",
+      "size": 4954,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/48275839cb2b14957a8c10da7e63fcf1a8cfc897"
+    },
+    {
+      "path": "examples/paths.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a789f41a561dfd27730184f49ac65a9a13552f34",
+      "size": 10559,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a789f41a561dfd27730184f49ac65a9a13552f34"
+    },
+    {
+      "path": "examples/pbr.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77ef86ffee8699ba59e8ee0cfe4f343301c0fe44",
+      "size": 32887,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/77ef86ffee8699ba59e8ee0cfe4f343301c0fe44"
+    },
+    {
+      "path": "examples/point-lighting.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c7494bdc24d1b7b413187ec95b420b5729d52d2",
+      "size": 7852,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7c7494bdc24d1b7b413187ec95b420b5729d52d2"
+    },
+    {
+      "path": "examples/polylines.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a3c1db12a442b0536cc38796f3329056b6d2e2a",
+      "size": 7889,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7a3c1db12a442b0536cc38796f3329056b6d2e2a"
+    },
+    {
+      "path": "examples/post-bloom.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a17b62c283f7e889a3f57d1e5acf64d3f9390189",
+      "size": 9817,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a17b62c283f7e889a3f57d1e5acf64d3f9390189"
+    },
+    {
+      "path": "examples/post-fluid-distortion.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c9356f995e97ad1b3ceb4e3802a97f5a9736618",
+      "size": 31200,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4c9356f995e97ad1b3ceb4e3802a97f5a9736618"
+    },
+    {
+      "path": "examples/post-fxaa.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d0c8f73db4347aa610fccd3afb724f44855de2c",
+      "size": 5557,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9d0c8f73db4347aa610fccd3afb724f44855de2c"
+    },
+    {
+      "path": "examples/raycasting.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e8c6a0a7a51a3ba2b1f50e176007dd450d13cc9",
+      "size": 6649,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4e8c6a0a7a51a3ba2b1f50e176007dd450d13cc9"
+    },
+    {
+      "path": "examples/render-to-texture.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b8a0bfa51509c8c05bd85b68fbdcae4fa5c20c1",
+      "size": 5048,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5b8a0bfa51509c8c05bd85b68fbdcae4fa5c20c1"
+    },
+    {
+      "path": "examples/scene-graph.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ab39fd331d57de4a15bb7a0d8356cec8fe98ae2",
+      "size": 5131,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1ab39fd331d57de4a15bb7a0d8356cec8fe98ae2"
+    },
+    {
+      "path": "examples/shadow-maps.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1d7439db3492ab2f03e05f420bb364c04ba4c40",
+      "size": 7611,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a1d7439db3492ab2f03e05f420bb364c04ba4c40"
+    },
+    {
+      "path": "examples/skinning.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04f2c5905d027fd7b9598f49584dcec6b9f898bc",
+      "size": 11519,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/04f2c5905d027fd7b9598f49584dcec6b9f898bc"
+    },
+    {
+      "path": "examples/skydome.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4db0a9fb203a8bc9650d76dff13b276bb15031c9",
+      "size": 3881,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4db0a9fb203a8bc9650d76dff13b276bb15031c9"
+    },
+    {
+      "path": "examples/sort-transparency.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cadab31f9c4243a884c79b62c8de6c0cdc9b480e",
+      "size": 4992,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/cadab31f9c4243a884c79b62c8de6c0cdc9b480e"
+    },
+    {
+      "path": "examples/textures.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01194cebcc37e77f93af22bef5a9fb51907058e6",
+      "size": 6421,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/01194cebcc37e77f93af22bef5a9fb51907058e6"
+    },
+    {
+      "path": "examples/torus.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03d2b569bd7ebcb21c3787f1d2dcdedd78ae9490",
+      "size": 3169,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/03d2b569bd7ebcb21c3787f1d2dcdedd78ae9490"
+    },
+    {
+      "path": "examples/triangle-screen-shader.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d67805dd10f8062dc92e01095a14c2fb6a3be26",
+      "size": 3221,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7d67805dd10f8062dc92e01095a14c2fb6a3be26"
+    },
+    {
+      "path": "examples/tube.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b5b8d96f79268d898ffbcde9f63b64d7c47e474a",
+      "size": 8847,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b5b8d96f79268d898ffbcde9f63b64d7c47e474a"
+    },
+    {
+      "path": "examples/wire-mesh.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39bfd9e138d5e9179c84354a4bca77971ebf95c7",
+      "size": 3551,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/39bfd9e138d5e9179c84354a4bca77971ebf95c7"
+    },
+    {
+      "path": "examples/wireframe-shader.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5fc8c5b8b077e000084ac97316e00c3ebde8b07",
+      "size": 6438,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c5fc8c5b8b077e000084ac97316e00c3ebde8b07"
+    },
+    {
+      "path": "examples/wireframe.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1688ed5aff22472faba4aed3dff75019ad2fe277",
+      "size": 5772,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1688ed5aff22472faba4aed3dff75019ad2fe277"
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70403d6e90ac3ac9740e999856400005589180b5",
+      "size": 1184,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/70403d6e90ac3ac9740e999856400005589180b5"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "96f59392b15685eb70e652fb7e2c5eb44b62660c",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/96f59392b15685eb70e652fb7e2c5eb44b62660c"
+    },
+    {
+      "path": "src/core",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "97258f36d3a4fe9e7e48ad67953bec78a0544392",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/97258f36d3a4fe9e7e48ad67953bec78a0544392"
+    },
+    {
+      "path": "src/core/Camera.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "942e7f5ade1397fad632b1f16d24d68b3af8951e",
+      "size": 4786,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/942e7f5ade1397fad632b1f16d24d68b3af8951e"
+    },
+    {
+      "path": "src/core/Geometry.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dfffb61eade032d9e4326bc2762d5232caf2f07b",
+      "size": 10815,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/dfffb61eade032d9e4326bc2762d5232caf2f07b"
+    },
+    {
+      "path": "src/core/Mesh.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "58d663e035f7bebb7b2e3a7875c302212017f2be",
+      "size": 2733,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/58d663e035f7bebb7b2e3a7875c302212017f2be"
+    },
+    {
+      "path": "src/core/Program.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7413402e368531c1aff01d799f2810ae86d8f58",
+      "size": 12278,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a7413402e368531c1aff01d799f2810ae86d8f58"
+    },
+    {
+      "path": "src/core/RenderTarget.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47d43783a9248ae1e9d1ecbea0a8d379c1c2f6ba",
+      "size": 6389,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/47d43783a9248ae1e9d1ecbea0a8d379c1c2f6ba"
+    },
+    {
+      "path": "src/core/Renderer.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "63dbdfb05652665f4d8ad53648fbcafa39810a53",
+      "size": 14537,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/63dbdfb05652665f4d8ad53648fbcafa39810a53"
+    },
+    {
+      "path": "src/core/Texture.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef8311f9dd0259eafbe56ebe02b1fc593298207a",
+      "size": 8955,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ef8311f9dd0259eafbe56ebe02b1fc593298207a"
+    },
+    {
+      "path": "src/core/Transform.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bedb35d744ec5ccde03ccdbea465474110803677",
+      "size": 2842,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bedb35d744ec5ccde03ccdbea465474110803677"
+    },
+    {
+      "path": "src/extras",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "75bd9c04108403219a1d418252791d732c9d3c03",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/75bd9c04108403219a1d418252791d732c9d3c03"
+    },
+    {
+      "path": "src/extras/Animation.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39f9e9bb57e6dc220cf057bf6372049386848c19",
+      "size": 1633,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/39f9e9bb57e6dc220cf057bf6372049386848c19"
+    },
+    {
+      "path": "src/extras/BasisManager.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f6d5fae5b7fdc1e80d2bd5925a1c6338c2bd889",
+      "size": 1965,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5f6d5fae5b7fdc1e80d2bd5925a1c6338c2bd889"
+    },
+    {
+      "path": "src/extras/Box.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b650d9d80b260ba99794368d1776cd654a750cab",
+      "size": 2235,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b650d9d80b260ba99794368d1776cd654a750cab"
+    },
+    {
+      "path": "src/extras/Curve.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "052953fbfa03cc1cd155b0e2050491fdc0d2cfc5",
+      "size": 5010,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/052953fbfa03cc1cd155b0e2050491fdc0d2cfc5"
+    },
+    {
+      "path": "src/extras/Cylinder.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9eb4283ba0d8c2e34754212c5bb3c137335b266b",
+      "size": 4137,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9eb4283ba0d8c2e34754212c5bb3c137335b266b"
+    },
+    {
+      "path": "src/extras/DracoManager.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7814195473b7241f8245aff862d55a4336073641",
+      "size": 939,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7814195473b7241f8245aff862d55a4336073641"
+    },
+    {
+      "path": "src/extras/Flowmap.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bd96843fab3c2946be1e91c16642edc622f2188",
+      "size": 4453,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5bd96843fab3c2946be1e91c16642edc622f2188"
+    },
+    {
+      "path": "src/extras/GLTFAnimation.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c8bcf5950e2df873f209027b06824aa29be1d69",
+      "size": 4441,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1c8bcf5950e2df873f209027b06824aa29be1d69"
+    },
+    {
+      "path": "src/extras/GLTFLoader.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b569f15b373f03a5061379a0d2da773150f2145",
+      "size": 42616,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3b569f15b373f03a5061379a0d2da773150f2145"
+    },
+    {
+      "path": "src/extras/GLTFSkin.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3293b5c457dea9171bce75ca65fbe9d86643b6a5",
+      "size": 2407,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3293b5c457dea9171bce75ca65fbe9d86643b6a5"
+    },
+    {
+      "path": "src/extras/GPGPU.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a2894d3f26ffd09edb78b8eba8b7f4c7316da16",
+      "size": 4466,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9a2894d3f26ffd09edb78b8eba8b7f4c7316da16"
+    },
+    {
+      "path": "src/extras/InstancedMesh.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f49773621235bd7daefff602f4db3a8fb8954e6",
+      "size": 3664,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3f49773621235bd7daefff602f4db3a8fb8954e6"
+    },
+    {
+      "path": "src/extras/KTXTexture.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77175c68cbaecc7dd238d057881c25bb0d9d4f9b",
+      "size": 2919,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/77175c68cbaecc7dd238d057881c25bb0d9d4f9b"
+    },
+    {
+      "path": "src/extras/NormalProgram.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c35412329cdd9cf9fd80d2fd6554221b0ff37c2",
+      "size": 840,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9c35412329cdd9cf9fd80d2fd6554221b0ff37c2"
+    },
+    {
+      "path": "src/extras/Orbit.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0d888e6b5233eba4f3e31a9d3344d5eb47c4dd4",
+      "size": 12470,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c0d888e6b5233eba4f3e31a9d3344d5eb47c4dd4"
+    },
+    {
+      "path": "src/extras/Plane.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61abe8f89bd70682737ad99fe8e87a8c9d52c854",
+      "size": 2421,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/61abe8f89bd70682737ad99fe8e87a8c9d52c854"
+    },
+    {
+      "path": "src/extras/Polyline.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "892e5b390f2894a447460763ae7456ff61ed707e",
+      "size": 6008,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/892e5b390f2894a447460763ae7456ff61ed707e"
+    },
+    {
+      "path": "src/extras/Post.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9341cb73c97e6195104d471664b8707ebbc66a8c",
+      "size": 4437,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9341cb73c97e6195104d471664b8707ebbc66a8c"
+    },
+    {
+      "path": "src/extras/Raycast.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44c27ae7f2cc13df882d60ee40a8eb23571092fa",
+      "size": 14863,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/44c27ae7f2cc13df882d60ee40a8eb23571092fa"
+    },
+    {
+      "path": "src/extras/Shadow.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f65b2076545e14fb93093a2ae5bb952beb4faf21",
+      "size": 3704,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f65b2076545e14fb93093a2ae5bb952beb4faf21"
+    },
+    {
+      "path": "src/extras/Skin.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d051dad6b0ab6759005ffd900acff99e0f7f9b03",
+      "size": 3613,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d051dad6b0ab6759005ffd900acff99e0f7f9b03"
+    },
+    {
+      "path": "src/extras/Sphere.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97297fff36e338fdf3a34e5decbfed79d95dda0e",
+      "size": 3058,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/97297fff36e338fdf3a34e5decbfed79d95dda0e"
+    },
+    {
+      "path": "src/extras/Text.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f34682547af9a904b278680857ba2e54991427a4",
+      "size": 7166,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f34682547af9a904b278680857ba2e54991427a4"
+    },
+    {
+      "path": "src/extras/Texture3D.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b3b6b617ae9a7d910e356e88e547554fa6ea44b",
+      "size": 2802,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0b3b6b617ae9a7d910e356e88e547554fa6ea44b"
+    },
+    {
+      "path": "src/extras/TextureLoader.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "152247d69f596b774965e587610e215f42d4a841",
+      "size": 6681,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/152247d69f596b774965e587610e215f42d4a841"
+    },
+    {
+      "path": "src/extras/Torus.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "686e5ee878ba4c79b8f0e8abec00019f86ac3c19",
+      "size": 2607,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/686e5ee878ba4c79b8f0e8abec00019f86ac3c19"
+    },
+    {
+      "path": "src/extras/Triangle.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0214f5d4216fe8dad81316aa4c73dd873b892d3",
+      "size": 382,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c0214f5d4216fe8dad81316aa4c73dd873b892d3"
+    },
+    {
+      "path": "src/extras/Tube.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb5a85b0d1512ed05a98b87654905366ef1248be",
+      "size": 3935,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bb5a85b0d1512ed05a98b87654905366ef1248be"
+    },
+    {
+      "path": "src/extras/WireMesh.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8780a2a9ccd7129b3b3e89a9521945e3bfdef286",
+      "size": 2978,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8780a2a9ccd7129b3b3e89a9521945e3bfdef286"
+    },
+    {
+      "path": "src/extras/helpers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "00e254bc6b4fe96dee7a06e96db328ec54d8f7f1",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/00e254bc6b4fe96dee7a06e96db328ec54d8f7f1"
+    },
+    {
+      "path": "src/extras/helpers/AxesHelper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f7d916b57a3d032ccd664aa913d6ad806d008bc",
+      "size": 1589,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6f7d916b57a3d032ccd664aa913d6ad806d008bc"
+    },
+    {
+      "path": "src/extras/helpers/FaceNormalsHelper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f78d437edd532371e5cb4238147d6370d4e891e3",
+      "size": 3348,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f78d437edd532371e5cb4238147d6370d4e891e3"
+    },
+    {
+      "path": "src/extras/helpers/GridHelper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebfeecd8f5f229d944c39c4d351887c0ef9a3f3a",
+      "size": 1437,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ebfeecd8f5f229d944c39c4d351887c0ef9a3f3a"
+    },
+    {
+      "path": "src/extras/helpers/VertexNormalsHelper.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9eeb33d1dd5229312d9af1b97f1a977b803bbbd9",
+      "size": 2715,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9eeb33d1dd5229312d9af1b97f1a977b803bbbd9"
+    },
+    {
+      "path": "src/extras/path",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0aba5ddfec03fbfcac3d9c4c45f933e640bc4d89",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/0aba5ddfec03fbfcac3d9c4c45f933e640bc4d89"
+    },
+    {
+      "path": "src/extras/path/BaseSegment.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2dcb0d32d97a4b5750ec239ed707a6c0fecab07",
+      "size": 1202,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d2dcb0d32d97a4b5750ec239ed707a6c0fecab07"
+    },
+    {
+      "path": "src/extras/path/CubicBezierSegment.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed695e1508a5a5923ae98d4e9dbdcfe45b2cbae3",
+      "size": 2714,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ed695e1508a5a5923ae98d4e9dbdcfe45b2cbae3"
+    },
+    {
+      "path": "src/extras/path/LineSegment.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a110141fe9386f018115e1bcf16e7cadddf6f2fb",
+      "size": 1400,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/a110141fe9386f018115e1bcf16e7cadddf6f2fb"
+    },
+    {
+      "path": "src/extras/path/Path.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fef322d830af96138444ea3045134428fce6f950",
+      "size": 8618,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/fef322d830af96138444ea3045134428fce6f950"
+    },
+    {
+      "path": "src/extras/path/QuadraticBezierSegment.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2926198162b81459d69e72fa6904787e93e25f81",
+      "size": 2453,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2926198162b81459d69e72fa6904787e93e25f81"
+    },
+    {
+      "path": "src/extras/path/utils.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cc682992154fbb9942c2ec8853c3cfdbbf8a56c",
+      "size": 5005,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3cc682992154fbb9942c2ec8853c3cfdbbf8a56c"
+    },
+    {
+      "path": "src/index.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c2b94c4166a1db385fa091789c84e6875989ef5",
+      "size": 2442,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/7c2b94c4166a1db385fa091789c84e6875989ef5"
+    },
+    {
+      "path": "src/math",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "980e074727aa5c71bc5fdb55051c6fe0383ac3da",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/980e074727aa5c71bc5fdb55051c6fe0383ac3da"
+    },
+    {
+      "path": "src/math/Color.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "f398239642dc97395519f2a54fbf3686d5b94d0a",
+      "size": 1238,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f398239642dc97395519f2a54fbf3686d5b94d0a"
+    },
+    {
+      "path": "src/math/Euler.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "ee1ad7040e9131c695681a0f4ce5c0c1da6cd891",
+      "size": 2388,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ee1ad7040e9131c695681a0f4ce5c0c1da6cd891"
+    },
+    {
+      "path": "src/math/Mat3.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "daa7d1c6115e4e59b9683c2a9755c8f256bbddd5",
+      "size": 1623,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/daa7d1c6115e4e59b9683c2a9755c8f256bbddd5"
+    },
+    {
+      "path": "src/math/Mat4.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "6d024ba54d08cb70f9a7c9b6a1351e20504a320d",
+      "size": 4532,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6d024ba54d08cb70f9a7c9b6a1351e20504a320d"
+    },
+    {
+      "path": "src/math/Quat.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "1055f94b41a462522575e3a8e078813b7e66c4a7",
+      "size": 3645,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1055f94b41a462522575e3a8e078813b7e66c4a7"
+    },
+    {
+      "path": "src/math/Vec2.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "ae84f7a30b001d2263ea01336c306115c1a0f749",
+      "size": 2809,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ae84f7a30b001d2263ea01336c306115c1a0f749"
+    },
+    {
+      "path": "src/math/Vec3.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "bc26e1c23f677abf8d29ba77e5bfcb70e2292efc",
+      "size": 3617,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/bc26e1c23f677abf8d29ba77e5bfcb70e2292efc"
+    },
+    {
+      "path": "src/math/Vec4.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "3b1e4e7cc7cb5cbb80c4dcc4c720fd2fd54c7dc8",
+      "size": 1314,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/3b1e4e7cc7cb5cbb80c4dcc4c720fd2fd54c7dc8"
+    },
+    {
+      "path": "src/math/functions",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7718d461807afdb634186a87fe7b950765a13188",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/7718d461807afdb634186a87fe7b950765a13188"
+    },
+    {
+      "path": "src/math/functions/ColorFunc.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e43def637b2899222484cbd4862cbec65735584",
+      "size": 1202,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1e43def637b2899222484cbd4862cbec65735584"
+    },
+    {
+      "path": "src/math/functions/EulerFunc.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "158a7961093051589c44416cc8f6cde911031690",
+      "size": 2094,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/158a7961093051589c44416cc8f6cde911031690"
+    },
+    {
+      "path": "src/math/functions/Mat3Func.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "0df78041892c059f1f6436cdef33bc153d8db4d2",
+      "size": 11097,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0df78041892c059f1f6436cdef33bc153d8db4d2"
+    },
+    {
+      "path": "src/math/functions/Mat4Func.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "07f0d012d53d25f62084ff4d4c95d159b713bf23",
+      "size": 26642,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/07f0d012d53d25f62084ff4d4c95d159b713bf23"
+    },
+    {
+      "path": "src/math/functions/QuatFunc.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "e4cc1a58e973051ff74def65eeacd9059a7b0828",
+      "size": 10660,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e4cc1a58e973051ff74def65eeacd9059a7b0828"
+    },
+    {
+      "path": "src/math/functions/Vec2Func.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "db3332f79ec1cb7899ba458956b5fef6ae9638b4",
+      "size": 7575,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/db3332f79ec1cb7899ba458956b5fef6ae9638b4"
+    },
+    {
+      "path": "src/math/functions/Vec3Func.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "698845db2780c5757fd15eea1b0f67c3aadeae32",
+      "size": 9673,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/698845db2780c5757fd15eea1b0f67c3aadeae32"
+    },
+    {
+      "path": "src/math/functions/Vec4Func.js",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "b76a82423e2c5c46d7e8faa49b03c5d98feab53b",
+      "size": 2916,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b76a82423e2c5c46d7e8faa49b03c5d98feab53b"
+    },
+    {
+      "path": "types",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8caa97f3832cb20d67655f34f16387cb0e780ca2",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/8caa97f3832cb20d67655f34f16387cb0e780ca2"
+    },
+    {
+      "path": "types/core",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "81871cfea8f8fc87b3566e59ca8b3b939bc1a93b",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/81871cfea8f8fc87b3566e59ca8b3b939bc1a93b"
+    },
+    {
+      "path": "types/core/Camera.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "809ebb615dc805e87c178d7b0d89479b1caa385a",
+      "size": 1843,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/809ebb615dc805e87c178d7b0d89479b1caa385a"
+    },
+    {
+      "path": "types/core/Geometry.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2518c28338290f43be8ad4c2dec841813e2308a5",
+      "size": 2171,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2518c28338290f43be8ad4c2dec841813e2308a5"
+    },
+    {
+      "path": "types/core/Mesh.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0cf23abe3c955cc9d1262c67be41823e6009da18",
+      "size": 1825,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0cf23abe3c955cc9d1262c67be41823e6009da18"
+    },
+    {
+      "path": "types/core/Program.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e86eca7d0cbfc0ed6b056e2fc9ffcb681dded650",
+      "size": 1899,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e86eca7d0cbfc0ed6b056e2fc9ffcb681dded650"
+    },
+    {
+      "path": "types/core/RenderTarget.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3363923eb951a408fdcabb81371dcc183a63f02",
+      "size": 1154,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d3363923eb951a408fdcabb81371dcc183a63f02"
+    },
+    {
+      "path": "types/core/Renderer.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eef6def52031dade2068c02a6afd3d103a47c4a6",
+      "size": 4372,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/eef6def52031dade2068c02a6afd3d103a47c4a6"
+    },
+    {
+      "path": "types/core/Texture.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea83d10658e6d0d4f17f30a5dfbaf63673371065",
+      "size": 2086,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ea83d10658e6d0d4f17f30a5dfbaf63673371065"
+    },
+    {
+      "path": "types/core/Transform.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e8b5fa70f12b1f7bd84717c15c69e187f1a9272",
+      "size": 3553,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6e8b5fa70f12b1f7bd84717c15c69e187f1a9272"
+    },
+    {
+      "path": "types/extras",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6959eb814a3caeacc6c010e1e4e857ca7bd0ab7d",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/6959eb814a3caeacc6c010e1e4e857ca7bd0ab7d"
+    },
+    {
+      "path": "types/extras/Animation.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8047e982cfe517e24bf7c6e601078851a89dd6f4",
+      "size": 858,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8047e982cfe517e24bf7c6e601078851a89dd6f4"
+    },
+    {
+      "path": "types/extras/BasisManager.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2bbc0f54943388b7a461bab10b5f79791fa02239",
+      "size": 903,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2bbc0f54943388b7a461bab10b5f79791fa02239"
+    },
+    {
+      "path": "types/extras/Box.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd525474d24d81fffb04938bbfa149d2d2e243a2",
+      "size": 597,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/cd525474d24d81fffb04938bbfa149d2d2e243a2"
+    },
+    {
+      "path": "types/extras/Curve.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09246faf438fc9a7a9d796aba5bfd419882ede8f",
+      "size": 672,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/09246faf438fc9a7a9d796aba5bfd419882ede8f"
+    },
+    {
+      "path": "types/extras/Cylinder.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8172cae7ec67e821b50854025738dec153d586e0",
+      "size": 680,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8172cae7ec67e821b50854025738dec153d586e0"
+    },
+    {
+      "path": "types/extras/DracoManager.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0adbdfd540e4d5daba7caa8ae33df48fe3a12ad",
+      "size": 1183,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/e0adbdfd540e4d5daba7caa8ae33df48fe3a12ad"
+    },
+    {
+      "path": "types/extras/Flowmap.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95cad3f064cfa3c8ee2f7627f0a386eb69f5be9a",
+      "size": 843,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/95cad3f064cfa3c8ee2f7627f0a386eb69f5be9a"
+    },
+    {
+      "path": "types/extras/GLTFAnimation.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "561636e0af077a6e78c829d719d08d367e0970dd",
+      "size": 670,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/561636e0af077a6e78c829d719d08d367e0970dd"
+    },
+    {
+      "path": "types/extras/GLTFLoader.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60fa03fc578613586d1d2942df73b8da4ba3f88c",
+      "size": 6147,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/60fa03fc578613586d1d2942df73b8da4ba3f88c"
+    },
+    {
+      "path": "types/extras/GLTFSkin.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4005263cf6e8899c1135c8289e4be63cf4c1e5ef",
+      "size": 1138,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/4005263cf6e8899c1135c8289e4be63cf4c1e5ef"
+    },
+    {
+      "path": "types/extras/GPGPU.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10f934cb2862a8b90a203e4e8d2814c374eeb4d1",
+      "size": 1302,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/10f934cb2862a8b90a203e4e8d2814c374eeb4d1"
+    },
+    {
+      "path": "types/extras/InstancedMesh.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70172a9a5fbedde79f92e875e547e61be4763f2d",
+      "size": 361,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/70172a9a5fbedde79f92e875e547e61be4763f2d"
+    },
+    {
+      "path": "types/extras/KTXTexture.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "500aee0ef05ac30f6a3794218e13762078fa5463",
+      "size": 667,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/500aee0ef05ac30f6a3794218e13762078fa5463"
+    },
+    {
+      "path": "types/extras/NormalProgram.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61f99c07f0d9ecf911865e84b2ce0803add09052",
+      "size": 418,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/61f99c07f0d9ecf911865e84b2ce0803add09052"
+    },
+    {
+      "path": "types/extras/Orbit.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fc9d74ac81efa60985f1bf200d1ae87251482aab",
+      "size": 1303,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/fc9d74ac81efa60985f1bf200d1ae87251482aab"
+    },
+    {
+      "path": "types/extras/Plane.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2589e58ccff87d03a78e54f31eff9fd11e51e173",
+      "size": 984,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2589e58ccff87d03a78e54f31eff9fd11e51e173"
+    },
+    {
+      "path": "types/extras/Polyline.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52569c61aaff932a0bd2e79847f238c51c32a598",
+      "size": 1182,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/52569c61aaff932a0bd2e79847f238c51c32a598"
+    },
+    {
+      "path": "types/extras/Post.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0fcc51c964846769e56c1e8ad6753f54f21e7ab3",
+      "size": 1948,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0fcc51c964846769e56c1e8ad6753f54f21e7ab3"
+    },
+    {
+      "path": "types/extras/Raycast.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9795504297cd035210e84c53247b9195821251ed",
+      "size": 1440,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/9795504297cd035210e84c53247b9195821251ed"
+    },
+    {
+      "path": "types/extras/Shadow.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29b651d7be46d972d5397417f92856eb4a8c0fba",
+      "size": 1181,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/29b651d7be46d972d5397417f92856eb4a8c0fba"
+    },
+    {
+      "path": "types/extras/Skin.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "806962943f87ba0dc1ab8f7cb9ca48ffada80c4a",
+      "size": 1506,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/806962943f87ba0dc1ab8f7cb9ca48ffada80c4a"
+    },
+    {
+      "path": "types/extras/Sphere.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "66f5fce4167e7b1e8bcafff8ed2278988f50c2ae",
+      "size": 641,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/66f5fce4167e7b1e8bcafff8ed2278988f50c2ae"
+    },
+    {
+      "path": "types/extras/Text.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "949bac767fbc61bb6280ec77aa4f96c810d28c7f",
+      "size": 771,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/949bac767fbc61bb6280ec77aa4f96c810d28c7f"
+    },
+    {
+      "path": "types/extras/Texture3D.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bfc1d4047fbb8feb9d414d951d1f0f0f811a3f9",
+      "size": 567,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/5bfc1d4047fbb8feb9d414d951d1f0f0f811a3f9"
+    },
+    {
+      "path": "types/extras/TextureLoader.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c8ecbff8f39817f688e10930148e4c714cb4e70",
+      "size": 644,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/8c8ecbff8f39817f688e10930148e4c714cb4e70"
+    },
+    {
+      "path": "types/extras/Torus.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc1c8aa0aaf5b56846393198c7e2446db9be55e9",
+      "size": 579,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/dc1c8aa0aaf5b56846393198c7e2446db9be55e9"
+    },
+    {
+      "path": "types/extras/Triangle.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f5456f8ee29ea2503083cd028604abca5682710",
+      "size": 213,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/0f5456f8ee29ea2503083cd028604abca5682710"
+    },
+    {
+      "path": "types/extras/Tube.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b39902e1403b0f3ed26e71e68ca5bb9e2fdc8ab7",
+      "size": 882,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b39902e1403b0f3ed26e71e68ca5bb9e2fdc8ab7"
+    },
+    {
+      "path": "types/extras/WireMesh.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d0f6e78b30a9541b26384f66a718eb016b93f77",
+      "size": 521,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1d0f6e78b30a9541b26384f66a718eb016b93f77"
+    },
+    {
+      "path": "types/extras/helpers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "823d825c9e5c855723c6f7d0cb99207b30706d2e",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/823d825c9e5c855723c6f7d0cb99207b30706d2e"
+    },
+    {
+      "path": "types/extras/helpers/AxesHelper.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77555ee629ce0cc1f7ebc19e7bfeaee1ed4da2db",
+      "size": 546,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/77555ee629ce0cc1f7ebc19e7bfeaee1ed4da2db"
+    },
+    {
+      "path": "types/extras/helpers/FaceNormalsHelper.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ce069e33e975c429c9c22d4b78be8bcc17f421c",
+      "size": 441,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1ce069e33e975c429c9c22d4b78be8bcc17f421c"
+    },
+    {
+      "path": "types/extras/helpers/GridHelper.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "164ddbe888a9be0bcf9400402f7d57c41634da87",
+      "size": 506,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/164ddbe888a9be0bcf9400402f7d57c41634da87"
+    },
+    {
+      "path": "types/extras/helpers/VertexNormalsHelper.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a0fd246068e2951a7f97177d47d8ab76a5f77cb",
+      "size": 451,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/2a0fd246068e2951a7f97177d47d8ab76a5f77cb"
+    },
+    {
+      "path": "types/extras/path",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "211ef33fc99e6280461a6fae8b4c9e2031300752",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/211ef33fc99e6280461a6fae8b4c9e2031300752"
+    },
+    {
+      "path": "types/extras/path/BaseSegment.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac8a1c95fd11971606a2e516baf9cd6970d1471f",
+      "size": 148,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ac8a1c95fd11971606a2e516baf9cd6970d1471f"
+    },
+    {
+      "path": "types/extras/path/CubicBezierSegment.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4d199521791f18091140052ac37aacae9f68f82",
+      "size": 108,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d4d199521791f18091140052ac37aacae9f68f82"
+    },
+    {
+      "path": "types/extras/path/LineSegment.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1648b397f05ea7aca77ce9135a59b9df71909c8f",
+      "size": 101,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/1648b397f05ea7aca77ce9135a59b9df71909c8f"
+    },
+    {
+      "path": "types/extras/path/Path.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20c12e9e21e4aa787835bd5117feaa0982695b8e",
+      "size": 1095,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/20c12e9e21e4aa787835bd5117feaa0982695b8e"
+    },
+    {
+      "path": "types/extras/path/QuadraticBezierSegment.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6fa5b5500ed6c073a96374b49c86ac646ca30255",
+      "size": 112,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/6fa5b5500ed6c073a96374b49c86ac646ca30255"
+    },
+    {
+      "path": "types/index.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5d7ee88615db2d00fdef028ec78e5b1a9bacd69",
+      "size": 2079,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c5d7ee88615db2d00fdef028ec78e5b1a9bacd69"
+    },
+    {
+      "path": "types/math",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f1a7d0d43e892c86f45324c0ed22db2d238f72d9",
+      "url": "https://api.github.com/repos/oframe/ogl/git/trees/f1a7d0d43e892c86f45324c0ed22db2d238f72d9"
+    },
+    {
+      "path": "types/math/Color.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61263a7d1112edafb8922cf6bbe295794e75f663",
+      "size": 740,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/61263a7d1112edafb8922cf6bbe295794e75f663"
+    },
+    {
+      "path": "types/math/Euler.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3bd5814a10464aba4b982f2da9ba167fe247833",
+      "size": 1140,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/d3bd5814a10464aba4b982f2da9ba167fe247833"
+    },
+    {
+      "path": "types/math/Mat3.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "107b2ed895cac77660d2a3048e1a979f9f658ca7",
+      "size": 1350,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/107b2ed895cac77660d2a3048e1a979f9f658ca7"
+    },
+    {
+      "path": "types/math/Mat4.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2a23873b796b6c75783ebaefdef489019968423",
+      "size": 2569,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/c2a23873b796b6c75783ebaefdef489019968423"
+    },
+    {
+      "path": "types/math/Quat.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88bf4bb5dc098e742d5927e33a08bda1d272fe25",
+      "size": 1373,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/88bf4bb5dc098e742d5927e33a08bda1d272fe25"
+    },
+    {
+      "path": "types/math/Vec2.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f151371d5c29353527b2f4afb891630d3bc07d2e",
+      "size": 1357,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/f151371d5c29353527b2f4afb891630d3bc07d2e"
+    },
+    {
+      "path": "types/math/Vec3.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce8909f4931be0a3c801fadd69e5935c443db8e4",
+      "size": 1626,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/ce8909f4931be0a3c801fadd69e5935c443db8e4"
+    },
+    {
+      "path": "types/math/Vec4.d.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4c48c010ce22954b0f7424915f73a462418871d",
+      "size": 848,
+      "url": "https://api.github.com/repos/oframe/ogl/git/blobs/b4c48c010ce22954b0f7424915f73a462418871d"
+    }
+  ],
+  "truncated": false
+}

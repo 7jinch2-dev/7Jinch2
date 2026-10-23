@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+blender/output/supplied_single_normalized.glb
+blender/output/supplied_single_clerk.blend
+*.tmp
+*.log
+*.blend1
+.idea/
+.vscode/

@@ -1,0 +1,31 @@
+/* 首页默认：仅展示店外 3D 场景。 */
+.store-preview {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: 0;
+  background: #08090c;
+}
+
+.store-preview__stage {
+  position: relative;
+  width: 100%;
+  height: max(620px, calc(100svh - var(--nav-height)));
+  overflow: hidden;
+}
+
+.store-preview__iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #08090c;
+}
+
+@media (max-width: 600px) {
+  .store-preview__stage {
+    min-height: 690px;
+    height: calc(100svh - var(--nav-height));
+  }
+}

@@ -1,0 +1,55 @@
+/* ==========================================
+   响应式
+   ========================================== */
+@media (max-width: 1024px) {
+  .hero {
+    gap: 40px;
+    padding: 80px 24px 88px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    padding: 20px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .nav-hamburger { display: flex; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding: 56px 20px 72px;
+  }
+  .hero-portrait {
+    order: -1;
+    width: min(236px, 62vw);
+  }
+  .hero-desc { max-width: none; }
+
+  .sec {
+    margin-top: 104px;
+    padding: 0 20px;
+  }
+  .ghost-word { left: 20px; }
+  .sec-contact { padding-bottom: 88px; }
+  .footer { padding: 26px 20px 36px; }
+}
+
+@media (max-width: 480px) {
+  .hero-name { font-size: 2.4rem; }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-actions .btn { width: 100%; }
+}

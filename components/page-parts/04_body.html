@@ -1,0 +1,101 @@
+<body>
+
+<!-- 背景光晕（纯装饰） -->
+<div class="glow-field" aria-hidden="true"><span class="g1"></span><span class="g2"></span></div>
+
+<!-- 顶部滚动进度条 -->
+<div class="scroll-progress" aria-hidden="true"><i></i></div>
+
+<!-- ==========================================
+     导航栏
+     ========================================== -->
+<nav class="nav" id="nav" data-reveal="down">
+  <!-- 替换点：品牌名 -->
+  <a href="#about" class="nav-brand">
+    <span class="cross">✦</span> BAO LONG
+  </a>
+
+  <ul class="nav-links" id="navLinks">
+    <!-- 替换点：导航菜单项 -->
+    <li><a href="#about" data-section="about">About</a></li>
+    <li><a href="#works" data-section="works">Works</a></li>
+    <li><a href="#contact" data-section="contact">Contact</a></li>
+  </ul>
+
+  <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ==========================================
+     01 / HELLO
+     ========================================== -->
+<section class="hero" id="about">
+  <div class="hero-copy">
+    <!-- 替换点：文字 —— 眉标 -->
+    <p class="eyebrow" data-reveal="up">01 — HELLO / 你好</p>
+
+    <!-- 替换点：文字 —— 姓名 -->
+    <h1 class="hero-name" data-reveal="mask" style="--rv-delay:.10s">Bao Long</h1>
+
+    <!-- 替换点：文字 —— 身份 -->
+    <p class="hero-role" data-reveal="up" style="--rv-delay:.26s">景观设计 / 视觉传达 / 品牌策划</p>
+
+    <!-- 替换点：文字 —— 个人简介 -->
+    <p class="hero-desc" data-reveal="up" style="--rv-delay:.34s">
+      每一次按下快门、每一张设计稿，都是我对世界观察的切片。
+      欢迎浏览我的作品集，感受设计的力量。
+    </p>
+
+    <div class="hero-actions" data-reveal="up" style="--rv-delay:.42s">
+      <a class="btn btn-solid" href="#works">查看作品 ↗</a>
+      <a class="btn btn-outline" href="#contact">联系我</a>
+    </div>
+  </div>
+
+  <!-- 头像：把 images/avatar.jpg 放进仓库就会自动替换掉字母占位 -->
+  <div class="hero-portrait" data-reveal="zoom" style="--rv-delay:.22s">
+    <img src="images/avatar.jpg" alt="Bao Long" data-fallback>
+    <span class="hero-portrait-fallback">BL</span>
+  </div>
+
+  <span class="ghost-wrap" aria-hidden="true"><span class="ghost-word">PORTFOLIO</span></span>
+</section>
+
+<!-- ==========================================
+     02 / WORKS
+     ========================================== -->
+<section class="sec sec-works" id="works">
+  <p class="eyebrow" data-reveal="up">02 — THE PRACTITIONER / 作品</p>
+
+  <!-- 替换点：文字 —— 章节标题 -->
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Selected Works<em> / 作品集</em></h2>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">六组项目 · 景观、视觉与品牌的实践切片。</p>
+
+  <!-- 作品画廊：内容与动效参数在下方 GALLERY_ITEMS / GALLERY_CONFIG 中配置 -->
+  <div class="accordion-gallery ag-no-anim" id="accordionGallery" role="list" aria-label="作品画廊" data-reveal="up" style="--rv-delay:.22s"></div>
+</section>
+
+<!-- ==========================================
+     03 / CONTACT
+     ========================================== -->
+<section class="sec sec-contact" id="contact">
+  <p class="eyebrow" data-reveal="up">03 — CONTACT / 联系</p>
+  <h2 class="display" data-reveal="mask" style="--rv-delay:.06s">Let's Talk<em> / 坐等合作</em></h2>
+  <p class="sec-caption" data-reveal="up" style="--rv-delay:.14s">
+    欢迎通过邮件联系我，聊聊新的项目、工作机会与创意想法。
+  </p>
+
+  <!-- 替换点：文字 —— 邮箱 -->
+  <a class="contact-mail" href="mailto:hello@baolong.com" data-reveal="up" style="--rv-delay:.20s">hello@baolong.com</a>
+
+  <span class="ghost-wrap" aria-hidden="true"><span class="ghost-word">LET'S BUILD</span></span>
+</section>
+
+<!-- ==========================================
+     Footer
+     ========================================== -->
+<footer class="footer">
+  <!-- 替换点：文字 —— 版权信息 -->
+  <p data-reveal="up">&copy; 2026 Bao Long. All Rights Reserved.</p>
+</footer>
