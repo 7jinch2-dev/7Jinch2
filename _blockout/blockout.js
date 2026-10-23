@@ -564,7 +564,7 @@ function makeModeledDoorPivot(door, hinge) {
   return pivot;
 }
 
-loadGlbModel('../assets/models/store-exterior.glb?v=20261023-model-compress-3').then(model => {
+loadGlbModel('../assets/models/store-exterior.glb?v=20261023-freezer-clean').then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
     const name = object.name || '';
