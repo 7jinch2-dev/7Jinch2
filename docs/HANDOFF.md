@@ -10,14 +10,14 @@
 - 线上地址：<https://7jinch2-dev.github.io/7Jinch2/>
 - GitHub 仓库：<https://github.com/7jinch2-dev/7Jinch2>
 - 线上分支：`main`
-- 部署仓库当前提交：`016b65a fix: move counter clear of wall and clerk`
-- 对应源码分支提交：`1b5635b fix: clear counter collisions and duplicate wall`
+- 部署仓库当前提交：`d56d012 fix: restore exterior counter occlusion`
+- 对应源码分支提交：`c563302 fix: restore visible counter as foreground occluder`
 
 线上验证结果：
 
 - 首页：HTTP 200
 - 3D 场景：HTTP 200
-- 最新场景脚本：`blockout.js?v=20261026-counter-clear-final3`
+- 最新场景脚本：`blockout.js?v=20261026-counter-visible`
 - `assets/models/clerk-optimized.glb`：HTTP 200，约 `10.3 MB`
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
 - `assets/models/clerk-meshopt.glb`：HTTP 200，约 `4.13 MB`（显式快速模式）
@@ -66,6 +66,7 @@
 - 收银柜台、延长板、收银机、小本子和工牌作为整组向店前及过道方向移动。
 - 店员向柜台内侧移动，头发与左墙、柜台均保留安全间距；门前盆栽位于墙柱外侧。
 - 柜台的桌面物件与正向特写机位、第一人称碰撞盒同步更新。
+- 收银柜台在店外模式保持可见，作为店员下半身的前景遮挡，避免人物看起来陷入地面。
 - 门前盆栽已向左、向前移动并略微缩小，侧视角下不再与招牌支柱或店面墙体视觉交叠。
 - 工牌在桌面平面内旋转 `90°`；工牌特写镜头同步旋转 `-90°`，确保卡面文字方向正确。
 - 售货机、柜台、工牌、证书墙、收银机和小本子是六个有效交互物件；装饰货架与陈列柜不抢点击。
@@ -384,8 +385,8 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 最近一次发布已验证：
 
-- 远端 `main` 为部署提交 `016b65a`。
-- 线上页面已引用 `blockout.js?v=20261026-counter-clear-final3`。
+- 远端 `main` 为部署提交 `d56d012`。
+- 线上页面已引用 `blockout.js?v=20261026-counter-visible`。
 - 线上手机海报约 `80 KB`，默认外景模型约 `2.92 MB`，无损人物原版约 `10.3 MB`。
 - 已实测：开屏显示真实下载进度，外景就绪后自动进入自由旋转，高清人物随后补入；控制台无错误。
 
