@@ -10,19 +10,22 @@
 - 线上地址：<https://7jinch2-dev.github.io/7Jinch2/>
 - GitHub 仓库：<https://github.com/7jinch2-dev/7Jinch2>
 - 线上分支：`main`
-- 部署仓库当前提交：`1609f7b feat: publish first-person store navigation`
-- 对应本地功能提交：`b9fb6d3 feat: add first-person store navigation`
+- 部署仓库当前提交：`969b91a perf: reveal scene before clerk finishes`
+- 对应源码分支提交：`3fc2ab2 perf: reveal 3d on first rendered frame`
 
 线上验证结果：
 
 - 首页：HTTP 200
 - 3D 场景：HTTP 200
-- 最新场景脚本：`blockout.js?v=20261023-first-person`
+- 最新场景脚本：`blockout.js?v=20261026-meshopt-5`
 - `assets/models/clerk-optimized.glb`：HTTP 200，约 `10.3 MB`
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
+- `assets/models/clerk-meshopt.glb`：HTTP 200，约 `3.44 MB`
+- `assets/models/store-exterior-meshopt.glb`：HTTP 200，约 `2.92 MB`
+- `images/store-poster-mobile.jpg`：HTTP 200，约 `80 KB`
 - 旧 `/_blockout/clerk.js`：HTTP 404，已删除
 
-本地工作区已完成移动端加载优化：首屏改为约 `202 KB` 的静态店铺海报，点击后才加载 3D；店内主路径只加载约 `3.44 MB` 的 Meshopt 店员，独立店外模型约 `2.92 MB`。该版本尚待发布。
+移动端加载优化已上线：首屏先显示静态店铺海报，未点击时请求任何 GLB；点击后才加载 3D。店内主路径只加载约 `3.44 MB` 的 Meshopt 店员，独立店外模型约 `2.92 MB`。
 
 > `site/_blockout/` 目录名以下划线开头。GitHub Pages 必须依赖根目录下的 `site/.nojekyll`，不能删除。
 
@@ -376,10 +379,10 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 最近一次发布已验证：
 
-- 远端 `main` 为部署提交 `1609f7b`。
-- 线上页面已引用 `blockout.js?v=20261023-first-person`。
-- 线上外景 GLB 约 `9.94 MB`，SHA-256 与本地发布文件一致。
-- 公网已实测第一人称提示、WASD 行走、准星 `F` 交互、`Esc` 原位返回和转向后的墙体封闭，控制台无加载错误。
+- 远端 `main` 为部署提交 `969b91a`。
+- 线上页面已引用 `blockout.js?v=20261026-meshopt-5`。
+- 线上手机海报约 `80 KB`，店员模型约 `3.44 MB`，外景模型约 `2.92 MB`。
+- 公网已实测：未点击时不请求 GLB；点击后先显示可操作 3D 首帧，店员随后补入；控制台无错误。
 
 ## 9. 已知风险
 
