@@ -893,7 +893,6 @@ function applyMode(isExt) {
   facade.visible = isExt && !modeledExteriorReady;
   street.visible = isExt && !modeledExteriorReady;
   modeledExterior.visible = isExt && modeledExteriorReady;
-  counterArea.visible = !isExt;
   interiorLeftWall.visible = !isExt;
   interiorRightWall.visible = !isExt;
   interiorFacade.visible = !isExt;
