@@ -10,8 +10,8 @@
 - 线上地址：<https://7jinch2-dev.github.io/7Jinch2/>
 - GitHub 仓库：<https://github.com/7jinch2-dev/7Jinch2>
 - 线上分支：`main`
-- 部署仓库当前提交：`9314d53 fix: restore exterior rotation with splash loading`
-- 对应源码分支提交：`44c37ea fix: restore exterior rotation with progressive splash`
+- 部署仓库当前提交：`e4f2c8e fix: refresh cached store scene`
+- 对应源码分支提交：`8da2ce7 fix: bust cached store iframe`
 
 线上验证结果：
 
@@ -379,7 +379,7 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 最近一次发布已验证：
 
-- 远端 `main` 为部署提交 `9314d53`。
+- 远端 `main` 为部署提交 `e4f2c8e`。
 - 线上页面已引用 `blockout.js?v=20261026-loader-8`。
 - 线上手机海报约 `80 KB`，默认外景模型约 `2.92 MB`，无损人物原版约 `10.3 MB`。
 - 已实测：开屏显示真实下载进度，外景就绪后自动进入自由旋转，高清人物随后补入；控制台无错误。
