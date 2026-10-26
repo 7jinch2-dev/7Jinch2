@@ -236,7 +236,7 @@ box(5.0, 0.12, 3.8, M.floor, 0, -0.06, 0, shell, { edges: false });
 box(4.88, 0.02, 3.68, M.tile, 0, 0.005, 0, shell, { edges: false });
 // 后墙 + 左右墙 + 天花板；前墙另做店内专用封口，避免第一人称越界看到墙背面。
 box(5.0, 2.65, 0.12, M.wall, 0, 1.325, -1.90, shell);
-box(0.12, 2.65, 3.8, M.wall, -2.50, 1.325, 0, shell);
+const interiorLeftWall = box(0.12, 2.65, 3.8, M.wall, -2.50, 1.325, 0, shell);
 const interiorRightWall = box(0.12, 2.65, 3.8, M.wall, 2.50, 1.325, 0, shell);
 box(5.0, 0.08, 3.8, M.ceiling, 0, 2.68, 0, shell, { edges: false });
 
@@ -368,7 +368,7 @@ labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-1.02, 1.17
 // 店员：只使用当前高精度 PBR 模型，正面朝向柜台和入口。
 const clerk = new THREE.Group();
 clerk.name = 'clerk-chen-zhixi';
-clerk.position.set(-1.82, 0, 0.18);
+clerk.position.set(-1.60, 0, 0.18);
 const COUNTER_FACING_YAW = Math.PI / 2;
 clerk.rotation.y = COUNTER_FACING_YAW;
 window.__blk.clerk = clerk;
@@ -888,6 +888,7 @@ function applyMode(isExt) {
   facade.visible = isExt && !modeledExteriorReady;
   street.visible = isExt && !modeledExteriorReady;
   modeledExterior.visible = isExt && modeledExteriorReady;
+  interiorLeftWall.visible = !isExt;
   interiorRightWall.visible = !isExt;
   interiorFacade.visible = !isExt;
   labels.forEach(l => { if (l.el) l.el.style.opacity = l.layer === (isExt ? 'ext' : 'int') ? '' : '0'; });
@@ -969,7 +970,7 @@ function updateLabels() {
 let bubbleTimer = 0;
 function greetFromInside() {
   showBubble('<b>店员：</b>欢迎来到我的灵感便利店 ✦',
-    new THREE.Vector3(-1.82, 2.32, 0.18), 5200);
+    new THREE.Vector3(-1.60, 2.32, 0.18), 5200);
 }
 
 function showBubble(text, anchor, duration = 3600) {
