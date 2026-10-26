@@ -4,7 +4,7 @@
    ========================================== */
 import * as THREE from './three.module.min.js';
 import { createTableBadge } from './badge.js';
-import { loadGlbModel } from './glb-loader.js?v=20261026-meshopt-3';
+import { loadGlbModel } from './glb-loader.js?v=20261026-progress-4';
 
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labels');
@@ -22,6 +22,7 @@ const CAMERA_FOV = 48;
 const frame = document.getElementById('frame');
 const assetQuery = new URLSearchParams(location.search);
 const useFullAssets = assetQuery.get('assets') === 'full';
+const useMeshoptClerk = assetQuery.get('clerk') === 'meshopt';
 const insideOnly = assetQuery.has('insideOnly');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -384,19 +385,40 @@ labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.
 
 let clerkLoadPromise = null;
 let sceneReadyPosted = false;
-function notifySceneReady() {
-  if (sceneReadyPosted) return;
+const readySources = new Set();
+
+function postLoadProgress(progress, label) {
+  if (sceneReadyPosted && !insideOnly) return;
+  window.parent.postMessage({
+    type: 'store-load-progress',
+    progress: THREE.MathUtils.clamp(progress, 0, 1),
+    label
+  }, '*');
+}
+
+function markSourceReady(source) {
+  readySources.add(source);
+  const required = insideOnly ? ['clerk'] : ['exterior'];
+  if (sceneReadyPosted || !required.every(item => readySources.has(item))) return;
+  postLoadProgress(1, '准备完成');
   sceneReadyPosted = true;
-  window.parent.postMessage({ type: 'store-scene-ready' }, '*');
+  requestAnimationFrame(() => {
+    window.parent.postMessage({ type: 'store-scene-ready' }, '*');
+  });
 }
 
 function loadClerk() {
   if (clerkLoadPromise) return clerkLoadPromise;
   document.body.dataset.clerkModel = 'loading';
   clerkLoadPromise = loadGlbModel(
-    useFullAssets
-      ? '../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2'
-      : '../assets/models/clerk-meshopt.glb?v=20261026-meshopt-clerk-full'
+    useMeshoptClerk
+      ? '../assets/models/clerk-meshopt.glb?v=20261026-meshopt-clerk-safe'
+      : '../assets/models/clerk-optimized.glb?v=20261026-clerk-original-safe',
+    (loaded, total) => {
+      const fraction = total ? loaded / total : 0;
+      postLoadProgress(insideOnly ? 0.08 + fraction * 0.86 : 0,
+        '载入店员模型');
+    }
   )
     .then(model => {
       model.name = 'clerk-chen-zhixi-textured';
@@ -408,12 +430,12 @@ function loadClerk() {
       clerk.add(model);
       clerk.userData.texturedModel = model;
       document.body.dataset.clerkModel = 'textured';
-      notifySceneReady();
+      markSourceReady('clerk');
     })
     .catch(error => {
       console.warn('Textured clerk could not load.', error);
       document.body.dataset.clerkModel = 'unavailable';
-      notifySceneReady();
+      markSourceReady('clerk');
     });
   return clerkLoadPromise;
 }
@@ -619,12 +641,18 @@ function makeModeledDoorPivot(door, hinge) {
 
 if (insideOnly) {
   document.body.dataset.exteriorModel = 'skipped';
+  postLoadProgress(0.04, '搭建室内空间');
+  markSourceReady('exterior');
   scheduleClerkLoad();
 } else {
   loadGlbModel(
     useFullAssets
       ? '../assets/models/store-exterior.glb?v=20261023-lighter-props'
-      : '../assets/models/store-exterior-meshopt.glb?v=20261026-meshopt-store'
+      : '../assets/models/store-exterior-meshopt.glb?v=20261026-meshopt-store-safe',
+    (loaded, total) => {
+      const fraction = total ? loaded / total : 0;
+      postLoadProgress(0.05 + fraction * 0.93, '载入店外模型');
+    }
   ).then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
@@ -677,11 +705,11 @@ if (insideOnly) {
     camTarget.set(...streetView.target);
   }
   document.body.dataset.exteriorModel = 'textured';
-  notifySceneReady();
+  markSourceReady('exterior');
 }).catch(error => {
   console.warn('Modeled exterior could not load; using the procedural storefront.', error);
   document.body.dataset.exteriorModel = 'fallback';
-  notifySceneReady();
+  markSourceReady('exterior');
 }).finally(scheduleClerkLoad);
 }
 
@@ -1342,7 +1370,6 @@ document.body.dataset.mode = startStation.ext ? 'ext' : 'int';
 document.body.dataset.station = startName;
 resize();
 render();
-requestAnimationFrame(notifySceneReady);
 setTimeout(() => loader.classList.add('is-off'), 350);
 setTimeout(() => loader.remove(), 1200);
 if (asked && stations[asked]) {

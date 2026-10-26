@@ -27,7 +27,7 @@
 
 网页加载 `site/assets/models/clerk-optimized.glb`。旧角色不再作为加载占位；模型加载失败时宁可不显示人物，也不会回退到旧版本。
 
-网页默认加载 `clerk-meshopt.glb` 和 `store-exterior-meshopt.glb`。两份高清 GLB 保留作 `?assets=full` 对照与回退；Meshopt 版本使用 512 WebP 贴图，浏览器解码后会重新计算大网格法线，避免压缩接缝。
+网页默认加载 `clerk-optimized.glb` 和 `store-exterior-meshopt.glb`。外景先加载，开屏结束后即可自由旋转；人物原版随后加载，避免近景脸部被几何压缩破坏。`?assets=full` 可让外景也切回高清原版，`?clerk=meshopt` 可显式测试人物快速模式。
 
 店外 GLB 已接入网页首屏。程序化立面仅作为模型加载失败时的后备；正常状态使用双开玻璃门、右移门组和独立的深绿街灯材质。
 
@@ -79,7 +79,7 @@ FREEZER_SOURCE=/path/to/freezer.glb \
   --python blender/optimize_web_meshopt.py
 ```
 
-默认输出约 `3.44 MB` 的店员模型和约 `2.92 MB` 的外景模型。`CLERK_RATIO`、`STORE_RATIO`、`TEXTURE_SIZE` 可覆盖压缩参数；调整后必须同时检查浏览器近景和 Meshopt 接缝。
+脚本输出约 `4.13 MB` 的无减面店员模型和约 `2.92 MB` 的外景模型。`CLERK_RATIO`、`STORE_RATIO`、`TEXTURE_SIZE` 可覆盖压缩参数；调整后必须同时检查浏览器近景和 Meshopt 接缝。
 
 重新生成店外模型、白底四视图和 GLB：
 

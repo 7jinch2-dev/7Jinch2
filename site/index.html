@@ -8,7 +8,7 @@
 <!-- 设计档案袋：开屏之后、首屏之前的一屏（样式与交互在 assets/paper.*） -->
 <link rel="stylesheet" href="assets/retro.css?v=20261021-store">
 <link rel="stylesheet" href="assets/carousel.css?v=10171805">
-<link rel="stylesheet" href="assets/store-preview.css?v=20261026-store-poster">
+<link rel="stylesheet" href="assets/store-preview.css?v=20261026-store-loader">
 
 <!--
   ============================================
@@ -1563,9 +1563,9 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   <div class="store-preview__stage">
     <iframe
       class="store-preview__iframe"
-      data-src="_blockout/?embed=1&shot=inside&insideOnly=1"
+      src="_blockout/?embed=1"
       title="灵感补给站 3D 互动场景"
-      loading="lazy"
+      loading="eager"
       allow="fullscreen"
       referrerpolicy="no-referrer"></iframe>
     <div class="store-preview__poster" id="storePoster">
@@ -1573,49 +1573,37 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
            srcset="images/store-poster-mobile.jpg?v=20261026-perf 900w, images/store-poster.jpg?v=20261026-perf 1600w"
            sizes="100vw" width="1600" height="900"
            alt="灵感补给站便利店外景" fetchpriority="high" decoding="async">
-      <div class="store-preview__loading" aria-live="polite">正在准备 3D 场景…</div>
-      <button class="store-preview__launch" id="storeLaunch" type="button">进入 3D →</button>
+      <div class="store-preview__loading" aria-live="polite">
+        <div class="store-preview__loading-title">
+          <b>正在搭建灵感便利店</b>
+          <span id="storeProgressText">3%</span>
+        </div>
+        <div class="store-preview__loading-track">
+          <i id="storeProgressBar"></i>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 <script>
 (() => {
   const poster = document.getElementById('storePoster');
-  const launch = document.getElementById('storeLaunch');
   const frame = poster.closest('.store-preview').querySelector('.store-preview__iframe');
-  let started = false;
+  const bar = document.getElementById('storeProgressBar');
+  const text = document.getElementById('storeProgressText');
+  const splashStartedAt = performance.now();
 
-  const revealWhenReady = event => {
+  window.addEventListener('message', event => {
     if (event.source !== frame.contentWindow) return;
-    if (event.data?.type === 'store-scene-ready') {
-      poster.classList.add('is-hidden');
-    } else if (event.data?.type === 'store-exit') {
-      poster.classList.remove('is-hidden');
-      poster.classList.remove('is-loading');
-      launch.disabled = false;
-      launch.textContent = '进入 3D →';
+    if (event.data?.type === 'store-load-progress') {
+      const progress = Math.max(3, Math.min(100, Math.round(event.data.progress * 100)));
+      bar.style.width = `${progress}%`;
+      text.textContent = `${progress}%`;
+    } else if (event.data?.type === 'store-scene-ready') {
+      const delay = Math.max(0, 900 - (performance.now() - splashStartedAt));
+      setTimeout(() => poster.classList.add('is-hidden'), delay);
     }
-  };
-
-  const start = () => {
-    if (poster.classList.contains('is-loading')) return;
-    poster.classList.add('is-loading');
-    launch.disabled = true;
-    launch.textContent = '正在准备…';
-    if (!started) {
-      started = true;
-      frame.src = frame.dataset.src;
-    } else {
-      poster.classList.add('is-hidden');
-      frame.contentWindow?.postMessage({ type: 'store-enter' }, location.origin);
-    }
-  };
-
-  launch.addEventListener('click', start);
-  poster.addEventListener('click', event => {
-    if (event.target !== launch) start();
   });
-  window.addEventListener('message', revealWhenReady);
 })();
 </script>
 

@@ -28,7 +28,6 @@
   inset: 0;
   z-index: 2;
   overflow: hidden;
-  cursor: pointer;
   background: #08090c;
   opacity: 1;
   transition: opacity .35s ease;
@@ -45,51 +44,49 @@
   object-fit: cover;
 }
 
-.store-preview__launch {
-  position: absolute;
-  left: 50%;
-  bottom: max(28px, 6svh);
-  transform: translateX(-50%);
-  min-width: 154px;
-  padding: 12px 20px;
-  border: 1px solid rgba(255,255,255,.28);
-  border-radius: 999px;
-  background: rgba(12,12,16,.78);
-  color: #f5ead8;
-  font: 600 13px/1 -apple-system, "PingFang SC", sans-serif;
-  letter-spacing: .08em;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 14px 36px rgba(0,0,0,.38);
-  transition: background .2s, border-color .2s, transform .2s;
-}
-
-.store-preview__launch:hover {
-  background: #e8a24a;
-  border-color: #e8a24a;
-  color: #21170f;
-  transform: translateX(-50%) translateY(-2px);
-}
-
-.store-preview__launch[disabled] {
-  cursor: wait;
-  opacity: .72;
-}
-
 .store-preview__loading {
   position: absolute;
   left: 50%;
-  bottom: max(82px, calc(6svh + 54px));
+  bottom: max(26px, 5.5svh);
   transform: translateX(-50%);
-  color: rgba(245,234,216,.68);
-  font-size: 11px;
-  letter-spacing: .08em;
-  opacity: 0;
-  transition: opacity .2s;
+  width: min(320px, calc(100vw - 48px));
+  padding: 13px 16px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(12,12,16,.82);
+  color: rgba(245,234,216,.84);
+  font: 500 11px/1.4 -apple-system, "PingFang SC", sans-serif;
+  letter-spacing: .06em;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.38);
 }
 
-.store-preview__poster.is-loading .store-preview__loading {
-  opacity: 1;
+.store-preview__loading-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.store-preview__loading-title b {
+  color: #f5ead8;
+  font-weight: 600;
+}
+
+.store-preview__loading-track {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+}
+
+.store-preview__loading-track i {
+  display: block;
+  width: 3%;
+  height: 100%;
+  border-radius: inherit;
+  background: #e8a24a;
+  transition: width .18s ease;
 }
 
 @media (max-width: 600px) {
@@ -98,7 +95,4 @@
     height: calc(100svh - var(--nav-height));
   }
 
-  .store-preview__launch {
-    bottom: max(22px, 5svh);
-  }
 }

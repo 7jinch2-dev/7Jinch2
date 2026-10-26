@@ -20,18 +20,18 @@
 - 最新场景脚本：`blockout.js?v=20261026-meshopt-5`
 - `assets/models/clerk-optimized.glb`：HTTP 200，约 `10.3 MB`
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
-- `assets/models/clerk-meshopt.glb`：HTTP 200，约 `3.44 MB`
+- `assets/models/clerk-meshopt.glb`：HTTP 200，约 `4.13 MB`（显式快速模式）
 - `assets/models/store-exterior-meshopt.glb`：HTTP 200，约 `2.92 MB`
 - `images/store-poster-mobile.jpg`：HTTP 200，约 `80 KB`
 - 旧 `/_blockout/clerk.js`：HTTP 404，已删除
 
-移动端加载优化已上线：首屏先显示静态店铺海报，未点击时请求任何 GLB；点击后才加载 3D。店内主路径只加载约 `3.44 MB` 的 Meshopt 店员，独立店外模型约 `2.92 MB`。
+移动端加载优化：首屏先显示静态店铺海报与真实下载进度；约 `2.92 MB` 的店外模型就绪后自动进入可自由旋转的外景，约 `10.3 MB` 的无损人物原版随后在后台加载。
 
 > `site/_blockout/` 目录名以下划线开头。GitHub Pages 必须依赖根目录下的 `site/.nojekyll`，不能删除。
 
 ## 2. 当前页面状态
 
-网站打开后先显示接近全屏的店铺海报，点击“进入 3D”后才按需加载互动场景；作品展示柜位于其后。
+网站打开后先显示接近全屏的店铺海报与加载进度，店外模型就绪后自动显示互动外景；作品展示柜位于其后。
 
 当前首屏遵循以下约束：
 
@@ -94,7 +94,7 @@
 - `site/_blockout/three.module.min.js`：Three.js r160。
 - `site/assets/models/clerk-optimized.glb`：当前网页用店员模型。
 - `site/assets/models/store-exterior.glb`：网页店外使用的完整便利店外景模型。
-- `site/assets/models/clerk-meshopt.glb`：默认店员模型。
+- `site/assets/models/clerk-meshopt.glb`：显式快速模式店员模型。
 - `site/assets/models/store-exterior-meshopt.glb`：默认独立店外模型。
 - `site/images/store-poster.jpg`：首屏静态海报。
 - `site/.nojekyll`：GitHub Pages 必须保留。
@@ -107,9 +107,9 @@
   - 约 22.5 万三角面
   - 2048 WebP PBR 贴图
 - `site/assets/models/clerk-meshopt.glb`
-- 约 `3.44 MB`
+- 约 `4.13 MB`
   - 约 18 万三角面，512 WebP PBR 贴图
-  - 轻量 Meshopt 版本，浏览器重算法线以修复压缩接缝
+  - 显式 Meshopt 模式；默认人物仍使用无几何压缩原版以避免近景裂纹
 - `site/assets/models/store-exterior.glb`
 - 约 `9.94 MB`
   - 约 22.5 万顶点、67.3 万索引
@@ -229,13 +229,13 @@ _blockout/?shot=wall
 
 ### 店员加载
 
-`blockout.js` 创建空白 `THREE.Group`。主页进入店内时通过 `insideOnly=1` 跳过不可见的外景，只加载：
+`blockout.js` 创建空白 `THREE.Group`，默认先加载外景，再在后台加载无损人物：
 
 ```text
-../assets/models/clerk-meshopt.glb
+../assets/models/clerk-optimized.glb
 ```
 
-加载成功后 `document.body.dataset.clerkModel = 'textured'`；开始加载时为 `'loading'`，失败时为 `'unavailable'`。`?assets=full` 可切回高清原版。独立店外 3D 默认加载 `store-exterior-meshopt.glb`。
+加载成功后 `document.body.dataset.clerkModel = 'textured'`；开始加载时为 `'loading'`，失败时为 `'unavailable'`。开屏只等待约 `2.92 MB` 的 `store-exterior-meshopt.glb`，外景可旋转后再加载人物；`?clerk=meshopt` 可切到快速但有近景接缝风险的版本。
 
 ### 店外精细道具
 
@@ -386,7 +386,7 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 ## 9. 已知风险
 
-1. **模型体积**：高清回退为店员约 `10.3 MB`、外景约 `9.94 MB`；默认 Meshopt 路径为店员约 `3.44 MB`、外景约 `2.92 MB`，首屏海报约 `202 KB`。
+1. **模型体积**：默认外景约 `2.92 MB`，人物原版约 `10.3 MB` 并在外景就绪后后台加载；首屏海报约 `80–202 KB`。
 2. **WebP 兼容性**：两个 GLB 使用 `EXT_texture_webp`；当前加载器与页面已在 Chrome 中验证。若未来改用其他 GLTF 加载器，必须确认该扩展可用。
 3. **模型无骨骼和动画**：店员是静态模型，没有站立、呼吸或动作。
 4. **室内仍是灰模体块**：除店员外，货架商品、收银机和证书墙主要由基础几何构成，真实作品内容尚未接入。

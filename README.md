@@ -72,11 +72,11 @@ git sparse-checkout set site docs blender concepts design-data components source
 - 网页完整外景预览：[concepts/store/store-web-modeled-exterior-final.png](concepts/store/store-web-modeled-exterior-final.png)
 - 网页店内组合预览：[concepts/store/store-web-interior-final.png](concepts/store/store-web-interior-final.png)
 
-当前场景为 v0.8：首屏先显示约 `202 KB` 的店铺海报，点击“进入 3D”后才按需加载场景。店外采用左侧大橱窗与贴右边缘的双开玻璃门，补齐深绿檐口、朱砂红布棚、竖招、石铺人行道和门前物件；店内净空间约 5.0m × 3.8m，收银柜台沿左侧动线纵向布置，货架和陈列柜均收进外景壳体内。进店后切换为受限的第一人称视角，使用 `WASD` 行走、拖拽转头、准星对准物件后按 `F` 查看特写；`Esc` 可从特写返回原行走位置。
+当前场景为 v0.8：首屏先显示约 `80–202 KB` 的店铺海报与加载进度，店外模型就绪后自动进入可自由旋转的 3D 外景，高清店员随后补入。店外采用左侧大橱窗与贴右边缘的双开玻璃门，补齐深绿檐口、朱砂红布棚、竖招、石铺人行道和门前物件；店内净空间约 5.0m × 3.8m，收银柜台沿左侧动线纵向布置，货架和陈列柜均收进外景壳体内。进店后切换为受限的第一人称视角，使用 `WASD` 行走、拖拽转头、准星对准物件后按 `F` 查看特写；`Esc` 可从特写返回原行走位置。
 
-店外另有一套可编辑的 Blender 资产：`blender/build_store_exterior.py` 可重建白底四视图、`blender/output/store_exterior.blend` 和约 `9.94 MB` 的高清 `store-exterior.glb`。默认网页使用约 `2.92 MB` 的 Meshopt 外景；主页进入店内时只加载约 `3.44 MB` 的 Meshopt 店员，不再下载当前视角不可见的外景模型。
+店外另有一套可编辑的 Blender 资产：`blender/build_store_exterior.py` 可重建白底四视图、`blender/output/store_exterior.blend` 和约 `9.94 MB` 的高清 `store-exterior.glb`。默认网页使用约 `2.92 MB` 的 Meshopt 外景，先恢复外景旋转；约 `10.3 MB` 的无损人物原版在后台继续加载。
 
-Blender 店员已接入网页，高清 `clerk-optimized.glb` 作为回退。默认 `clerk-meshopt.glb` 使用轻度减面、512 WebP 贴图和 Meshopt 几何压缩；浏览器加载后重新计算法线，消除压缩接缝。可继续编辑的工程保存在 `blender/output/clerk_refined.blend`。
+Blender 店员默认使用无几何压缩、无额外减面的 `clerk-optimized.glb`，避免近景脸部与发丝出现裂纹。`clerk-meshopt.glb` 保留为显式快速模式，不再作为默认人物。可继续编辑的工程保存在 `blender/output/clerk_refined.blend`。
 
 ## 导入说明
 

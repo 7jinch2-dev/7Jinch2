@@ -12,7 +12,7 @@ CLERK_OUTPUT = os.path.join(MODEL_DIR, "clerk-meshopt.glb")
 STORE_OUTPUT = os.path.join(MODEL_DIR, "store-exterior-meshopt.glb")
 TEXTURE_SIZE = int(os.environ.get("TEXTURE_SIZE", "512"))
 WEBP_QUALITY = int(os.environ.get("WEBP_QUALITY", "80"))
-CLERK_RATIO = float(os.environ.get("CLERK_RATIO", "0.8"))
+CLERK_RATIO = float(os.environ.get("CLERK_RATIO", "1.0"))
 STORE_RATIO = float(os.environ.get("STORE_RATIO", "0.62"))
 
 
