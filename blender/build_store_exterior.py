@@ -195,7 +195,7 @@ def place_detail_props():
     bpy.ops.import_scene.gltf(filepath=PROPS_PATH)
     imported = list(bpy.context.selected_objects)
     placements = {
-        "plant_detail": (7.20, -2.76, 0.34),
+        "plant_detail": (6.80, -3.12, -2.62, 0.34),
     }
     replacements = {}
     for obj in imported:
@@ -204,7 +204,7 @@ def place_detail_props():
         base_name = obj.name.split(".")[0]
         if base_name not in placements:
             continue
-        scale, target_x, ground_z = placements[base_name]
+        scale, target_x, target_y, ground_z = placements[base_name]
         obj.scale = (scale, scale, scale)
         bpy.context.view_layer.update()
         corners = [obj.matrix_world @ Vector(corner) for corner in obj.bound_box]
@@ -212,7 +212,7 @@ def place_detail_props():
         high = Vector(tuple(max(point[i] for point in corners) for i in range(3)))
         center = (low + high) * 0.5
         obj.location.x += target_x - center.x
-        obj.location.y += -2.54 - center.y
+        obj.location.y += target_y - center.y
         obj.location.z += ground_z - low.z
         obj.name = base_name.replace("_detail", "_source")
         obj["exportable"] = True

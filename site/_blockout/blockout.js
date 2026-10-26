@@ -648,7 +648,7 @@ if (insideOnly) {
   loadGlbModel(
     useFullAssets
       ? '../assets/models/store-exterior.glb?v=20261023-lighter-props'
-      : '../assets/models/store-exterior-meshopt.glb?v=20261026-meshopt-store-safe',
+      : '../assets/models/store-exterior-meshopt.glb?v=20261026-plantfix',
     (loaded, total) => {
       const fraction = total ? loaded / total : 0;
       postLoadProgress(0.05 + fraction * 0.93, '载入店外模型');
