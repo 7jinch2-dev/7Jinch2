@@ -301,9 +301,15 @@ groupPick(vm, 'vending');
 labels.push({ el: null, text: '售货机 · 5 层', anchor: new THREE.Vector3(1.5, 2.38, -1.30), layer: 'int', station: 'vending' });
 
 /* ---------- L 形柜台 + 店员 ---------- */
+const COUNTER_SHIFT_X = 0.45;
+const COUNTER_SHIFT_Z = 0.08;
+const counterArea = new THREE.Group();
+counterArea.position.set(COUNTER_SHIFT_X, 0, COUNTER_SHIFT_Z);
+props.add(counterArea);
+
 const counter = new THREE.Group();
 counter.position.set(0, 0, 0);
-props.add(counter);
+counterArea.add(counter);
 // 长边沿左侧动线摆放，正面朝向右侧入口；短边向后墙折回。
 box(0.68, 0.78, 1.95, M.prop, -1.02, 0.39, 0.15, counter);
 box(0.80, 0.06, 2.08, M.cream, -1.02, 0.81, 0.15, counter);
@@ -311,13 +317,13 @@ box(1.55, 0.78, 0.68, M.prop, -1.64, 0.39, -0.78, counter);
 box(1.68, 0.06, 0.80, M.cream, -1.64, 0.81, -0.78, counter);
 box(0.68, 0.82, 0.68, M.propLo, -1.02, 0.41, -0.78, counter);
 groupPick(counter, 'counter');
-labels.push({ el: null, text: 'L 形柜台', anchor: new THREE.Vector3(-1.02, 1.02, 0.15), layer: 'int', station: 'counter' });
+labels.push({ el: null, text: 'L 形柜台', anchor: new THREE.Vector3(-0.57, 1.02, 0.23), layer: 'int', station: 'counter' });
 
 /* 柜台朝门口的折叠延长板：展开补足工作台，向下翻收后让出店员进出通道。 */
 const counterExtension = new THREE.Group();
 counterExtension.name = 'counter-folding-extension';
 counterExtension.position.set(-1.02, 0.81, 1.13);
-props.add(counterExtension);
+counterArea.add(counterExtension);
 box(0.66, 0.075, 0.075, M.metal, 0, 0.015, 0, counterExtension);
 for (const x of [-0.26, 0.26]) {
   box(0.10, 0.09, 0.11, M.metal, x, 0.015, 0.075, counterExtension);
@@ -332,7 +338,7 @@ groupPick(counterExtension, 'counter-extension');
 labels.push({
   el: null,
   text: '活动延长板 · 点击收起',
-  anchor: new THREE.Vector3(-1.02, 1.0, 1.64),
+  anchor: new THREE.Vector3(-0.57, 1.0, 1.72),
   layer: 'int',
   station: 'counter-extension'
 });
@@ -349,26 +355,26 @@ function toggleCounterExtension() {
 }
 
 // 小本子
-const note = box(0.3, 0.04, 0.23, M.accent, -1.08, 0.86, 0.74, props, { edges: true });
+const note = box(0.3, 0.04, 0.23, M.accent, -1.08, 0.86, 0.74, counterArea, { edges: true });
 pick(note, 'notebook', null, new THREE.Vector3(), 'int');
-labels.push({ el: null, text: '小本子', anchor: new THREE.Vector3(-1.08, 1.0, 0.74), layer: 'int', station: 'notebook' });
+labels.push({ el: null, text: '小本子', anchor: new THREE.Vector3(-0.63, 1.0, 0.82), layer: 'int', station: 'notebook' });
 
 // 收银机
 const reg = new THREE.Group();
 reg.position.set(-1.02, 0.84, -0.42);
 reg.scale.setScalar(0.82);
 reg.rotation.y = -Math.PI / 2;
-props.add(reg);
+counterArea.add(reg);
 box(0.52, 0.24, 0.42, M.cream, 0, 0.12, 0, reg);
 box(0.44, 0.2, 0.06, M.dark, 0, 0.34, -0.12, reg, { edges: false });
 box(0.4, 0.02, 0.3, M.glowSoft, 0, 0.37, -0.08, reg, { edges: false });
 groupPick(reg, 'register');
-labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-1.02, 1.17, -0.42), layer: 'int', station: 'register' });
+labels.push({ el: null, text: '收银机', anchor: new THREE.Vector3(-0.57, 1.17, -0.34), layer: 'int', station: 'register' });
 
 // 店员：只使用当前高精度 PBR 模型，正面朝向柜台和入口。
 const clerk = new THREE.Group();
 clerk.name = 'clerk-chen-zhixi';
-clerk.position.set(-1.60, 0, 0.18);
+clerk.position.set(-1.58, 0, 0.18);
 const COUNTER_FACING_YAW = Math.PI / 2;
 clerk.rotation.y = COUNTER_FACING_YAW;
 window.__blk.clerk = clerk;
@@ -379,9 +385,9 @@ const tableBadge = createTableBadge();
 tableBadge.position.set(-1.02, 0.855, 0.52);
 tableBadge.scale.setScalar(0.65);
 tableBadge.rotation.z += Math.PI / 2;
-props.add(tableBadge);
+counterArea.add(tableBadge);
 groupPick(tableBadge, 'badge');
-labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
+labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-0.57, 1.0, 0.60), layer: 'int', station: 'badge' });
 
 let clerkLoadPromise = null;
 let sceneReadyPosted = false;
@@ -680,7 +686,6 @@ if (insideOnly) {
     const prop = model.getObjectByName(name);
     if (prop) groupPick(prop, 'vending');
   }
-
   modeledExteriorReady = true;
   const entryBounds = new THREE.Box3();
   for (const name of ['Left door', 'Right door']) {
@@ -763,12 +768,12 @@ const stations = {
   inside:   { pos: [0.62, 1.40, 1.30], target: [-0.45, 1.02, -0.64], ext: false },
   /* 所有物件特写都让镜头落在物体正面的法线方向上。 */
   vending:  { pos: [1.29, 1.05, 1.55], target: [1.29, 0.95, -0.76], ext: false },
-  counter:  { pos: [0.78, 1.12, 0.13], target: [-0.88, 0.70, 0.13], ext: false },
-  clerk:    { pos: [0.30, 1.32, 0.16], target: [-1.59, 1.02, 0.16], ext: false },
-  badge:    { pos: [-0.93, 1.30, 0.82], target: [-0.93, 0.76, 0.45], roll: -Math.PI / 2, ext: false },
+  counter:  { pos: [0.78, 1.12, 0.20], target: [-0.47, 0.70, 0.20], ext: false },
+  clerk:    { pos: [0.30, 1.32, 0.18], target: [-1.58, 1.02, 0.18], ext: false },
+  badge:    { pos: [-0.52, 1.30, 0.89], target: [-0.52, 0.76, 0.52], roll: -Math.PI / 2, ext: false },
   wall:     { pos: [-0.47, 1.46, 0.20], target: [-0.47, 1.24, -1.57], ext: false },
-  register: { pos: [0.42, 1.10, -0.36], target: [-0.88, 0.84, -0.36], ext: false },
-  notebook: { pos: [-0.93, 1.30, 0.90], target: [-0.93, 0.76, 0.64], ext: false }
+  register: { pos: [0.42, 1.10, -0.29], target: [-0.47, 0.84, -0.29], ext: false },
+  notebook: { pos: [-0.52, 1.30, 0.97], target: [-0.52, 0.76, 0.71], ext: false }
 };
 
 let mode = 'inside';
@@ -789,8 +794,8 @@ const walk = {
 };
 const WALK_BOUNDS = { minX: -1.88, maxX: 1.88, minZ: -1.42, maxZ: 1.38 };
 const WALK_COLLIDERS = [
-  { minX: -1.29, maxX: -0.52, minZ: -0.80, maxZ: 1.18 },
-  { minX: -2.16, maxX: -0.69, minZ: -1.12, maxZ: -0.31 },
+  { minX: -0.81, maxX: -0.16, minZ: -0.68, maxZ: 1.08 },
+  { minX: -1.69, maxX: -0.36, minZ: -0.89, maxZ: -0.30 },
   { minX: 0.51, maxX: 2.12, minZ: -1.43, maxZ: -0.73 },
   { minX: 1.45, maxX: 2.14, minZ: 0.51, maxZ: 1.18 },
   { minX: -1.23, maxX: 0.28, minZ: -1.50, maxZ: -1.23 }
@@ -888,6 +893,7 @@ function applyMode(isExt) {
   facade.visible = isExt && !modeledExteriorReady;
   street.visible = isExt && !modeledExteriorReady;
   modeledExterior.visible = isExt && modeledExteriorReady;
+  counterArea.visible = !isExt;
   interiorLeftWall.visible = !isExt;
   interiorRightWall.visible = !isExt;
   interiorFacade.visible = !isExt;
@@ -970,7 +976,7 @@ function updateLabels() {
 let bubbleTimer = 0;
 function greetFromInside() {
   showBubble('<b>店员：</b>欢迎来到我的灵感便利店 ✦',
-    new THREE.Vector3(-1.60, 2.32, 0.18), 5200);
+    new THREE.Vector3(-1.58, 2.32, 0.18), 5200);
 }
 
 function showBubble(text, anchor, duration = 3600) {
