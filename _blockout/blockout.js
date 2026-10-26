@@ -1342,6 +1342,7 @@ document.body.dataset.mode = startStation.ext ? 'ext' : 'int';
 document.body.dataset.station = startName;
 resize();
 render();
+requestAnimationFrame(notifySceneReady);
 setTimeout(() => loader.classList.add('is-off'), 350);
 setTimeout(() => loader.remove(), 1200);
 if (asked && stations[asked]) {
