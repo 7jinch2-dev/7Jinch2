@@ -10,14 +10,14 @@
 - 线上地址：<https://7jinch2-dev.github.io/7Jinch2/>
 - GitHub 仓库：<https://github.com/7jinch2-dev/7Jinch2>
 - 线上分支：`main`
-- 部署仓库当前提交：`969b91a perf: reveal scene before clerk finishes`
-- 对应源码分支提交：`3fc2ab2 perf: reveal 3d on first rendered frame`
+- 部署仓库当前提交：`9314d53 fix: restore exterior rotation with splash loading`
+- 对应源码分支提交：`44c37ea fix: restore exterior rotation with progressive splash`
 
 线上验证结果：
 
 - 首页：HTTP 200
 - 3D 场景：HTTP 200
-- 最新场景脚本：`blockout.js?v=20261026-meshopt-5`
+- 最新场景脚本：`blockout.js?v=20261026-loader-8`
 - `assets/models/clerk-optimized.glb`：HTTP 200，约 `10.3 MB`
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
 - `assets/models/clerk-meshopt.glb`：HTTP 200，约 `4.13 MB`（显式快速模式）
@@ -379,10 +379,10 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 最近一次发布已验证：
 
-- 远端 `main` 为部署提交 `969b91a`。
-- 线上页面已引用 `blockout.js?v=20261026-meshopt-5`。
-- 线上手机海报约 `80 KB`，店员模型约 `3.44 MB`，外景模型约 `2.92 MB`。
-- 公网已实测：未点击时不请求 GLB；点击后先显示可操作 3D 首帧，店员随后补入；控制台无错误。
+- 远端 `main` 为部署提交 `9314d53`。
+- 线上页面已引用 `blockout.js?v=20261026-loader-8`。
+- 线上手机海报约 `80 KB`，默认外景模型约 `2.92 MB`，无损人物原版约 `10.3 MB`。
+- 已实测：开屏显示真实下载进度，外景就绪后自动进入自由旋转，高清人物随后补入；控制台无错误。
 
 ## 9. 已知风险
 
