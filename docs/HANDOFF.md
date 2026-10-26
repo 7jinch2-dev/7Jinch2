@@ -1,6 +1,6 @@
 # 作品集项目交接
 
-更新时间：2026-10-23  
+更新时间：2026-10-26
 工作区：`/Users/muyuganbawang/Documents/ChatGPT/作品集`
 
 ## 1. 当前结论
@@ -22,11 +22,13 @@
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
 - 旧 `/_blockout/clerk.js`：HTTP 404，已删除
 
+本地工作区已完成移动端加载优化：首屏改为约 `202 KB` 的静态店铺海报，点击后才加载 3D；店内主路径只加载约 `3.44 MB` 的 Meshopt 店员，独立店外模型约 `2.92 MB`。该版本尚待发布。
+
 > `site/_blockout/` 目录名以下划线开头。GitHub Pages 必须依赖根目录下的 `site/.nojekyll`，不能删除。
 
 ## 2. 当前页面状态
 
-网站打开后先显示全屏 3D 店外场景，作品展示柜位于 3D 场景之后。
+网站打开后先显示接近全屏的店铺海报，点击“进入 3D”后才按需加载互动场景；作品展示柜位于其后。
 
 当前首屏遵循以下约束：
 
@@ -85,10 +87,13 @@
 - `site/_blockout/index.html`：独立 3D 场景入口。
 - `site/_blockout/blockout.js`：店铺布局、机位、点击、正向特写、滚轮/双指缩放、进入/退出店逻辑。
 - `site/_blockout/badge.js`：桌面工牌。
-- `site/_blockout/glb-loader.js`：项目内轻量 GLB 加载器，支持材质名、透明材质、发光强度和 `EXT_texture_webp`。
+- `site/_blockout/glb-loader.js`：项目内轻量 GLB 加载器，支持透明材质、发光强度、`EXT_texture_webp` 和 `EXT_meshopt_compression`。
 - `site/_blockout/three.module.min.js`：Three.js r160。
 - `site/assets/models/clerk-optimized.glb`：当前网页用店员模型。
 - `site/assets/models/store-exterior.glb`：网页店外使用的完整便利店外景模型。
+- `site/assets/models/clerk-meshopt.glb`：默认店员模型。
+- `site/assets/models/store-exterior-meshopt.glb`：默认独立店外模型。
+- `site/images/store-poster.jpg`：首屏静态海报。
 - `site/.nojekyll`：GitHub Pages 必须保留。
 
 ### 当前模型
@@ -98,11 +103,19 @@
   - 约 22.4 万顶点
   - 约 22.5 万三角面
   - 2048 WebP PBR 贴图
+- `site/assets/models/clerk-meshopt.glb`
+- 约 `3.44 MB`
+  - 约 18 万三角面，512 WebP PBR 贴图
+  - 轻量 Meshopt 版本，浏览器重算法线以修复压缩接缝
 - `site/assets/models/store-exterior.glb`
 - 约 `9.94 MB`
   - 约 22.5 万顶点、67.3 万索引
   - glTF 2.0，程序化建筑、压缩饮料机、压缩冰淇淋柜和参考盆栽
   - 已接入网页店外场景，包含贴右双门和可交互玻璃门节点
+- `site/assets/models/store-exterior-meshopt.glb`
+- 约 `2.92 MB`
+  - Meshopt 几何压缩，512 WebP PBR 贴图
+  - 独立店外 3D 的默认模型
 - `blender/output/clerk_refined.blend`：当前网页模型的 Blender 工程。
 - `blender/output/store_exterior.blend`：店外模型的 Blender 工程。
 - `blender/output/clerk_refined_front.png`
@@ -129,6 +142,7 @@
 - `blender/extract_glb_props.py`：从整体参考 GLB 提取售货机、冰柜和盆栽。
 - `blender/optimize_vending_asset.py`：把新饮料机从约 `81 MB` 压到约 `2.8 MB`，使用 1024 WebP PBR 贴图。
 - `blender/optimize_freezer_asset.py`：把新冰淇淋柜从约 `82 MB` 压到约 `2.7 MB`，使用 1024 WebP PBR 贴图。
+- `blender/optimize_web_meshopt.py`：从当前高清交付模型生成 Meshopt 网页版本。
 - `blender/render_glb_preview.py`、`blender/analyze_glb_parts.py`：外部 GLB 的预览与连通块检查工具。
 
 ### 已删除的旧模型
@@ -212,22 +226,22 @@ _blockout/?shot=wall
 
 ### 店员加载
 
-`blockout.js` 现在创建空白 `THREE.Group`，外景完成后才在浏览器空闲时加载：
+`blockout.js` 创建空白 `THREE.Group`。主页进入店内时通过 `insideOnly=1` 跳过不可见的外景，只加载：
 
 ```text
-../assets/models/clerk-optimized.glb
+../assets/models/clerk-meshopt.glb
 ```
 
-加载成功后 `document.body.dataset.clerkModel = 'textured'`；开始加载时为 `'loading'`，失败时为 `'unavailable'`。这样店外约 `9.94 MB` 的主场景不会与约 `10.3 MB` 的店员同时争抢首屏带宽。用户若提前点门，会立即触发人物加载。
+加载成功后 `document.body.dataset.clerkModel = 'textured'`；开始加载时为 `'loading'`，失败时为 `'unavailable'`。`?assets=full` 可切回高清原版。独立店外 3D 默认加载 `store-exterior-meshopt.glb`。
 
 ### 店外精细道具
 
-- `blockout.js` 通过 `loadGlbModel()` 加载完整的 `site/assets/models/store-exterior.glb`。
+- `blockout.js` 通过 `loadGlbModel()` 加载 `site/assets/models/store-exterior-meshopt.glb`；高清原版保留为回退。
 - 加载成功后隐藏程序化立面、街道和基础外摆，但不修改原有室内布局或店员。
 - 模型中的 `Back wall`、`Interior *`、`Inner glass darkness` 等空室内占位会隐藏，玻璃后透出原有 Three.js 室内场景。
 - `Left door`、`Right door` 在加载后围绕外侧铰链建立枢轴并同步内开；仅双门可点击，橱窗不再承担交互。
 - `body.dataset.exteriorModel` 为 `'textured'` 表示完整外景加载成功，`'fallback'` 表示继续使用程序化外景。
-- `glb-loader.js` 按材质索引缓存材质与贴图，并支持 glTF 的 `BLEND` 与 `MASK` 透明模式。
+- `glb-loader.js` 按材质索引缓存材质与贴图，并支持 glTF 的 `BLEND`、`MASK`、WebP 和 Meshopt 压缩。
 
 ## 6. 本地开发
 
@@ -285,6 +299,17 @@ http://127.0.0.1:8765/_blockout/?shot=inside
 
 不要继续大幅降低减面比例；15% 档位已在网页人物近景中验证。若调整比例或贴图质量，必须重新检查发丝、镜框和皮肤表面。
 
+生成网页默认的 Meshopt 模型：
+
+```bash
+/Applications/Blender.app/Contents/MacOS/Blender \
+  --background \
+  --factory-startup \
+  --python blender/optimize_web_meshopt.py
+```
+
+脚本从两份高清网页 GLB 生成 `clerk-meshopt.glb` 和 `store-exterior-meshopt.glb`。`glb-loader.js` 解码 Meshopt 后会对顶点数超过 5000 的网格重算法线，避免压缩接缝。
+
 重新生成店外模型：
 
 ```bash
@@ -296,7 +321,7 @@ http://127.0.0.1:8765/_blockout/?shot=inside
 
 该脚本输出约 `9.94 MB` 的 `site/assets/models/store-exterior.glb`、`blender/output/store_exterior.blend`，并在 `concepts/store/blender/` 生成白底四视图。盆栽来自 `blender/source/store-props.glb`；饮料机和冰淇淋柜来自用户提供的新资产，分别经 `optimize_vending_asset.py`、`optimize_freezer_asset.py` 减面到约 6 万面、贴图缩至 1024 WebP 后嵌入。招牌文字使用较低曲线细分。网页当前直接加载这份完整外景 GLB，并通过独立点击代理、双门枢轴和空室内占位隐藏逻辑衔接原店内场景。
 
-## 8. Git 与部署
+## 8. GitHub 与部署
 
 ### 本地源码仓库
 
@@ -304,7 +329,7 @@ http://127.0.0.1:8765/_blockout/?shot=inside
 /Users/muyuganbawang/Documents/ChatGPT/作品集
 ```
 
-该仓库没有配置 `origin`。不要直接期待 `git push` 可用。
+当前使用 `source` 分支进行源码维护，远端为 `origin/source`。本地启用了 sparse checkout，只展开 `site/` 和 `docs/`；按需使用 `git sparse-checkout add blender concepts design-data components source-assets tools` 展开模型和设计源文件。
 
 ### 线上部署仓库
 
@@ -358,7 +383,7 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 ## 9. 已知风险
 
-1. **模型体积**：店员 GLB 约 `10.3 MB`，外景 GLB 约 `9.94 MB`。外景优先加载，人物在外景完成后空闲加载；人物加载期间不显示旧占位。
+1. **模型体积**：高清回退为店员约 `10.3 MB`、外景约 `9.94 MB`；默认 Meshopt 路径为店员约 `3.44 MB`、外景约 `2.92 MB`，首屏海报约 `202 KB`。
 2. **WebP 兼容性**：两个 GLB 使用 `EXT_texture_webp`；当前加载器与页面已在 Chrome 中验证。若未来改用其他 GLTF 加载器，必须确认该扩展可用。
 3. **模型无骨骼和动画**：店员是静态模型，没有站立、呼吸或动作。
 4. **室内仍是灰模体块**：除店员外，货架商品、收银机和证书墙主要由基础几何构成，真实作品内容尚未接入。

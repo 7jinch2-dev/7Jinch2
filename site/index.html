@@ -8,7 +8,7 @@
 <!-- 设计档案袋：开屏之后、首屏之前的一屏（样式与交互在 assets/paper.*） -->
 <link rel="stylesheet" href="assets/retro.css?v=20261021-store">
 <link rel="stylesheet" href="assets/carousel.css?v=10171805">
-<link rel="stylesheet" href="assets/store-preview.css?v=20261022-front-storefront">
+<link rel="stylesheet" href="assets/store-preview.css?v=20261026-store-poster">
 
 <!--
   ============================================
@@ -1563,13 +1563,61 @@ html.js-ready .rv-mask.rv-in > .rv-mask-inner { transform: none; }
   <div class="store-preview__stage">
     <iframe
       class="store-preview__iframe"
-      src="_blockout/?embed=1"
+      data-src="_blockout/?embed=1&shot=inside&insideOnly=1"
       title="灵感补给站 3D 互动场景"
-      loading="eager"
+      loading="lazy"
       allow="fullscreen"
       referrerpolicy="no-referrer"></iframe>
+    <div class="store-preview__poster" id="storePoster">
+      <img src="images/store-poster.jpg?v=20261026-perf"
+           srcset="images/store-poster-mobile.jpg?v=20261026-perf 900w, images/store-poster.jpg?v=20261026-perf 1600w"
+           sizes="100vw" width="1600" height="900"
+           alt="灵感补给站便利店外景" fetchpriority="high" decoding="async">
+      <div class="store-preview__loading" aria-live="polite">正在准备 3D 场景…</div>
+      <button class="store-preview__launch" id="storeLaunch" type="button">进入 3D →</button>
+    </div>
   </div>
 </section>
+<script>
+(() => {
+  const poster = document.getElementById('storePoster');
+  const launch = document.getElementById('storeLaunch');
+  const frame = poster.closest('.store-preview').querySelector('.store-preview__iframe');
+  let started = false;
+
+  const revealWhenReady = event => {
+    if (event.source !== frame.contentWindow) return;
+    if (event.data?.type === 'store-scene-ready') {
+      poster.classList.add('is-hidden');
+    } else if (event.data?.type === 'store-exit') {
+      poster.classList.remove('is-hidden');
+      poster.classList.remove('is-loading');
+      launch.disabled = false;
+      launch.textContent = '进入 3D →';
+    }
+  };
+
+  const start = () => {
+    if (poster.classList.contains('is-loading')) return;
+    poster.classList.add('is-loading');
+    launch.disabled = true;
+    launch.textContent = '正在准备…';
+    if (!started) {
+      started = true;
+      frame.src = frame.dataset.src;
+    } else {
+      poster.classList.add('is-hidden');
+      frame.contentWindow?.postMessage({ type: 'store-enter' }, location.origin);
+    }
+  };
+
+  launch.addEventListener('click', start);
+  poster.addEventListener('click', event => {
+    if (event.target !== launch) start();
+  });
+  window.addEventListener('message', revealWhenReady);
+})();
+</script>
 
 <!-- ==========================================
      01 / ARCHIVE —— 作品展示柜

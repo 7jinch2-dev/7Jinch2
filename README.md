@@ -72,11 +72,11 @@ git sparse-checkout set site docs blender concepts design-data components source
 - 网页完整外景预览：[concepts/store/store-web-modeled-exterior-final.png](concepts/store/store-web-modeled-exterior-final.png)
 - 网页店内组合预览：[concepts/store/store-web-interior-final.png](concepts/store/store-web-interior-final.png)
 
-当前场景为 v0.8：店外采用左侧大橱窗与贴右边缘的双开玻璃门，补齐深绿檐口、朱砂红布棚、竖招、石铺人行道和门前物件；店内净空间约 5.0m × 3.8m，收银柜台沿左侧动线纵向布置，货架和陈列柜均收进外景壳体内。进店后切换为受限的第一人称视角，使用 `WASD` 行走、拖拽转头、准星对准物件后按 `F` 查看特写；`Esc` 可从特写返回原行走位置。双门围绕外侧铰链同步内开，进店后店员自动说欢迎语。
+当前场景为 v0.8：首屏先显示约 `202 KB` 的店铺海报，点击“进入 3D”后才按需加载场景。店外采用左侧大橱窗与贴右边缘的双开玻璃门，补齐深绿檐口、朱砂红布棚、竖招、石铺人行道和门前物件；店内净空间约 5.0m × 3.8m，收银柜台沿左侧动线纵向布置，货架和陈列柜均收进外景壳体内。进店后切换为受限的第一人称视角，使用 `WASD` 行走、拖拽转头、准星对准物件后按 `F` 查看特写；`Esc` 可从特写返回原行走位置。
 
-店外另有一套可编辑的 Blender 资产：`blender/build_store_exterior.py` 可重建白底四视图、`blender/output/store_exterior.blend` 和约 `9.94 MB` 的 `site/assets/models/store-exterior.glb`。饮料机和冰淇淋柜均使用用户提供的新资产，经减面与 1024 WebP 贴图压缩后嵌入。室内不做重复建模；网页已加载完整店外模型，只隐藏模型中的空室内占位，并继续复用 `site/_blockout/blockout.js` 中已经完成的、带店员的室内互动场景。店员模型在外景完成后空闲加载，避免两个大文件同时抢占首屏带宽。
+店外另有一套可编辑的 Blender 资产：`blender/build_store_exterior.py` 可重建白底四视图、`blender/output/store_exterior.blend` 和约 `9.94 MB` 的高清 `store-exterior.glb`。默认网页使用约 `2.92 MB` 的 Meshopt 外景；主页进入店内时只加载约 `3.44 MB` 的 Meshopt 店员，不再下载当前视角不可见的外景模型。
 
-Blender 店员已接入网页，并只保留当前带 PBR 贴图的 `site/assets/models/clerk-optimized.glb`。旧程序化角色和左半身中间模型已移除。网页模型经过近景验证的适度减面，从约 150 万三角面降至约 22.5 万三角面，并将 4096 贴图缩至 2048 WebP；颜色贴图做轻度降噪，法线强度降到 0.35，以避免放大后出现坑点。交付文件约 10.3 MB。可继续编辑的工程保存在 `blender/output/clerk_refined.blend`。
+Blender 店员已接入网页，高清 `clerk-optimized.glb` 作为回退。默认 `clerk-meshopt.glb` 使用轻度减面、512 WebP 贴图和 Meshopt 几何压缩；浏览器加载后重新计算法线，消除压缩接缝。可继续编辑的工程保存在 `blender/output/clerk_refined.blend`。
 
 ## 导入说明
 

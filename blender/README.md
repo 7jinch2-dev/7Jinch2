@@ -8,6 +8,7 @@
 - `optimize_supplied_single.py`：生成减面、2048 WebP 贴图的网页交付模型和可编辑 Blender 工程；
 - `optimize_vending_asset.py`：把用户提供的饮料机 GLB 减面并转为 WebP 贴图；
 - `optimize_freezer_asset.py`：把用户提供的冰淇淋柜 GLB 减面并转为 WebP 贴图；
+- `optimize_web_meshopt.py`：从当前高清网页模型生成 Meshopt 轻量版本；
 - `inspect_supplied_glb.py`：检查 GLB 网格、尺寸、材质与贴图；
 - `tutorial-notes.md`：Q 版头部建模的方法与快捷键整理；
 - `output/clerk_refined.blend`：当前网页模型的 Blender 工程；
@@ -25,6 +26,8 @@
 - `../concepts/store/blender/`：店外模型正视图、右视图、背视图和四分之三视图。
 
 网页加载 `site/assets/models/clerk-optimized.glb`。旧角色不再作为加载占位；模型加载失败时宁可不显示人物，也不会回退到旧版本。
+
+网页默认加载 `clerk-meshopt.glb` 和 `store-exterior-meshopt.glb`。两份高清 GLB 保留作 `?assets=full` 对照与回退；Meshopt 版本使用 512 WebP 贴图，浏览器解码后会重新计算大网格法线，避免压缩接缝。
 
 店外 GLB 已接入网页首屏。程序化立面仅作为模型加载失败时的后备；正常状态使用双开玻璃门、右移门组和独立的深绿街灯材质。
 
@@ -66,6 +69,17 @@ FREEZER_SOURCE=/path/to/freezer.glb \
 ```
 
 脚本会生成 `blender/source/freezer-optimized.glb`。当前源文件约 2.7 MB、6 万面和 1024 WebP 贴图；可用 `DECIMATE_RATIO`、`TEXTURE_SIZE` 覆盖默认参数。
+
+生成网页默认的 Meshopt 版本：
+
+```bash
+/Applications/Blender.app/Contents/MacOS/Blender \
+  --background \
+  --factory-startup \
+  --python blender/optimize_web_meshopt.py
+```
+
+默认输出约 `3.44 MB` 的店员模型和约 `2.92 MB` 的外景模型。`CLERK_RATIO`、`STORE_RATIO`、`TEXTURE_SIZE` 可覆盖压缩参数；调整后必须同时检查浏览器近景和 Meshopt 接缝。
 
 重新生成店外模型、白底四视图和 GLB：
 

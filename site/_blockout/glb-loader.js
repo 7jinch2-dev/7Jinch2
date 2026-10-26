@@ -1,4 +1,5 @@
 import * as THREE from './three.module.min.js';
+import { MeshoptDecoder } from './meshopt_decoder.module.js?v=20261026-perf';
 
 
 const COMPONENT_COUNT = {
@@ -48,7 +49,7 @@ function parseContainer(arrayBuffer) {
   return { gltf, binary };
 }
 
-function readAccessor(gltf, binary, index) {
+function readAccessor(gltf, binary, index, decodedViews) {
   const accessor = gltf.accessors[index];
   const bufferView = gltf.bufferViews[accessor.bufferView];
   const ArrayType = COMPONENT_ARRAY[accessor.componentType];
@@ -61,17 +62,21 @@ function readAccessor(gltf, binary, index) {
   }
 
   const itemBytes = ArrayType.BYTES_PER_ELEMENT * componentCount;
-  const stride = bufferView.byteStride || itemBytes;
-  const start = binary.byteOffset + (bufferView.byteOffset || 0) + (accessor.byteOffset || 0);
+  const decoded = decodedViews.get(accessor.bufferView);
+  const stride = decoded?.byteStride || bufferView.byteStride || itemBytes;
+  const start = decoded
+    ? decoded.data.byteOffset + (accessor.byteOffset || 0)
+    : binary.byteOffset + (bufferView.byteOffset || 0) + (accessor.byteOffset || 0);
+  const source = decoded?.data || binary;
   if (stride === itemBytes) {
-    return new ArrayType(binary.buffer, start, accessor.count * componentCount);
+    return new ArrayType(source.buffer, start, accessor.count * componentCount);
   }
 
   const packed = new ArrayBuffer(accessor.count * itemBytes);
   const target = new Uint8Array(packed);
   for (let item = 0; item < accessor.count; item++) {
     const from = item * stride;
-    target.set(new Uint8Array(binary.buffer, start + from, itemBytes), item * itemBytes);
+    target.set(new Uint8Array(source.buffer, start + from, itemBytes), item * itemBytes);
   }
   return new ArrayType(packed);
 }
@@ -182,12 +187,12 @@ async function loadMaterial(gltf, binary, materialIndex) {
   return material;
 }
 
-async function loadPrimitive(gltf, binary, primitive, materials, materialCache) {
+async function loadPrimitive(gltf, binary, primitive, materials, materialCache, decodedViews) {
   const geometry = new THREE.BufferGeometry();
   const attributes = primitive.attributes || {};
 
   for (const [name, accessorIndex] of Object.entries(attributes)) {
-    const values = readAccessor(gltf, binary, accessorIndex);
+    const values = readAccessor(gltf, binary, accessorIndex, decodedViews);
     const count = COMPONENT_COUNT[gltf.accessors[accessorIndex].type];
     const attributeName = {
       POSITION: 'position',
@@ -197,12 +202,24 @@ async function loadPrimitive(gltf, binary, primitive, materials, materialCache) 
       COLOR_0: 'color'
     }[name];
     if (attributeName) {
-      geometry.setAttribute(attributeName, new THREE.BufferAttribute(values, count));
+      geometry.setAttribute(
+        attributeName,
+        new THREE.BufferAttribute(values, count, gltf.accessors[accessorIndex].normalized === true)
+      );
     }
   }
 
   if (primitive.indices != null) {
-    geometry.setIndex(new THREE.BufferAttribute(readAccessor(gltf, binary, primitive.indices), 1));
+    geometry.setIndex(new THREE.BufferAttribute(
+      readAccessor(gltf, binary, primitive.indices, decodedViews),
+      1
+    ));
+  }
+  const positionCount = attributes.POSITION != null
+    ? gltf.accessors[attributes.POSITION].count
+    : 0;
+  if (decodedViews.size && positionCount > 5000 && geometry.getAttribute('normal')) {
+    geometry.computeVertexNormals();
   }
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
@@ -222,7 +239,7 @@ async function loadPrimitive(gltf, binary, primitive, materials, materialCache) 
   return new THREE.Mesh(geometry, material);
 }
 
-async function buildNode(gltf, binary, nodeIndex, materials, materialCache) {
+async function buildNode(gltf, binary, nodeIndex, materials, materialCache, decodedViews) {
   const def = gltf.nodes[nodeIndex];
   const node = new THREE.Group();
   node.name = def.name || `node-${nodeIndex}`;
@@ -237,13 +254,41 @@ async function buildNode(gltf, binary, nodeIndex, materials, materialCache) {
 
   if (def.mesh != null) {
     for (const primitive of gltf.meshes[def.mesh].primitives) {
-      node.add(await loadPrimitive(gltf, binary, primitive, materials, materialCache));
+      node.add(await loadPrimitive(
+        gltf, binary, primitive, materials, materialCache, decodedViews
+      ));
     }
   }
   for (const childIndex of def.children || []) {
-    node.add(await buildNode(gltf, binary, childIndex, materials, materialCache));
+    node.add(await buildNode(gltf, binary, childIndex, materials, materialCache, decodedViews));
   }
   return node;
+}
+
+async function decodeMeshoptViews(gltf, binary) {
+  const decodedViews = new Map();
+  if (!gltf.extensionsUsed?.includes('EXT_meshopt_compression')) return decodedViews;
+  await MeshoptDecoder.ready;
+  for (let index = 0; index < (gltf.bufferViews?.length || 0); index++) {
+    const view = gltf.bufferViews[index];
+    const ext = view.extensions?.EXT_meshopt_compression;
+    if (!ext) continue;
+    if (ext.buffer !== 0) {
+      throw new Error('External Meshopt buffers are not supported');
+    }
+    const compressed = binary.subarray(ext.byteOffset || 0, (ext.byteOffset || 0) + ext.byteLength);
+    const decoded = new Uint8Array(ext.count * ext.byteStride);
+    MeshoptDecoder.decodeGltfBuffer(
+      decoded,
+      ext.count,
+      ext.byteStride,
+      compressed,
+      ext.mode,
+      ext.filter
+    );
+    decodedViews.set(index, { data: decoded, byteStride: ext.byteStride });
+  }
+  return decodedViews;
 }
 
 export async function loadGlbModel(url) {
@@ -253,6 +298,7 @@ export async function loadGlbModel(url) {
   }
 
   const { gltf, binary } = parseContainer(await response.arrayBuffer());
+  const decodedViews = await decodeMeshoptViews(gltf, binary);
   const sceneIndex = gltf.scene ?? 0;
   const sceneDef = gltf.scenes?.[sceneIndex];
   if (!sceneDef) throw new Error('GLB has no default scene');
@@ -262,7 +308,7 @@ export async function loadGlbModel(url) {
   const materials = [];
   const materialCache = new Map();
   for (const nodeIndex of sceneDef.nodes || []) {
-    root.add(await buildNode(gltf, binary, nodeIndex, materials, materialCache));
+    root.add(await buildNode(gltf, binary, nodeIndex, materials, materialCache, decodedViews));
   }
   root.userData.glbMaterials = materials;
   return root;

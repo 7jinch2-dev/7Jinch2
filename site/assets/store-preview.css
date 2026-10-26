@@ -23,9 +23,82 @@
   background: #08090c;
 }
 
+.store-preview__poster {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  cursor: pointer;
+  background: #08090c;
+  opacity: 1;
+  transition: opacity .35s ease;
+}
+
+.store-preview__poster.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.store-preview__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.store-preview__launch {
+  position: absolute;
+  left: 50%;
+  bottom: max(28px, 6svh);
+  transform: translateX(-50%);
+  min-width: 154px;
+  padding: 12px 20px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  background: rgba(12,12,16,.78);
+  color: #f5ead8;
+  font: 600 13px/1 -apple-system, "PingFang SC", sans-serif;
+  letter-spacing: .08em;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.38);
+  transition: background .2s, border-color .2s, transform .2s;
+}
+
+.store-preview__launch:hover {
+  background: #e8a24a;
+  border-color: #e8a24a;
+  color: #21170f;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.store-preview__launch[disabled] {
+  cursor: wait;
+  opacity: .72;
+}
+
+.store-preview__loading {
+  position: absolute;
+  left: 50%;
+  bottom: max(82px, calc(6svh + 54px));
+  transform: translateX(-50%);
+  color: rgba(245,234,216,.68);
+  font-size: 11px;
+  letter-spacing: .08em;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.store-preview__poster.is-loading .store-preview__loading {
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
   .store-preview__stage {
     min-height: 690px;
     height: calc(100svh - var(--nav-height));
+  }
+
+  .store-preview__launch {
+    bottom: max(22px, 5svh);
   }
 }

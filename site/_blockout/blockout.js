@@ -4,7 +4,7 @@
    ========================================== */
 import * as THREE from './three.module.min.js';
 import { createTableBadge } from './badge.js';
-import { loadGlbModel } from './glb-loader.js?v=20261023-model-compress-3';
+import { loadGlbModel } from './glb-loader.js?v=20261026-meshopt-3';
 
 const stage = document.getElementById('stage');
 const labelLayer = document.getElementById('labels');
@@ -20,6 +20,9 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 const CAMERA_FOV = 48;
 const frame = document.getElementById('frame');
+const assetQuery = new URLSearchParams(location.search);
+const useFullAssets = assetQuery.get('assets') === 'full';
+const insideOnly = assetQuery.has('insideOnly');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -380,10 +383,21 @@ groupPick(tableBadge, 'badge');
 labels.push({ el: null, text: '工牌', anchor: new THREE.Vector3(-1.02, 1.0, 0.52), layer: 'int', station: 'badge' });
 
 let clerkLoadPromise = null;
+let sceneReadyPosted = false;
+function notifySceneReady() {
+  if (sceneReadyPosted) return;
+  sceneReadyPosted = true;
+  window.parent.postMessage({ type: 'store-scene-ready' }, '*');
+}
+
 function loadClerk() {
   if (clerkLoadPromise) return clerkLoadPromise;
   document.body.dataset.clerkModel = 'loading';
-  clerkLoadPromise = loadGlbModel('../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2')
+  clerkLoadPromise = loadGlbModel(
+    useFullAssets
+      ? '../assets/models/clerk-optimized.glb?v=20261023-clerk-smooth-2'
+      : '../assets/models/clerk-meshopt.glb?v=20261026-meshopt-clerk-full'
+  )
     .then(model => {
       model.name = 'clerk-chen-zhixi-textured';
       model.traverse(object => {
@@ -394,10 +408,12 @@ function loadClerk() {
       clerk.add(model);
       clerk.userData.texturedModel = model;
       document.body.dataset.clerkModel = 'textured';
+      notifySceneReady();
     })
     .catch(error => {
       console.warn('Textured clerk could not load.', error);
       document.body.dataset.clerkModel = 'unavailable';
+      notifySceneReady();
     });
   return clerkLoadPromise;
 }
@@ -601,7 +617,15 @@ function makeModeledDoorPivot(door, hinge) {
   return pivot;
 }
 
-loadGlbModel('../assets/models/store-exterior.glb?v=20261023-lighter-props').then(model => {
+if (insideOnly) {
+  document.body.dataset.exteriorModel = 'skipped';
+  scheduleClerkLoad();
+} else {
+  loadGlbModel(
+    useFullAssets
+      ? '../assets/models/store-exterior.glb?v=20261023-lighter-props'
+      : '../assets/models/store-exterior-meshopt.glb?v=20261026-meshopt-store'
+  ).then(model => {
   model.name = 'store-exterior-model';
   model.traverse(object => {
     const name = object.name || '';
@@ -653,10 +677,13 @@ loadGlbModel('../assets/models/store-exterior.glb?v=20261023-lighter-props').the
     camTarget.set(...streetView.target);
   }
   document.body.dataset.exteriorModel = 'textured';
+  notifySceneReady();
 }).catch(error => {
   console.warn('Modeled exterior could not load; using the procedural storefront.', error);
   document.body.dataset.exteriorModel = 'fallback';
+  notifySceneReady();
 }).finally(scheduleClerkLoad);
+}
 
 /* ---------- 街道 ---------- */
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 16), M.streetFloor);
@@ -846,6 +873,9 @@ function go(name, opts = {}) {
   outline.visible = false;
   orbit.yaw = 0; orbit.pitch = 0;
   document.body.dataset.station = name;
+  if (name === 'street' && document.body.dataset.embed === '1') {
+    window.parent.postMessage({ type: 'store-exit' }, '*');
+  }
   const isExt = !!st.ext;
   applyMode(isExt);
   document.body.dataset.mode = isExt ? 'ext' : 'int';
@@ -1228,6 +1258,10 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => walk.keys.delete(e.code));
 window.addEventListener('blur', () => walk.keys.clear());
+window.addEventListener('message', event => {
+  if (event.origin !== location.origin) return;
+  if (event.data?.type === 'store-enter') enterThroughDoor();
+});
 
 /* ---------- 渲染循环 ---------- */
 const clock = new THREE.Clock();
