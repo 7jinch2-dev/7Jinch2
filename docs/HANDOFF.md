@@ -10,14 +10,14 @@
 - 线上地址：<https://7jinch2-dev.github.io/7Jinch2/>
 - GitHub 仓库：<https://github.com/7jinch2-dev/7Jinch2>
 - 线上分支：`main`
-- 部署仓库当前提交：`cea24fe fix: move planter clear of storefront wall`
-- 对应源码分支提交：`1309b9a fix: separate plant from storefront wall`
+- 部署仓库当前提交：`6c8df05 fix: remove duplicate wall and hair overlap`
+- 对应源码分支提交：`c19eec3 fix: clear duplicate interior wall and hair overlap`
 
 线上验证结果：
 
 - 首页：HTTP 200
 - 3D 场景：HTTP 200
-- 最新场景脚本：`blockout.js?v=20261026-loader-9`
+- 最新场景脚本：`blockout.js?v=20261026-wall-clean`
 - `assets/models/clerk-optimized.glb`：HTTP 200，约 `10.3 MB`
 - `assets/models/store-exterior.glb`：HTTP 200，约 `9.94 MB`
 - `assets/models/clerk-meshopt.glb`：HTTP 200，约 `4.13 MB`（显式快速模式）
@@ -62,6 +62,8 @@
 - 进入店内时显示约 `2.6` 秒的悬浮操作提示；物件标签在店内显示、店外隐藏。
 - 售货机、柜台、工牌、证书墙、收银机和小本子均有独立正向特写；平面物品使用俯视正面机位。按 `Esc` 从特写返回第一人称时会保留离开前的位置与朝向。
 - 店内前侧新增独立内封玻璃、门框和天花板，镜头不会绕到建筑外部看到墙背面。
+- 店外模式隐藏程序化室内左侧墙，避免它与外景模型侧墙重叠成“多出来的一面墙”。
+- 店员向柜台内侧移动，头发与左墙保留安全间距；门前盆栽位于墙柱外侧。
 - 门前盆栽已向左、向前移动并略微缩小，侧视角下不再与招牌支柱或店面墙体视觉交叠。
 - 工牌在桌面平面内旋转 `90°`；工牌特写镜头同步旋转 `-90°`，确保卡面文字方向正确。
 - 售货机、柜台、工牌、证书墙、收银机和小本子是六个有效交互物件；装饰货架与陈列柜不抢点击。
@@ -380,8 +382,8 @@ curl -fsSL 'https://7jinch2-dev.github.io/7Jinch2/_blockout/?deploy=check' \
 
 最近一次发布已验证：
 
-- 远端 `main` 为部署提交 `cea24fe`。
-- 线上页面已引用 `blockout.js?v=20261026-loader-9`。
+- 远端 `main` 为部署提交 `6c8df05`。
+- 线上页面已引用 `blockout.js?v=20261026-wall-clean`。
 - 线上手机海报约 `80 KB`，默认外景模型约 `2.92 MB`，无损人物原版约 `10.3 MB`。
 - 已实测：开屏显示真实下载进度，外景就绪后自动进入自由旋转，高清人物随后补入；控制台无错误。
 
