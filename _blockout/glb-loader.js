@@ -103,6 +103,34 @@ function imageFromBlob(blob) {
   });
 }
 
+async function readResponseBuffer(response, onProgress) {
+  const total = Number(response.headers.get('content-length')) || 0;
+  if (!onProgress || !response.body?.getReader) {
+    const buffer = await response.arrayBuffer();
+    onProgress?.(buffer.byteLength, total || buffer.byteLength);
+    return buffer;
+  }
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let received = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.byteLength;
+    onProgress(received, total);
+  }
+  const buffer = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    buffer.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  onProgress(received, total || received);
+  return buffer.buffer;
+}
+
 async function loadTexture(gltf, binary, textureIndex, colorSpace) {
   const textureDef = gltf.textures[textureIndex];
   const sourceIndex = textureDef.source ??
@@ -291,13 +319,13 @@ async function decodeMeshoptViews(gltf, binary) {
   return decodedViews;
 }
 
-export async function loadGlbModel(url) {
+export async function loadGlbModel(url, onProgress) {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Could not load ${url}: HTTP ${response.status}`);
   }
 
-  const { gltf, binary } = parseContainer(await response.arrayBuffer());
+  const { gltf, binary } = parseContainer(await readResponseBuffer(response, onProgress));
   const decodedViews = await decodeMeshoptViews(gltf, binary);
   const sceneIndex = gltf.scene ?? 0;
   const sceneDef = gltf.scenes?.[sceneIndex];
